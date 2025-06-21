@@ -48,6 +48,10 @@ $show_text = Advanced_WC_Wishlist::get_option('show_text', 'yes');
 $button_color = Advanced_WC_Wishlist::get_option('button_color', '#e74c3c');
 $button_color_hover = Advanced_WC_Wishlist::get_option('button_color_hover', '#c0392b');
 
+// Get custom sizes
+$button_font_size = Advanced_WC_Wishlist::get_option('button_font_size');
+$button_icon_size = Advanced_WC_Wishlist::get_option('button_icon_size');
+
 // Get wishlist URL
 $wishlist_url = AWW()->core->get_wishlist_url($wishlist_id);
 
@@ -118,6 +122,18 @@ $overlay = ($loop && $loop_position === 'on_image');
     font-size: 16px;
     line-height: 1;
 }
+
+<?php if ( ! empty( $button_font_size ) ) : ?>
+.aww-wishlist-btn .aww-text {
+    font-size: <?php echo esc_attr($button_font_size); ?>px !important;
+}
+<?php endif; ?>
+
+<?php if ( ! empty( $button_icon_size ) ) : ?>
+.aww-wishlist-btn .aww-icon {
+    font-size: <?php echo esc_attr($button_icon_size); ?>px !important;
+}
+<?php endif; ?>
 
 .aww-wishlist-btn .aww-text {
     font-weight: 500;

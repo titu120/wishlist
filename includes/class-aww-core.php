@@ -102,13 +102,6 @@ class AWW_Core {
             AWW_VERSION
         );
 
-        wp_enqueue_style(
-            'aww-custom-styles',
-            AWW_PLUGIN_URL . 'assets/css/custom-styles.css',
-            array('aww-frontend'),
-            AWW_VERSION
-        );
-
         wp_enqueue_script(
             'aww-frontend',
             AWW_PLUGIN_URL . 'assets/js/frontend.js',
@@ -118,7 +111,6 @@ class AWW_Core {
         );
         
 
-
         wp_localize_script(
             'aww-frontend',
             'aww_ajax',
@@ -127,9 +119,6 @@ class AWW_Core {
                 'nonce'    => wp_create_nonce('aww_nonce'),
                 'wishlist_url' => $this->get_wishlist_url(),
                 'button_position' => Advanced_WC_Wishlist::get_option('button_position', 'after_add_to_cart'),
-                'button_style'    => Advanced_WC_Wishlist::get_option('button_style', 'default'),
-                'button_icon'     => Advanced_WC_Wishlist::get_option('button_icon', 'heart'),
-                'button_custom_svg' => Advanced_WC_Wishlist::get_option('button_custom_svg', ''),
                 'strings'  => array(
                     'added_to_wishlist'    => __('Added to wishlist!', 'advanced-wc-wishlist'),
                     'removed_from_wishlist'=> __('Removed from wishlist!', 'advanced-wc-wishlist'),
@@ -443,6 +432,14 @@ class AWW_Core {
         $icon = file_get_contents( AWW_PLUGIN_DIR . 'assets/images/heart-icon.svg' );
         if ( ! $icon ) {
             $icon = '♥';
+        } else {
+            $icon_size = Advanced_WC_Wishlist::get_option('button_icon_size');
+            if (!empty($icon_size)) {
+                // Remove existing width/height attributes to avoid conflicts
+                $icon = preg_replace('/(width|height)="[^"]*"/i', '', $icon);
+                // Add the new width and height attributes to the <svg> tag
+                $icon = preg_replace('/<svg/i', '<svg width="' . esc_attr($icon_size) . '" height="' . esc_attr($icon_size) . '"', $icon, 1);
+            }
         }
 
         ob_start();
@@ -615,8 +612,10 @@ class AWW_Core {
         $custom_css = Advanced_WC_Wishlist::get_option( 'custom_css', '' );
         $button_custom_css = Advanced_WC_Wishlist::get_option( 'button_custom_css', '' );
         $floating_icon_custom_css = Advanced_WC_Wishlist::get_option( 'floating_icon_custom_css', '' );
+        $button_font_size = Advanced_WC_Wishlist::get_option( 'button_font_size' );
+        $button_icon_size = Advanced_WC_Wishlist::get_option( 'button_icon_size' );
         
-        if ( ! empty( $custom_css ) || ! empty( $button_custom_css ) || ! empty( $floating_icon_custom_css ) ) {
+        if ( ! empty( $custom_css ) || ! empty( $button_custom_css ) || ! empty( $floating_icon_custom_css ) || ! empty( $button_font_size ) || ! empty( $button_icon_size ) ) {
             echo '<style id="aww-custom-css">';
             
             if ( ! empty( $custom_css ) ) {
@@ -629,6 +628,16 @@ class AWW_Core {
             
             if ( ! empty( $floating_icon_custom_css ) ) {
                 echo esc_html( $floating_icon_custom_css );
+            }
+
+            if ( ! empty( $button_font_size ) ) {
+                echo ".aww-wishlist-btn .aww-text { font-size: " . esc_attr($button_font_size) . "px; }";
+            }
+
+            if ( ! empty( $button_icon_size ) ) {
+                $size = esc_attr($button_icon_size);
+                echo ".aww-wishlist-btn .aww-icon { display: inline-flex; align-items: center; }";
+                echo ".aww-wishlist-btn .aww-icon svg { width: {$size}px !important; height: {$size}px !important; }";
             }
             
             echo '</style>';

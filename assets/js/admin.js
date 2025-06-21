@@ -16,7 +16,6 @@
             this.initCharts();
             this.initColorPickers();
             this.initTabs();
-            this.initConditionalFields();
         },
 
         // Bind events
@@ -29,7 +28,6 @@
             $(document).on('click', '.aww-test-email', this.handleTestEmail);
             $(document).on('click', '.aww-bulk-action', this.handleBulkAction);
             $(document).on('change', '.aww-date-range', this.handleDateRangeChange);
-            $(document).on('change', 'select[name="aww_button_icon"]', this.initConditionalFields);
         },
 
         // Handle export data
@@ -528,18 +526,6 @@
         isValidEmail: function(email) {
             var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
-        },
-
-        // Initialize conditional fields
-        initConditionalFields: function() {
-            var iconType = $('select[name="aww_button_icon"]').val();
-            var $customSvgField = $('textarea[name="aww_button_custom_svg"]').closest('tr');
-
-            if (iconType === 'custom') {
-                $customSvgField.show();
-            } else {
-                $customSvgField.hide();
-            }
         }
     };
 

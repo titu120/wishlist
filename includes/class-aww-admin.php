@@ -234,56 +234,73 @@ class AWW_Admin {
         );
 
         add_settings_field(
-            'button_style',
-            __('Button Style', 'advanced-wc-wishlist'),
+            'button_position',
+            __('Button Position', 'advanced-wc-wishlist'),
             array($this, 'select_field_callback'),
             'aww_settings',
             'aww_button_settings',
-            array('field' => 'button_style', 'options' => array(
-                'default' => __('Default', 'advanced-wc-wishlist'),
-                'outline' => __('Outline', 'advanced-wc-wishlist'),
-                'minimal' => __('Minimal', 'advanced-wc-wishlist'),
-                'custom' => __('Custom', 'advanced-wc-wishlist'),
+            array('field' => 'button_position', 'options' => array(
+                'after_add_to_cart' => __('After "Add to Cart" button', 'advanced-wc-wishlist'),
+                'before_add_to_cart' => __('Before "Add to Cart" button', 'advanced-wc-wishlist'),
+                'after_title' => __('After product title', 'advanced-wc-wishlist'),
+                'after_price' => __('After price', 'advanced-wc-wishlist'),
+                'after_meta' => __('After product meta', 'advanced-wc-wishlist'),
+                'custom' => __('Custom (use shortcode)', 'advanced-wc-wishlist'),
             ))
         );
 
         add_settings_field(
-            'button_icon',
-            __('Button Icon', 'advanced-wc-wishlist'),
-            array($this, 'select_field_callback'),
+            'button_font_size',
+            __('Button Font Size (px)', 'advanced-wc-wishlist'),
+            array($this, 'number_field_callback'),
             'aww_settings',
             'aww_button_settings',
-            array('field' => 'button_icon', 'options' => array(
-                'heart' => __('Heart', 'advanced-wc-wishlist'),
-                'star' => __('Star', 'advanced-wc-wishlist'),
-                'plus' => __('Plus', 'advanced-wc-wishlist'),
-                'custom' => __('Custom SVG', 'advanced-wc-wishlist'),
-            ))
+            array('field' => 'button_font_size')
         );
 
         add_settings_field(
-            'button_custom_svg',
-            __('Custom Button SVG', 'advanced-wc-wishlist'),
-            array($this, 'textarea_field_callback'),
+            'button_icon_size',
+            __('Button Icon Size (px)', 'advanced-wc-wishlist'),
+            array($this, 'number_field_callback'),
             'aww_settings',
             'aww_button_settings',
-            array(
-                'field' => 'button_custom_svg',
-                'description' => __('Enter your full SVG code. It will be displayed when "Custom SVG" is selected as the button icon.', 'advanced-wc-wishlist')
-            )
+            array('field' => 'button_icon_size')
         );
 
         add_settings_field(
-            'button_size',
-            __('Button Size', 'advanced-wc-wishlist'),
-            array($this, 'select_field_callback'),
+            'button_text',
+            __('Button Text', 'advanced-wc-wishlist'),
+            array($this, 'text_field_callback'),
             'aww_settings',
             'aww_button_settings',
-            array('field' => 'button_size', 'options' => array(
-                'small' => __('Small', 'advanced-wc-wishlist'),
-                'medium' => __('Medium', 'advanced-wc-wishlist'),
-                'large' => __('Large', 'advanced-wc-wishlist'),
-            ))
+            array('field' => 'button_text')
+        );
+
+        add_settings_field(
+            'button_text_added',
+            __('Button Text (Added)', 'advanced-wc-wishlist'),
+            array($this, 'text_field_callback'),
+            'aww_settings',
+            'aww_button_settings',
+            array('field' => 'button_text_added')
+        );
+
+        add_settings_field(
+            'button_color',
+            __('Button Color', 'advanced-wc-wishlist'),
+            array($this, 'color_field_callback'),
+            'aww_settings',
+            'aww_button_settings',
+            array('field' => 'button_color')
+        );
+
+        add_settings_field(
+            'button_color_hover',
+            __('Button Hover Color', 'advanced-wc-wishlist'),
+            array($this, 'color_field_callback'),
+            'aww_settings',
+            'aww_button_settings',
+            array('field' => 'button_color_hover')
         );
 
         add_settings_field(
@@ -302,6 +319,15 @@ class AWW_Admin {
             'aww_settings',
             'aww_button_settings',
             array('field' => 'button_custom_css')
+        );
+
+        add_settings_field(
+            'button_icon',
+            __('Button Icon', 'advanced-wc-wishlist'),
+            array($this, 'text_field_callback'),
+            'aww_settings',
+            'aww_button_settings',
+            array('field' => 'button_icon')
         );
 
         // Loop Settings
@@ -955,45 +981,24 @@ class AWW_Admin {
 									<option value="after_meta" <?php selected( $settings['button_position'], 'after_meta' ); ?>>
                                         <?php esc_html_e( 'After Product Meta', 'advanced-wc-wishlist' ); ?>
                                     </option>
+                                    <option value="custom" <?php selected( $settings['button_position'], 'custom' ); ?>><?php esc_html_e( 'Custom (use shortcode)', 'advanced-wc-wishlist' ); ?></option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">
-                                <label for="aww_button_style"><?php esc_html_e( 'Button Style', 'advanced-wc-wishlist' ); ?></label>
+                                <label for="aww_button_font_size"><?php esc_html_e( 'Button Font Size (px)', 'advanced-wc-wishlist' ); ?></label>
                             </th>
                             <td>
-                                <select name="aww_button_style" id="aww_button_style">
-                                    <option value="default" <?php selected( $settings['button_style'], 'default' ); ?>><?php esc_html_e( 'Default', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="outline" <?php selected( $settings['button_style'], 'outline' ); ?>><?php esc_html_e( 'Outline', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="minimal" <?php selected( $settings['button_style'], 'minimal' ); ?>><?php esc_html_e( 'Minimal', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="custom" <?php selected( $settings['button_style'], 'custom' ); ?>><?php esc_html_e( 'Custom', 'advanced-wc-wishlist' ); ?></option>
-                                </select>
+                                <input type="number" name="aww_button_font_size" id="aww_button_font_size" value="<?php echo esc_attr( $settings['button_font_size'] ); ?>" min="10" max="50" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">
-                                <label for="aww_button_icon"><?php esc_html_e( 'Button Icon', 'advanced-wc-wishlist' ); ?></label>
+                                <label for="aww_button_icon_size"><?php esc_html_e( 'Button Icon Size (px)', 'advanced-wc-wishlist' ); ?></label>
                             </th>
                             <td>
-                                <select name="aww_button_icon" id="aww_button_icon">
-                                    <option value="heart" <?php selected( $settings['button_icon'], 'heart' ); ?>><?php esc_html_e( 'Heart', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="star" <?php selected( $settings['button_icon'], 'star' ); ?>><?php esc_html_e( 'Star', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="plus" <?php selected( $settings['button_icon'], 'plus' ); ?>><?php esc_html_e( 'Plus', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="custom" <?php selected( $settings['button_icon'], 'custom' ); ?>><?php esc_html_e( 'Custom SVG', 'advanced-wc-wishlist' ); ?></option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_size"><?php esc_html_e( 'Button Size', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <select name="aww_button_size" id="aww_button_size">
-                                    <option value="small" <?php selected( $settings['button_size'], 'small' ); ?>><?php esc_html_e( 'Small', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="medium" <?php selected( $settings['button_size'], 'medium' ); ?>><?php esc_html_e( 'Medium', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="large" <?php selected( $settings['button_size'], 'large' ); ?>><?php esc_html_e( 'Large', 'advanced-wc-wishlist' ); ?></option>
-                                </select>
+                                <input type="number" name="aww_button_icon_size" id="aww_button_icon_size" value="<?php echo esc_attr( $settings['button_icon_size'] ); ?>" min="16" max="100" />
                             </td>
                         </tr>
                         <tr>
@@ -1042,6 +1047,14 @@ class AWW_Admin {
                             </th>
                             <td>
                                 <textarea name="aww_button_custom_css" id="aww_button_custom_css" rows="5" cols="50"><?php echo esc_textarea( $settings['button_custom_css'] ); ?></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                <label for="aww_button_icon"><?php esc_html_e( 'Button Icon', 'advanced-wc-wishlist' ); ?></label>
+                            </th>
+                            <td>
+                                <input type="text" name="aww_button_icon" id="aww_button_icon" value="<?php echo esc_attr( $settings['button_icon'] ); ?>" class="regular-text" />
                             </td>
                         </tr>
                     </table>
@@ -1480,15 +1493,15 @@ class AWW_Admin {
             
             // Button Settings
             'button_position' => sanitize_text_field( $_POST['aww_button_position'] ),
-            'button_style' => sanitize_text_field( $_POST['aww_button_style'] ),
-            'button_icon' => sanitize_text_field( $_POST['aww_button_icon'] ),
-            'button_size' => sanitize_text_field( $_POST['aww_button_size'] ),
+            'button_font_size' => absint( $_POST['aww_button_font_size'] ),
+            'button_icon_size' => absint( $_POST['aww_button_icon_size'] ),
             'button_text' => sanitize_text_field( $_POST['aww_button_text'] ),
             'button_text_added' => sanitize_text_field( $_POST['aww_button_text_added'] ),
             'button_color' => sanitize_hex_color( $_POST['aww_button_color'] ),
             'button_color_hover' => sanitize_hex_color( $_POST['aww_button_color_hover'] ),
             'button_tooltip' => sanitize_text_field( $_POST['aww_button_tooltip'] ),
             'button_custom_css' => sanitize_textarea_field( $_POST['aww_button_custom_css'] ),
+            'button_icon' => sanitize_text_field( $_POST['aww_button_icon'] ),
             
             // Floating Icon Settings
             'enable_floating_icon' => isset( $_POST['aww_enable_floating_icon'] ) ? 'yes' : 'no',
@@ -1548,15 +1561,15 @@ class AWW_Admin {
             
             // Button Settings
             'button_position' => get_option( 'aww_button_position', 'after_add_to_cart' ),
-            'button_style' => get_option( 'aww_button_style', 'default' ),
-            'button_icon' => get_option( 'aww_button_icon', 'heart' ),
-            'button_size' => get_option( 'aww_button_size', 'medium' ),
+            'button_font_size' => get_option( 'aww_button_font_size', 14 ),
+            'button_icon_size' => get_option( 'aww_button_icon_size', 16 ),
             'button_text' => get_option( 'aww_button_text', __( 'Add to Wishlist', 'advanced-wc-wishlist' ) ),
             'button_text_added' => get_option( 'aww_button_text_added', __( 'Added to Wishlist', 'advanced-wc-wishlist' ) ),
             'button_color' => get_option( 'aww_button_color', '#e74c3c' ),
             'button_color_hover' => get_option( 'aww_button_color_hover', '#c0392b' ),
             'button_tooltip' => get_option( 'aww_button_tooltip', '' ),
             'button_custom_css' => get_option( 'aww_button_custom_css', '' ),
+            'button_icon' => get_option( 'aww_button_icon', '' ),
             
             // Floating Icon Settings
             'enable_floating_icon' => get_option( 'aww_enable_floating_icon', 'no' ),
@@ -1890,12 +1903,14 @@ class AWW_Admin {
      * Number field callback
      */
     public function number_field_callback( $args ) {
+        $options = get_option( 'aww_settings' );
         $field = $args['field'];
-        $value = Advanced_WC_Wishlist::get_option( $field, 0 );
+        $value = isset( $options[ $field ] ) ? $options[ $field ] : '';
         $min = isset( $args['min'] ) ? $args['min'] : 0;
-        $max = isset( $args['max'] ) ? $args['max'] : 999;
+        $max = isset( $args['max'] ) ? $args['max'] : 100;
+        $step = isset( $args['step'] ) ? $args['step'] : 1;
         ?>
-        <input type="number" name="aww_<?php echo esc_attr( $field ); ?>" value="<?php echo esc_attr( $value ); ?>" min="<?php echo esc_attr( $min ); ?>" max="<?php echo esc_attr( $max ); ?>" class="small-text" />
+        <input type="number" id="<?php echo esc_attr( $field ); ?>" name="aww_settings[<?php echo esc_attr( $field ); ?>]" value="<?php echo esc_attr( $value ); ?>" min="<?php echo esc_attr( $min ); ?>" max="<?php echo esc_attr( $max ); ?>" step="<?php echo esc_attr( $step ); ?>" />
         <?php
     }
 
@@ -1970,14 +1985,6 @@ class AWW_Admin {
                     $sanitized[ $key ] = in_array( $value, array( 'daily', 'weekly', 'monthly' ) ) ? $value : 'daily';
                     break;
                     
-                case 'button_icon':
-                    $sanitized[ $key ] = in_array( $value, array( 'heart', 'star', 'plus', 'custom' ) ) ? $value : 'heart';
-                    break;
-                
-                case 'button_custom_svg':
-                    $sanitized[ $key ] = wp_kses_post( $value );
-                    break;
-
                 default:
                     $sanitized[ $key ] = sanitize_text_field( $value );
                     break;
@@ -2097,20 +2104,5 @@ class AWW_Admin {
             $list[$page->ID] = $page->post_title;
         }
         return $list;
-    }
-
-    /**
-     * Textarea field callback
-     */
-    public function textarea_field_callback( $args ) {
-        $field = $args['field'];
-        $value = Advanced_WC_Wishlist::get_option( $field, '' );
-        $description = isset( $args['description'] ) ? $args['description'] : '';
-        ?>
-        <textarea name="aww_<?php echo esc_attr( $field ); ?>" rows="5" cols="50" class="large-text"><?php echo esc_textarea( $value ); ?></textarea>
-        <?php if ( $description ) : ?>
-            <p class="description"><?php echo esc_html( $description ); ?></p>
-        <?php endif; ?>
-        <?php
     }
 } 
