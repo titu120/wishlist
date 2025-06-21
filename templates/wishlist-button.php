@@ -25,7 +25,9 @@ $product_id = $product->get_id();
 $is_in_wishlist = AWW()->database->is_product_in_wishlist($product_id, $wishlist_id);
 
 // Get button settings
-$button_text = $is_in_wishlist ? 'Browse wishlist' : 'Add to wishlist';
+$button_text_option = Advanced_WC_Wishlist::get_option('button_text', __('Add to wishlist', 'advanced-wc-wishlist'));
+$button_text_added_option = Advanced_WC_Wishlist::get_option('button_text_added', __('Browse wishlist', 'advanced-wc-wishlist'));
+$button_text = $is_in_wishlist ? $button_text_added_option : $button_text_option;
 
 $button_class = 'aww-wishlist-btn';
 if ($is_in_wishlist) {
