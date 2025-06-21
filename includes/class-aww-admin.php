@@ -292,6 +292,30 @@ class AWW_Admin {
             array('field' => 'button_custom_css')
         );
 
+        // Loop Settings
+        add_settings_section(
+            'aww_loop_settings',
+            __('Loop Settings', 'advanced-wc-wishlist'),
+            function() { echo '<p>' . __('Configure wishlist button position in product loops (shop, category, etc).', 'advanced-wc-wishlist') . '</p>'; },
+            'aww_settings'
+        );
+        add_settings_field(
+            'loop_button_position',
+            __('Position of "Add to wishlist" in loop', 'advanced-wc-wishlist'),
+            array($this, 'select_field_callback'),
+            'aww_settings',
+            'aww_loop_settings',
+            array(
+                'field' => 'loop_button_position',
+                'options' => array(
+                    'on_image' => __('On top of the image', 'advanced-wc-wishlist'),
+                    'before_add_to_cart' => __('Before "Add to cart" button', 'advanced-wc-wishlist'),
+                    'after_add_to_cart' => __('After "Add to cart" button', 'advanced-wc-wishlist'),
+                    'shortcode' => __('Use shortcode', 'advanced-wc-wishlist'),
+                )
+            )
+        );
+
         // Floating Icon/Counter
         add_settings_section(
             'aww_floating_icon_settings',
@@ -516,6 +540,30 @@ class AWW_Admin {
             'aww_settings',
             'aww_display_ux_settings',
             array('field' => 'enable_rtl')
+        );
+
+        // Loop Settings
+        add_settings_section(
+            'aww_loop_settings',
+            __('Loop Settings', 'advanced-wc-wishlist'),
+            function() { echo '<p>' . __('Configure wishlist button position in product loops (shop, category, etc).', 'advanced-wc-wishlist') . '</p>'; },
+            'aww_settings'
+        );
+        add_settings_field(
+            'loop_button_position',
+            __('Position of "Add to wishlist" in loop', 'advanced-wc-wishlist'),
+            array($this, 'select_field_callback'),
+            'aww_settings',
+            'aww_loop_settings',
+            array(
+                'field' => 'loop_button_position',
+                'options' => array(
+                    'on_image' => __('On top of the image', 'advanced-wc-wishlist'),
+                    'before_add_to_cart' => __('Before "Add to cart" button', 'advanced-wc-wishlist'),
+                    'after_add_to_cart' => __('After "Add to cart" button', 'advanced-wc-wishlist'),
+                    'shortcode' => __('Use shortcode', 'advanced-wc-wishlist'),
+                )
+            )
         );
     }
 
@@ -827,6 +875,7 @@ class AWW_Admin {
             <h2 class="nav-tab-wrapper">
                 <a href="#general" class="nav-tab nav-tab-active"><?php esc_html_e( 'General', 'advanced-wc-wishlist' ); ?></a>
                 <a href="#button" class="nav-tab"><?php esc_html_e( 'Button Settings', 'advanced-wc-wishlist' ); ?></a>
+                <a href="#loop" class="nav-tab"><?php esc_html_e( 'Loop', 'advanced-wc-wishlist' ); ?></a>
                 <a href="#floating" class="nav-tab"><?php esc_html_e( 'Floating Icon', 'advanced-wc-wishlist' ); ?></a>
                 <a href="#sharing" class="nav-tab"><?php esc_html_e( 'Sharing', 'advanced-wc-wishlist' ); ?></a>
                 <a href="#behavior" class="nav-tab"><?php esc_html_e( 'Behavior', 'advanced-wc-wishlist' ); ?></a>
@@ -978,6 +1027,24 @@ class AWW_Admin {
                             </th>
                             <td>
                                 <textarea name="aww_button_custom_css" id="aww_button_custom_css" rows="5" cols="50"><?php echo esc_textarea( $settings['button_custom_css'] ); ?></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Loop Settings Tab -->
+                <div id="loop" class="tab-content">
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Position of "Add to wishlist" in loop', 'advanced-wc-wishlist' ); ?></th>
+                            <td>
+                                <select name="aww_loop_button_position" id="aww_loop_button_position">
+                                    <option value="on_image" <?php selected( $settings['loop_button_position'], 'on_image' ); ?>><?php esc_html_e( 'On top of the image', 'advanced-wc-wishlist' ); ?></option>
+                                    <option value="before_add_to_cart" <?php selected( $settings['loop_button_position'], 'before_add_to_cart' ); ?>><?php esc_html_e( 'Before "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
+                                    <option value="after_add_to_cart" <?php selected( $settings['loop_button_position'], 'after_add_to_cart' ); ?>><?php esc_html_e( 'After "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
+                                    <option value="shortcode" <?php selected( $settings['loop_button_position'], 'shortcode' ); ?>><?php esc_html_e( 'Use shortcode', 'advanced-wc-wishlist' ); ?></option>
+                                </select>
+                                <p class="description"><?php esc_html_e( 'Choose where to show the wishlist button in product loops (shop, category, etc).', 'advanced-wc-wishlist' ); ?></p>
                             </td>
                         </tr>
                     </table>
@@ -1438,6 +1505,9 @@ class AWW_Admin {
             'enable_accessibility' => isset( $_POST['aww_enable_accessibility'] ) ? 'yes' : 'no',
             'enable_rtl' => isset( $_POST['aww_enable_rtl'] ) ? 'yes' : 'no',
             'custom_css' => sanitize_textarea_field( $_POST['aww_custom_css'] ),
+
+            // Loop Settings
+            'loop_button_position' => isset( $_POST['aww_loop_button_position'] ) ? sanitize_text_field( $_POST['aww_loop_button_position'] ) : 'before_add_to_cart',
         );
 
         foreach ( $settings as $key => $value ) {
@@ -1503,6 +1573,9 @@ class AWW_Admin {
             'enable_accessibility' => get_option( 'aww_enable_accessibility', 'yes' ),
             'enable_rtl' => get_option( 'aww_enable_rtl', 'no' ),
             'custom_css' => get_option( 'aww_custom_css', '' ),
+
+            // Loop Settings
+            'loop_button_position' => get_option( 'aww_loop_button_position', 'before_add_to_cart' ),
         );
     }
 

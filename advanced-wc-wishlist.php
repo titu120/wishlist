@@ -108,6 +108,10 @@ final class Advanced_WC_Wishlist {
     private function init_hooks() {
         add_action( 'plugins_loaded', array( $this, 'init' ), 0 );
         add_action( 'init', array( $this, 'load_textdomain' ) );
+        
+        // Register shortcodes early, regardless of WooCommerce status
+        add_action( 'init', array( $this, 'register_shortcodes' ), 5 );
+        
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
         register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
     }
@@ -187,7 +191,7 @@ final class Advanced_WC_Wishlist {
         $this->database = new AWW_Database();
         $this->core = new AWW_Core();
         $this->ajax = new AWW_Ajax();
-        $this->shortcodes = new AWW_Shortcodes();
+        // Shortcodes are now registered separately in register_shortcodes()
         
         if ( is_admin() ) {
             $this->admin = new AWW_Admin();
@@ -195,12 +199,22 @@ final class Advanced_WC_Wishlist {
     }
 
     /**
+     * Register shortcodes
+     */
+    public function register_shortcodes() {
+        // Include shortcodes class if not already included
+        if ( ! class_exists( 'AWW_Shortcodes' ) ) {
+            require_once AWW_PLUGIN_DIR . 'includes/class-aww-shortcodes.php';
+        }
+        
+        // Create shortcodes instance
+        $this->shortcodes = new AWW_Shortcodes();
+    }
+
+    /**
      * Hook into WooCommerce
      */
     private function hook_woocommerce() {
-        // Add wishlist endpoint
-        add_action( 'init', array( $this->core, 'add_wishlist_endpoint' ) );
-        
         // Add wishlist button to product pages
         $button_position = self::get_option( 'button_position', 'after_add_to_cart' );
         switch ( $button_position ) {
@@ -219,11 +233,22 @@ final class Advanced_WC_Wishlist {
         }
         
         // Add wishlist button to product loops
-        add_action( 'woocommerce_after_shop_loop_item', array( $this->core, 'add_wishlist_button_loop' ) );
-        
-        // Add wishlist menu item
-        add_filter( 'woocommerce_account_menu_items', array( $this->core, 'add_wishlist_menu_item' ) );
-        add_action( 'woocommerce_account_wishlist_endpoint', array( $this->core, 'wishlist_endpoint_content' ) );
+        $loop_button_position = self::get_option( 'loop_button_position', 'before_add_to_cart' );
+        switch ( $loop_button_position ) {
+            case 'before_add_to_cart':
+                add_action( 'woocommerce_before_shop_loop_item_title', array( $this->core, 'add_wishlist_button_loop' ), 20 );
+                break;
+            case 'after_add_to_cart':
+                add_action( 'woocommerce_after_shop_loop_item', array( $this->core, 'add_wishlist_button_loop' ), 20 );
+                break;
+            case 'on_image':
+                add_action( 'woocommerce_before_shop_loop_item', array( $this->core, 'add_wishlist_button_loop_overlay' ), 5 );
+                break;
+            case 'shortcode':
+            default:
+                // Do not hook automatically
+                break;
+        }
     }
 
     /**
@@ -306,6 +331,7 @@ final class Advanced_WC_Wishlist {
             'show_price' => 'yes',
             'show_stock' => 'yes',
             'show_date' => 'no',
+            'loop_button_position' => 'on_image',
         );
 
         foreach ( $defaults as $key => $value ) {

@@ -321,59 +321,66 @@ $items = AWW()->database->get_wishlist_items($current_wishlist_id);
     background: #f8f9fa;
 }
 
+/* Modal Styles */
 .aww-modal {
+    display: none;
     position: fixed;
-    top: 0;
+    z-index: 1000;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
 }
 
 .aww-modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
     max-width: 500px;
-    width: 90%;
+    border-radius: 8px;
     position: relative;
 }
 
 .aww-modal-close {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 24px;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
     cursor: pointer;
-    color: #666;
+}
+
+.aww-modal-close:hover,
+.aww-modal-close:focus {
+    color: black;
+    text-decoration: none;
 }
 
 .aww-form-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .aww-form-group label {
     display: block;
     margin-bottom: 5px;
-    font-weight: 600;
+    font-weight: bold;
 }
 
 .aww-form-group input {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 14px;
 }
 
 .aww-form-actions {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
+    margin-top: 20px;
 }
 
 .aww-delete-btn {
@@ -384,25 +391,5 @@ $items = AWW()->database->get_wishlist_items($current_wishlist_id);
 .aww-delete-btn:hover {
     background: #c82333 !important;
     border-color: #c82333 !important;
-}
-
-@media (max-width: 768px) {
-    .aww-wishlist-manager {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .aww-wishlist-actions {
-        justify-content: center;
-    }
-    
-    .aww-wishlist-actions-top {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .aww-share-wishlist {
-        align-self: center;
-    }
 }
 </style> 

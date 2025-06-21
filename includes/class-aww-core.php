@@ -34,45 +34,33 @@ class AWW_Core {
         // Enqueue scripts and styles
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
-
-        // Add wishlist endpoint
-        add_action( 'init', array( $this, 'add_wishlist_endpoint' ) );
+        
+        // Add wishlist query vars
         add_filter( 'query_vars', array( $this, 'add_wishlist_query_vars' ) );
-        add_action( 'template_redirect', array( $this, 'wishlist_template' ) );
-
+        
         // Add wishlist button to product loops
-        add_action( 'woocommerce_after_shop_loop_item', array( $this, 'add_wishlist_button_loop' ) );
-
+        add_action( 'woocommerce_after_shop_loop_item', array( $this, 'add_wishlist_button_loop' ), 15 );
+        
         // Add wishlist count to header
         add_action( 'wp_footer', array( $this, 'add_wishlist_count' ) );
-
-        // Handle user login/logout
-        add_action( 'wp_login', array( $this, 'transfer_guest_wishlist_on_login' ) );
+        
+        // Transfer guest wishlist on login
+        add_action( 'wp_login', array( $this, 'transfer_guest_wishlist_on_login' ), 10, 2 );
+        
+        // Transfer guest wishlist on register
         add_action( 'user_register', array( $this, 'transfer_guest_wishlist_on_register' ) );
-
-        // Add menu item
-        add_filter( 'woocommerce_account_menu_items', array( $this, 'add_wishlist_menu_item' ) );
-        add_action( 'woocommerce_account_wishlist_endpoint', array( $this, 'wishlist_endpoint_content' ) );
-
-        // Add breadcrumb
+        
+        // Add wishlist breadcrumb
         add_filter( 'woocommerce_get_breadcrumb', array( $this, 'add_wishlist_breadcrumb' ), 10, 2 );
-
-        // Floating icon hooks
-        $position = Advanced_WC_Wishlist::get_option( 'floating_icon_position', 'top_right' );
-        if ( 'header' === $position ) {
-            add_action( 'wp_body_open', array( $this, 'render_floating_icon' ) );
-        } else {
-            add_action( 'wp_footer', array( $this, 'render_floating_icon' ) );
-        }
+        
+        // Add wishlist meta box
+        add_action( 'add_meta_boxes', array( $this, 'add_wishlist_meta_box' ) );
         
         // Output custom CSS
         add_action( 'wp_head', array( $this, 'output_custom_css' ) );
         
-        // Display merge notice after login
-        add_action( 'woocommerce_before_main_content', array( $this, 'display_merge_notice' ) );
-        
-        // Add product meta box
-        add_action( 'add_meta_boxes', array( $this, 'add_wishlist_meta_box' ) );
+        // Display merge notice
+        add_action( 'woocommerce_before_account_navigation', array( $this, 'display_merge_notice' ) );
     }
 
     /**
@@ -115,6 +103,7 @@ class AWW_Core {
             AWW_VERSION,
             true
         );
+        
 
         wp_localize_script(
             'aww-frontend',
@@ -161,13 +150,6 @@ class AWW_Core {
     }
 
     /**
-     * Add wishlist endpoint
-     */
-    public function add_wishlist_endpoint() {
-        add_rewrite_endpoint( 'wishlist', EP_ROOT | EP_PAGES );
-    }
-
-    /**
      * Add wishlist query vars
      *
      * @param array $vars Query vars
@@ -176,47 +158,6 @@ class AWW_Core {
     public function add_wishlist_query_vars( $vars ) {
         $vars[] = 'wishlist';
         return $vars;
-    }
-
-    /**
-     * Handle wishlist template
-     */
-    public function wishlist_template() {
-        if ( ! is_wc_endpoint_url( 'wishlist' ) ) {
-            return;
-        }
-
-        // Set page title
-        add_filter( 'woocommerce_page_title', array( $this, 'wishlist_page_title' ) );
-
-        // Load wishlist template with current wishlist data
-        $current_wishlist = $this->get_current_wishlist();
-        $user_wishlists = $this->get_user_wishlists();
-        
-        wc_get_template(
-            'wishlist-page.php',
-            array(
-                'current_wishlist' => $current_wishlist,
-                'user_wishlists' => $user_wishlists,
-            ),
-            'advanced-wc-wishlist/',
-            AWW_PLUGIN_DIR . 'templates/'
-        );
-        exit;
-    }
-
-    /**
-     * Wishlist page title
-     *
-     * @param string $title Page title
-     * @return string
-     */
-    public function wishlist_page_title( $title ) {
-        $current_wishlist = $this->get_current_wishlist();
-        if ( $current_wishlist ) {
-            return esc_html( $current_wishlist->name );
-        }
-        return __( 'My Wishlist', 'advanced-wc-wishlist' );
     }
 
     /**
@@ -234,6 +175,7 @@ class AWW_Core {
             'product' => $product,
             'loop' => true,
             'wishlist_id' => $current_wishlist_id,
+            'loop_position' => Advanced_WC_Wishlist::get_option('loop_button_position', 'before_add_to_cart'),
         ) );
     }
 
@@ -353,32 +295,6 @@ class AWW_Core {
     }
 
     /**
-     * Add wishlist menu item
-     *
-     * @param array $items Menu items
-     * @return array
-     */
-    public function add_wishlist_menu_item( $items ) {
-        $new_items = array();
-
-        foreach ( $items as $key => $item ) {
-            $new_items[ $key ] = $item;
-            if ( 'dashboard' === $key ) {
-                $new_items['wishlist'] = __( 'Wishlist', 'advanced-wc-wishlist' );
-            }
-        }
-
-        return $new_items;
-    }
-
-    /**
-     * Wishlist endpoint content
-     */
-    public function wishlist_endpoint_content() {
-        $this->load_template( 'wishlist-page.php' );
-    }
-
-    /**
      * Add wishlist breadcrumb
      *
      * @param array $crumbs Breadcrumbs
@@ -470,14 +386,16 @@ class AWW_Core {
      * Get wishlist URL
      */
     public function get_wishlist_url( $wishlist_id = null ) {
-        if ( is_user_logged_in() ) {
-            $base_url = wc_get_account_endpoint_url( 'wishlist' );
-            if ( $wishlist_id ) {
-                return add_query_arg( 'wishlist_id', $wishlist_id, $base_url );
-            }
-            return $base_url;
+        // Get the wishlist page ID from options
+        $wishlist_page_id = get_option( 'aww_wishlist_page_id' );
+        
+        if ( $wishlist_page_id ) {
+            $base_url = get_permalink( $wishlist_page_id );
+        } else {
+            // Fallback to home URL if page doesn't exist
+            $base_url = home_url( '/wishlist/' );
         }
-        $base_url = home_url( '/wishlist/' );
+        
         if ( $wishlist_id ) {
             return add_query_arg( 'wishlist_id', $wishlist_id, $base_url );
         }
@@ -831,5 +749,41 @@ class AWW_Core {
             echo '<div class="woocommerce-message aww-merge-notice">' . esc_html( $notice ) . '</div>';
             delete_user_meta( $user_id, 'aww_merge_notice' );
         }
+    }
+
+    /**
+     * Add wishlist button to product pages
+     */
+    public function add_wishlist_button() {
+        global $product;
+
+        if ( ! $product ) {
+            return;
+        }
+
+        $current_wishlist_id = $this->get_current_wishlist_id();
+        $this->load_template( 'wishlist-button.php', array(
+            'product' => $product,
+            'wishlist_id' => $current_wishlist_id,
+        ) );
+    }
+
+    /**
+     * Add wishlist button as overlay on product image in loop
+     */
+    public function add_wishlist_button_loop_overlay() {
+        global $product;
+        if ( ! $product ) {
+            return;
+        }
+        $current_wishlist_id = $this->get_current_wishlist_id();
+        echo '<div class="aww-wishlist-overlay" style="position:absolute;top:10px;left:10px;right:auto;z-index:10;">';
+        $this->load_template( 'wishlist-button.php', array(
+            'product' => $product,
+            'loop' => true,
+            'wishlist_id' => $current_wishlist_id,
+            'loop_position' => 'on_image',
+        ) );
+        echo '</div>';
     }
 } 

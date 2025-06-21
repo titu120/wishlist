@@ -15,6 +15,7 @@ if (!defined('ABSPATH')) {
 $product = isset($product) ? $product : null;
 $wishlist_id = isset($wishlist_id) ? $wishlist_id : AWW()->core->get_current_wishlist_id();
 $loop = isset($loop) ? $loop : false;
+$loop_position = isset($loop_position) ? $loop_position : (function_exists('Advanced_WC_Wishlist') ? Advanced_WC_Wishlist::get_option('loop_button_position', 'before_add_to_cart') : 'before_add_to_cart');
 
 if (!$product || !is_object($product)) {
     return;
@@ -24,9 +25,7 @@ $product_id = $product->get_id();
 $is_in_wishlist = AWW()->database->is_product_in_wishlist($product_id, $wishlist_id);
 
 // Get button settings
-$button_text = $is_in_wishlist ? 
-    Advanced_WC_Wishlist::get_option('button_text_added', __('Added to Wishlist', 'advanced-wc-wishlist')) :
-    Advanced_WC_Wishlist::get_option('button_text', __('Add to Wishlist', 'advanced-wc-wishlist'));
+$button_text = $is_in_wishlist ? 'Browse wishlist' : 'Add to wishlist';
 
 $button_class = 'aww-wishlist-btn';
 if ($is_in_wishlist) {
@@ -51,10 +50,12 @@ $button_color_hover = Advanced_WC_Wishlist::get_option('button_color_hover', '#c
 
 // Get wishlist URL
 $wishlist_url = AWW()->core->get_wishlist_url($wishlist_id);
+
+$overlay = ($loop && $loop_position === 'on_image');
 ?>
 
 <button 
-    class="<?php echo esc_attr($button_class); ?>"
+    class="aww-wishlist-btn aww-wishlist-link<?php if ($loop) echo ' loop'; ?><?php if ($is_in_wishlist) echo ' added'; ?><?php if ($overlay) echo ' overlay'; ?>"
     data-product-id="<?php echo esc_attr($product_id); ?>"
     data-wishlist-id="<?php echo esc_attr($wishlist_id); ?>"
     data-wishlist-url="<?php echo esc_attr($wishlist_url); ?>"
@@ -63,21 +64,8 @@ $wishlist_url = AWW()->core->get_wishlist_url($wishlist_id);
     aria-label="<?php echo esc_attr($button_text); ?>"
     title="<?php echo esc_attr($button_text); ?>"
 >
-    <?php if ($show_icon === 'yes'): ?>
-        <span class="aww-icon">
-            <?php if ($icon === 'heart'): ?>
-                ♥
-            <?php elseif ($icon === 'star'): ?>
-                ★
-            <?php elseif ($icon === 'plus'): ?>
-                +
-            <?php else: ?>
-                ♥
-            <?php endif; ?>
-        </span>
-    <?php endif; ?>
-    
-    <?php if ($show_text === 'yes'): ?>
+    <span class="aww-icon">♥</span>
+    <?php if (!$overlay): ?>
         <span class="aww-text"><?php echo esc_html($button_text); ?></span>
     <?php endif; ?>
 </button>
@@ -291,5 +279,92 @@ $wishlist_url = AWW()->core->get_wishlist_url($wishlist_id);
     .aww-wishlist-btn {
         display: none;
     }
+}
+
+.aww-wishlist-btn.aww-wishlist-link {
+    background: none !important;
+    border: none !important;
+    color: #e74c3c !important;
+    font-size: 1.1em;
+    font-weight: 500;
+    padding: 0;
+    margin: 0;
+    box-shadow: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.aww-wishlist-btn.aww-wishlist-link .aww-icon {
+    font-size: 1.1em;
+    color: #e74c3c;
+    transition: color 0.2s;
+}
+.aww-wishlist-btn.aww-wishlist-link:hover,
+.aww-wishlist-btn.aww-wishlist-link:focus {
+    color: #c0392b !important;
+    text-decoration: underline;
+    outline: none;
+}
+.aww-wishlist-btn.aww-wishlist-link:hover .aww-icon,
+.aww-wishlist-btn.aww-wishlist-link:focus .aww-icon {
+    color: #c0392b;
+}
+
+/* Overlay (on image) wishlist button styles */
+.aww-wishlist-overlay .aww-wishlist-btn.overlay {
+    background: transparent !important;
+    border: 2px solid #e74c3c !important;
+    color: #e74c3c !important;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+    z-index: 2;
+}
+.aww-wishlist-overlay .aww-wishlist-btn.overlay .aww-icon {
+    color: #e74c3c;
+    font-size: 20px;
+    line-height: 1;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.aww-wishlist-overlay .aww-wishlist-btn.overlay.added {
+    background: #e74c3c !important;
+    border-color: #e74c3c !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(231,76,60,0.18);
+}
+.aww-wishlist-overlay .aww-wishlist-btn.overlay.added .aww-icon {
+    color: #fff;
+}
+.aww-wishlist-overlay .aww-wishlist-btn.overlay:hover,
+.aww-wishlist-overlay .aww-wishlist-btn.overlay:focus {
+    border-color: #c0392b !important;
+    color: #c0392b !important;
+    box-shadow: 0 4px 16px rgba(192,57,43,0.18);
+}
+.aww-wishlist-overlay .aww-wishlist-btn.overlay.added:hover,
+.aww-wishlist-overlay .aww-wishlist-btn.overlay.added:focus {
+    background: #c0392b !important;
+    border-color: #c0392b !important;
+    color: #fff !important;
+}
+/* Remove any arrow or extra content for .added */
+.aww-wishlist-btn.overlay.added::after,
+.aww-wishlist-btn.overlay::after {
+    display: none !important;
+    content: none !important;
 }
 </style> 

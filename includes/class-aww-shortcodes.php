@@ -68,26 +68,29 @@ class AWW_Shortcodes {
         $wishlist_id = $atts['wishlist_id'] ? intval( $atts['wishlist_id'] ) : AWW()->core->get_current_wishlist_id();
         $items = AWW()->database->get_wishlist_items( $wishlist_id, $atts['limit'] );
 
-        if ( empty( $items ) ) {
-            if ( 'yes' === $atts['show_empty_message'] ) {
-                return '<p class="aww-empty-wishlist">' . __( 'Your wishlist is empty.', 'advanced-wc-wishlist' ) . '</p>';
-            }
-            return '';
-        }
-
         ob_start();
 
         if ( 'yes' === $atts['show_title'] ) {
             echo '<h2>' . __( 'My Wishlist', 'advanced-wc-wishlist' ) . '</h2>';
         }
 
-        // Load appropriate template
-        $template_file = 'wishlist-' . $atts['template'] . '.php';
-        if ( file_exists( AWW_PLUGIN_DIR . 'templates/' . $template_file ) ) {
-            include AWW_PLUGIN_DIR . 'templates/' . $template_file;
+        if ( empty( $items ) ) {
+            if ( 'yes' === $atts['show_empty_message'] ) {
+                echo '<div class="aww-empty-wishlist">';
+                echo '<p>' . __( 'Your wishlist is empty.', 'advanced-wc-wishlist' ) . '</p>';
+                echo '<a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '" class="button">' . __( 'Continue Shopping', 'advanced-wc-wishlist' ) . '</a>';
+                echo '</div>';
+            }
         } else {
-            // Fallback to default table template
-            include AWW_PLUGIN_DIR . 'templates/wishlist-table.php';
+            // Load the wishlist table template
+            AWW()->core->load_template( 'wishlist-table.php', array(
+                'items' => $items,
+                'wishlist_id' => $wishlist_id,
+                'show_price' => 'yes' === $atts['show_price'],
+                'show_stock' => 'yes' === $atts['show_stock'],
+                'show_add_to_cart' => 'yes' === $atts['show_add_to_cart'],
+                'show_remove' => 'yes' === $atts['show_remove'],
+            ) );
         }
 
         return ob_get_clean();
