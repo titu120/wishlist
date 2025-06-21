@@ -216,21 +216,7 @@ final class Advanced_WC_Wishlist {
      */
     private function hook_woocommerce() {
         // Add wishlist button to product pages
-        $button_position = self::get_option( 'button_position', 'after_add_to_cart' );
-        switch ( $button_position ) {
-            case 'before_add_to_cart':
-                add_action( 'woocommerce_before_add_to_cart_button', array( $this->core, 'add_wishlist_button' ) );
-                break;
-            case 'after_title':
-                add_action( 'woocommerce_single_product_summary', array( $this->core, 'add_wishlist_button' ), 6 );
-                break;
-            case 'after_price':
-                add_action( 'woocommerce_single_product_summary', array( $this->core, 'add_wishlist_button' ), 11 );
-                break;
-            default:
-                add_action( 'woocommerce_after_add_to_cart_button', array( $this->core, 'add_wishlist_button' ) );
-                break;
-        }
+        // The button is now added via JS to avoid theme conflicts
         
         // Add wishlist button to product loops
         $loop_button_position = self::get_option( 'loop_button_position', 'before_add_to_cart' );

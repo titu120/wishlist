@@ -61,6 +61,12 @@ class AWW_Core {
         
         // Display merge notice
         add_action( 'woocommerce_before_account_navigation', array( $this, 'display_merge_notice' ) );
+
+        // Add custom script for button positioning
+        add_action( 'wp_footer', array( $this, 'add_button_positioning_script' ) );
+        
+        // Add wishlist button to footer for JS positioning
+        add_action( 'wp_footer', array( $this, 'add_wishlist_button_to_footer' ) );
     }
 
     /**
@@ -112,6 +118,7 @@ class AWW_Core {
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce'    => wp_create_nonce('aww_nonce'),
                 'wishlist_url' => $this->get_wishlist_url(),
+                'button_position' => Advanced_WC_Wishlist::get_option('button_position', 'after_add_to_cart'),
                 'strings'  => array(
                     'added_to_wishlist'    => __('Added to wishlist!', 'advanced-wc-wishlist'),
                     'removed_from_wishlist'=> __('Removed from wishlist!', 'advanced-wc-wishlist'),
@@ -761,11 +768,15 @@ class AWW_Core {
             return;
         }
 
+        echo '<div class="aww-wishlist-btn-container">';
+
         $current_wishlist_id = $this->get_current_wishlist_id();
         $this->load_template( 'wishlist-button.php', array(
             'product' => $product,
             'wishlist_id' => $current_wishlist_id,
         ) );
+
+        echo '</div>';
     }
 
     /**
@@ -785,5 +796,68 @@ class AWW_Core {
             'loop_position' => 'on_image',
         ) );
         echo '</div>';
+    }
+
+    /**
+     * Add script to footer for robust button positioning.
+     */
+    public function add_button_positioning_script() {
+        if ( ! is_product() ) {
+            return;
+        }
+
+        $button_position = self::get_button_position();
+        ?>
+        <script type="text/javascript">
+            (function($) {
+                $(document).ready(function() {
+                    function positionWishlistButton() {
+                        var $container = $('.aww-wishlist-btn-container');
+                        if (!$container.length) { return; }
+
+                        var position = '<?php echo esc_js( $button_position ); ?>';
+                        var $summary = $('div.summary.entry-summary');
+                        if (!$summary.length) { return; }
+
+                        switch (position) {
+                            case 'before_add_to_cart':
+                                $container.insertBefore($summary.find('.cart'));
+                                break;
+                            case 'after_add_to_cart':
+                                $container.insertAfter($summary.find('.cart'));
+                                break;
+                            case 'after_title':
+                                $container.insertAfter($summary.find('.product_title'));
+                                break;
+                            case 'after_price':
+                                $container.insertAfter($summary.find('.price'));
+                                break;
+                            case 'after_meta':
+                                $container.insertAfter($summary.find('.product_meta'));
+                                break;
+                            default:
+                                $container.insertAfter($summary.find('.cart'));
+                        }
+                    }
+                    // Run on document ready and again after a short delay for compatibility
+                    positionWishlistButton();
+                    setTimeout(positionWishlistButton, 500);
+                });
+            })(jQuery);
+        </script>
+        <?php
+    }
+
+    /**
+     * Add the wishlist button to the footer on single product pages.
+     * It will be moved into the correct position by JavaScript.
+     */
+    public function add_wishlist_button_to_footer() {
+        if ( is_product() ) {
+            // The button is output inside a hidden div, so it's not visible until moved.
+            echo '<div style="display: none;">';
+            $this->add_wishlist_button();
+            echo '</div>';
+        }
     }
 } 

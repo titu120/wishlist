@@ -699,7 +699,7 @@
         }
     };
 
-    // Initialize when document is ready
+    // Initialize on document ready
     $(document).ready(function() {
         AWW.init();
     });

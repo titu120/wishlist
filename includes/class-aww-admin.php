@@ -940,6 +940,9 @@ class AWW_Admin {
                                     <option value="after_price" <?php selected( $settings['button_position'], 'after_price' ); ?>>
                                         <?php esc_html_e( 'After Product Price', 'advanced-wc-wishlist' ); ?>
                                     </option>
+									<option value="after_meta" <?php selected( $settings['button_position'], 'after_meta' ); ?>>
+                                        <?php esc_html_e( 'After Product Meta', 'advanced-wc-wishlist' ); ?>
+                                    </option>
                                 </select>
                             </td>
                         </tr>
