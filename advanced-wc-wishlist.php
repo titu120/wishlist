@@ -300,6 +300,8 @@ final class Advanced_WC_Wishlist {
     private function set_default_options() {
         $defaults = array(
             'button_position' => 'after_add_to_cart',
+            'button_style' => 'default',
+            'button_icon' => 'heart',
             'button_text' => __( 'Add to Wishlist', 'advanced-wc-wishlist' ),
             'button_text_added' => __( 'Added to Wishlist', 'advanced-wc-wishlist' ),
             'button_color' => '#e74c3c',

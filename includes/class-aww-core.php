@@ -102,6 +102,13 @@ class AWW_Core {
             AWW_VERSION
         );
 
+        wp_enqueue_style(
+            'aww-custom-styles',
+            AWW_PLUGIN_URL . 'assets/css/custom-styles.css',
+            array('aww-frontend'),
+            AWW_VERSION
+        );
+
         wp_enqueue_script(
             'aww-frontend',
             AWW_PLUGIN_URL . 'assets/js/frontend.js',
@@ -111,6 +118,7 @@ class AWW_Core {
         );
         
 
+
         wp_localize_script(
             'aww-frontend',
             'aww_ajax',
@@ -119,6 +127,9 @@ class AWW_Core {
                 'nonce'    => wp_create_nonce('aww_nonce'),
                 'wishlist_url' => $this->get_wishlist_url(),
                 'button_position' => Advanced_WC_Wishlist::get_option('button_position', 'after_add_to_cart'),
+                'button_style'    => Advanced_WC_Wishlist::get_option('button_style', 'default'),
+                'button_icon'     => Advanced_WC_Wishlist::get_option('button_icon', 'heart'),
+                'button_custom_svg' => Advanced_WC_Wishlist::get_option('button_custom_svg', ''),
                 'strings'  => array(
                     'added_to_wishlist'    => __('Added to wishlist!', 'advanced-wc-wishlist'),
                     'removed_from_wishlist'=> __('Removed from wishlist!', 'advanced-wc-wishlist'),

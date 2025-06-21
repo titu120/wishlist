@@ -262,6 +262,18 @@ class AWW_Admin {
         );
 
         add_settings_field(
+            'button_custom_svg',
+            __('Custom Button SVG', 'advanced-wc-wishlist'),
+            array($this, 'textarea_field_callback'),
+            'aww_settings',
+            'aww_button_settings',
+            array(
+                'field' => 'button_custom_svg',
+                'description' => __('Enter your full SVG code. It will be displayed when "Custom SVG" is selected as the button icon.', 'advanced-wc-wishlist')
+            )
+        );
+
+        add_settings_field(
             'button_size',
             __('Button Size', 'advanced-wc-wishlist'),
             array($this, 'select_field_callback'),
@@ -1958,6 +1970,14 @@ class AWW_Admin {
                     $sanitized[ $key ] = in_array( $value, array( 'daily', 'weekly', 'monthly' ) ) ? $value : 'daily';
                     break;
                     
+                case 'button_icon':
+                    $sanitized[ $key ] = in_array( $value, array( 'heart', 'star', 'plus', 'custom' ) ) ? $value : 'heart';
+                    break;
+                
+                case 'button_custom_svg':
+                    $sanitized[ $key ] = wp_kses_post( $value );
+                    break;
+
                 default:
                     $sanitized[ $key ] = sanitize_text_field( $value );
                     break;
@@ -2077,5 +2097,20 @@ class AWW_Admin {
             $list[$page->ID] = $page->post_title;
         }
         return $list;
+    }
+
+    /**
+     * Textarea field callback
+     */
+    public function textarea_field_callback( $args ) {
+        $field = $args['field'];
+        $value = Advanced_WC_Wishlist::get_option( $field, '' );
+        $description = isset( $args['description'] ) ? $args['description'] : '';
+        ?>
+        <textarea name="aww_<?php echo esc_attr( $field ); ?>" rows="5" cols="50" class="large-text"><?php echo esc_textarea( $value ); ?></textarea>
+        <?php if ( $description ) : ?>
+            <p class="description"><?php echo esc_html( $description ); ?></p>
+        <?php endif; ?>
+        <?php
     }
 } 
