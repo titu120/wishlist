@@ -304,8 +304,6 @@ final class Advanced_WC_Wishlist {
             'button_text_added' => __( 'Added to Wishlist', 'advanced-wc-wishlist' ),
             'button_text_color' => '#000000',
             'button_icon_color' => '#000000',
-            'enable_hover_border' => 'no',
-            'button_hover_border_color' => '#000000',
             'enable_guest_wishlist' => 'yes',
             'enable_social_sharing' => 'yes',
             'enable_multiple_wishlists' => 'yes',

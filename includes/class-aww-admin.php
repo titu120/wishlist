@@ -1052,23 +1052,6 @@ class AWW_Admin {
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><?php esc_html_e( 'Enable Hover Border', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_hover_border" value="yes" <?php checked( $settings['enable_hover_border'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Show border on button hover', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_hover_border_color"><?php esc_html_e( 'Button Hover Border Color', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="color" name="aww_button_hover_border_color" id="aww_button_hover_border_color" value="<?php echo esc_attr( $settings['button_hover_border_color'] ); ?>" />
-                            </td>
-                        </tr>
-                        <tr>
                             <th scope="row">
                                 <label for="aww_button_tooltip"><?php esc_html_e( 'Button Tooltip', 'advanced-wc-wishlist' ); ?></label>
                             </th>
@@ -1604,8 +1587,6 @@ class AWW_Admin {
             'button_text_added' => get_option( 'aww_button_text_added', __( 'Added to Wishlist', 'advanced-wc-wishlist' ) ),
             'button_text_color' => get_option( 'aww_button_text_color', '#000000' ),
             'button_icon_color' => get_option( 'aww_button_icon_color', '#000000' ),
-            'enable_hover_border' => get_option( 'aww_enable_hover_border', 'no' ),
-            'button_hover_border_color' => get_option( 'aww_button_hover_border_color', '#000000' ),
             'button_tooltip' => get_option( 'aww_button_tooltip', '' ),
             'button_custom_css' => get_option( 'aww_button_custom_css', '' ),
             'button_icon' => get_option( 'aww_button_icon', '' ),

@@ -42,24 +42,25 @@ $button_style = Advanced_WC_Wishlist::get_option('button_style', 'default');
 $button_size = Advanced_WC_Wishlist::get_option('button_size', 'medium');
 
 // Get icon
-$icon = Advanced_WC_Wishlist::get_option('button_icon', 'heart');
+$button_icon = Advanced_WC_Wishlist::get_option('button_icon', 'heart');
 $show_icon = Advanced_WC_Wishlist::get_option('show_icon', 'yes');
 $show_text = Advanced_WC_Wishlist::get_option('show_text', 'yes');
 
 // Get colors
 $button_text_color = Advanced_WC_Wishlist::get_option('button_text_color', '#000000');
 $button_icon_color = Advanced_WC_Wishlist::get_option('button_icon_color', '#000000');
-$enable_hover_border = Advanced_WC_Wishlist::get_option('enable_hover_border', 'no');
-$button_hover_border_color = Advanced_WC_Wishlist::get_option('button_hover_border_color', '#000000');
+$button_custom_css = Advanced_WC_Wishlist::get_option('button_custom_css', '');
 
 // Get custom sizes
 $button_font_size = Advanced_WC_Wishlist::get_option('button_font_size');
-$button_icon_size = Advanced_WC_Wishlist::get_option('button_icon_size');
+$button_icon_size = Advanced_WC_Wishlist::get_option('button_icon_size', '16');
 
 // Get wishlist URL
 $wishlist_url = AWW()->core->get_wishlist_url($wishlist_id);
 
 $overlay = ($loop && $loop_position === 'on_image');
+
+$style = "--aww-text-color: {$button_text_color}; --aww-icon-color: {$button_icon_color};";
 ?>
 
 <button 
@@ -71,7 +72,7 @@ $overlay = ($loop && $loop_position === 'on_image');
     type="button"
     aria-label="<?php echo esc_attr($button_text); ?>"
     title="<?php echo esc_attr($button_text); ?>"
-    style="--aww-text-color: <?php echo esc_attr($button_text_color); ?>; --aww-icon-color: <?php echo esc_attr($button_icon_color); ?>;<?php if ( 'yes' === $enable_hover_border ) : ?> --aww-hover-border-color: <?php echo esc_attr($button_hover_border_color); ?>;<?php endif; ?>"
+    style="<?php echo esc_attr($style); ?>"
 >
     <?php if ($show_icon === 'yes') : ?>
     <span class="aww-icon">
@@ -97,8 +98,8 @@ $overlay = ($loop && $loop_position === 'on_image');
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     text-decoration: none;
-    transition: all 0.3s ease;
     line-height: 1;
     min-height: 40px;
     position: relative;
@@ -107,14 +108,12 @@ $overlay = ($loop && $loop_position === 'on_image');
 
 .aww-wishlist-btn:hover {
     background: #DDDDDD;
-    border-color: transparent;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    <?php if ( 'yes' === $enable_hover_border ) { ?>
-    border-bottom: 2px solid var(--aww-hover-border-color);
-    <?php } else { ?>
-    border-bottom: none;
-    <?php } ?>
+    border-top-color: transparent !important;
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+    border-bottom-color: transparent !important;
 }
 
 .aww-wishlist-btn:active {
@@ -319,7 +318,7 @@ $overlay = ($loop && $loop_position === 'on_image');
 .aww-wishlist-btn.aww-wishlist-link {
     background: none !important;
     border: none !important;
-    color: #e74c3c !important;
+    color: var(--aww-text-color) !important;
     font-size: 1.1em;
     font-weight: 500;
     padding: 0;
@@ -329,22 +328,21 @@ $overlay = ($loop && $loop_position === 'on_image');
     align-items: center;
     gap: 6px;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: none;
 }
 .aww-wishlist-btn.aww-wishlist-link .aww-icon {
     font-size: 1.1em;
-    color: #e74c3c;
-    transition: color 0.2s;
+    color: var(--aww-icon-color);
+    transition: none;
 }
 .aww-wishlist-btn.aww-wishlist-link:hover,
 .aww-wishlist-btn.aww-wishlist-link:focus {
-    color: #c0392b !important;
     text-decoration: underline;
     outline: none;
 }
 .aww-wishlist-btn.aww-wishlist-link:hover .aww-icon,
 .aww-wishlist-btn.aww-wishlist-link:focus .aww-icon {
-    color: #c0392b;
+    color: var(--aww-icon-color);
 }
 
 /* Overlay (on image) wishlist button styles */
@@ -402,4 +400,8 @@ $overlay = ($loop && $loop_position === 'on_image');
     display: none !important;
     content: none !important;
 }
+
+<?php if ( ! empty( $button_custom_css ) ) : ?>
+    <?php echo esc_html( $button_custom_css ); ?>
+<?php endif; ?>
 </style> 
