@@ -446,7 +446,7 @@ class AWW_Admin {
         add_settings_field(
             'sharing_networks',
             __('Sharing Networks', 'advanced-wc-wishlist'),
-            array($this, 'text_field_callback'),
+            array($this, 'sharing_networks_field_callback'),
             'aww_settings',
             'aww_sharing_settings',
             array('field' => 'sharing_networks')
@@ -1622,8 +1622,8 @@ class AWW_Admin {
             
             // Floating Icon Settings
             'enable_floating_icon' => get_option( 'aww_enable_floating_icon', 'no' ),
-            'floating_icon_position' => get_option( 'aww_floating_icon_position', 'top_right' ),
-            'floating_icon_style' => get_option( 'aww_floating_icon_style', 'circle' ),
+            'floating_icon_position' => get_option( 'aww_floating_icon_position', 'bottom_right' ),
+            'floating_icon_style' => get_option( 'aww_floating_icon_style', 'minimal' ),
             'floating_icon_custom_css' => get_option( 'aww_floating_icon_custom_css', '' ),
             
             // Sharing Settings
@@ -2153,5 +2153,32 @@ class AWW_Admin {
             $list[$page->ID] = $page->post_title;
         }
         return $list;
+    }
+
+    /**
+     * Sharing networks field callback
+     */
+    public function sharing_networks_field_callback( $args ) {
+        $field = $args['field'];
+        $value = Advanced_WC_Wishlist::get_option( $field, 'facebook,twitter,whatsapp,email' );
+        $networks = array(
+            'facebook' => __( 'Facebook', 'advanced-wc-wishlist' ),
+            'twitter' => __( 'Twitter', 'advanced-wc-wishlist' ),
+            'whatsapp' => __( 'WhatsApp', 'advanced-wc-wishlist' ),
+            'email' => __( 'Email', 'advanced-wc-wishlist' ),
+            'pinterest' => __( 'Pinterest', 'advanced-wc-wishlist' ),
+            'linkedin' => __( 'LinkedIn', 'advanced-wc-wishlist' ),
+        );
+        $selected_networks = explode( ',', $value );
+        ?>
+        <div class="aww-sharing-networks">
+            <?php foreach ( $networks as $network => $label ) : ?>
+                <label>
+                    <input type="checkbox" name="aww_sharing_networks[]" value="<?php echo esc_attr( $network ); ?>" <?php checked( in_array( $network, $selected_networks ) ); ?> />
+                    <?php echo esc_html( $label ); ?>
+                </label>
+            <?php endforeach; ?>
+        </div>
+        <?php
     }
 } 

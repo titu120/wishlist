@@ -62,6 +62,7 @@ class AWW_Core {
         // Add custom script for button positioning
         add_action( 'wp_footer', array( $this, 'add_button_positioning_script' ) );
         
+        add_action('wp_footer', array($this, 'render_floating_icon'));
         // Add wishlist button to footer for JS positioning
         add_action( 'wp_footer', array( $this, 'add_wishlist_button_to_footer' ) );
     }
@@ -426,18 +427,7 @@ class AWW_Core {
             $button_class .= ' loop';
         }
 
-        $icon = file_get_contents( AWW_PLUGIN_DIR . 'assets/images/heart-icon.svg' );
-        if ( ! $icon ) {
-            $icon = '♥';
-        } else {
-            $icon_size = Advanced_WC_Wishlist::get_option('button_icon_size');
-            if (!empty($icon_size)) {
-                // Remove existing width/height attributes to avoid conflicts
-                $icon = preg_replace('/(width|height)="[^"]*"/i', '', $icon);
-                // Add the new width and height attributes to the <svg> tag
-                $icon = preg_replace('/<svg/i', '<svg width="' . esc_attr($icon_size) . '" height="' . esc_attr($icon_size) . '"', $icon, 1);
-            }
-        }
+        $icon = '♥';
 
         ob_start();
         ?>
@@ -575,8 +565,8 @@ class AWW_Core {
             return;
         }
 
-        $position = Advanced_WC_Wishlist::get_option( 'floating_icon_position', 'top_right' );
-        $style = Advanced_WC_Wishlist::get_option( 'floating_icon_style', 'circle' );
+        $position = Advanced_WC_Wishlist::get_option( 'floating_icon_position', 'bottom_right' );
+        $style = Advanced_WC_Wishlist::get_option( 'floating_icon_style', 'minimal' );
         $custom_css = Advanced_WC_Wishlist::get_option( 'floating_icon_custom_css', '' );
         $wishlist_id = $this->get_current_wishlist_id();
         $count = AWW()->database->get_wishlist_count( $wishlist_id );
