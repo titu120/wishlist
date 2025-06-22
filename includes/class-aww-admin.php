@@ -1110,7 +1110,7 @@ class AWW_Admin {
                                     <option value="on_image" <?php selected( $settings['loop_button_position'], 'on_image' ); ?>><?php esc_html_e( 'On top of the image', 'advanced-wc-wishlist' ); ?></option>
                                     <option value="before_add_to_cart" <?php selected( $settings['loop_button_position'], 'before_add_to_cart' ); ?>><?php esc_html_e( 'Before "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
                                     <option value="after_add_to_cart" <?php selected( $settings['loop_button_position'], 'after_add_to_cart' ); ?>><?php esc_html_e( 'After "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="shortcode" <?php selected( $settings['loop_button_position'], 'shortcode' ); ?>><?php esc_html_e( 'Use shortcode', 'advanced-wc-wishlist' ); ?></option>
+                                    <option value="shortcode" <?php selected( $settings['loop_button_position'], 'shortcode' ); ?>><?php esc_html_e( 'Use shortcode', 'advanced-wc-wishlists' ); ?></option>
                                 </select>
                                 <p class="description"><?php esc_html_e( 'Choose where to show the wishlist button in product loops (shop, category, etc).', 'advanced-wc-wishlist' ); ?></p>
                             </td>
