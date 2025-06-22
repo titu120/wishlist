@@ -122,12 +122,12 @@ class AWW_Admin {
         );
 
         add_settings_field(
-            'enable_social_sharing',
+            '_deprecated_enable_social_sharing',
             __('Enable Social Sharing', 'advanced-wc-wishlist'),
             array($this, 'checkbox_field_callback'),
             'aww_settings',
             'aww_general_settings',
-            array('field' => 'enable_social_sharing')
+            array('field' => '_deprecated_enable_social_sharing')
         );
 
         // Multiple Wishlist Settings
@@ -962,15 +962,6 @@ class AWW_Admin {
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><?php esc_html_e( 'Social Sharing', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_social_sharing" value="yes" <?php checked( $settings['enable_social_sharing'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Enable social sharing buttons', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
                             <th scope="row">
                                 <label for="aww_wishlist_expiry_days"><?php esc_html_e( 'Guest Wishlist Expiry (Days)', 'advanced-wc-wishlist' ); ?></label>
                             </th>
@@ -1110,7 +1101,7 @@ class AWW_Admin {
                                     <option value="on_image" <?php selected( $settings['loop_button_position'], 'on_image' ); ?>><?php esc_html_e( 'On top of the image', 'advanced-wc-wishlist' ); ?></option>
                                     <option value="before_add_to_cart" <?php selected( $settings['loop_button_position'], 'before_add_to_cart' ); ?>><?php esc_html_e( 'Before "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
                                     <option value="after_add_to_cart" <?php selected( $settings['loop_button_position'], 'after_add_to_cart' ); ?>><?php esc_html_e( 'After "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="shortcode" <?php selected( $settings['loop_button_position'], 'shortcode' ); ?>><?php esc_html_e( 'Use shortcode', 'advanced-wc-wishlists' ); ?></option>
+                                    <option value="shortcode" <?php selected( $settings['loop_button_position'], 'shortcode' ); ?>><?php esc_html_e( 'Use shortcode', 'advanced-wc-wishlist' ); ?></option>
                                 </select>
                                 <p class="description"><?php esc_html_e( 'Choose where to show the wishlist button in product loops (shop, category, etc).', 'advanced-wc-wishlist' ); ?></p>
                             </td>
@@ -1528,7 +1519,6 @@ class AWW_Admin {
         $settings = array(
             // General Settings
             'enable_guest_wishlist' => isset( $_POST['aww_enable_guest_wishlist'] ) ? 'yes' : 'no',
-            'enable_social_sharing' => isset( $_POST['aww_enable_social_sharing'] ) ? 'yes' : 'no',
             'wishlist_expiry_days' => intval( $_POST['aww_wishlist_expiry_days'] ),
             
             // Button Settings
@@ -1598,7 +1588,6 @@ class AWW_Admin {
         return array(
             // General Settings
             'enable_guest_wishlist' => get_option( 'aww_enable_guest_wishlist', 'yes' ),
-            'enable_social_sharing' => get_option( 'aww_enable_social_sharing', 'yes' ),
             'wishlist_expiry_days' => get_option( 'aww_wishlist_expiry_days', 30 ),
             
             // Button Settings

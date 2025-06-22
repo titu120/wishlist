@@ -805,7 +805,7 @@ class AWW_Core {
             return;
         }
         $current_wishlist_id = $this->get_current_wishlist_id();
-        echo '<div class="aww-wishlist-overlay" style="position:absolute;top:10px;right:10px;left:auto;z-index:10;">';
+        echo '<div class="aww-wishlist-overlay">';
         $this->load_template( 'wishlist-button.php', array(
             'product' => $product,
             'loop' => true,

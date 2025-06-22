@@ -53,11 +53,8 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.aww-wishlist-btn.added::after {
-    content: " →";
-    font-weight: bold;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+a.ast-on-card-button.ast-select-options-trigger.product_type_simple.add_to_cart_button.ajax_add_to_cart {
+    opacity: 0 !important;
 }
 
 .aww-wishlist-btn.added:hover::after {

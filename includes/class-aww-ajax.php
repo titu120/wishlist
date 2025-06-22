@@ -36,6 +36,7 @@ class AWW_Ajax {
         add_action( 'wp_ajax_aww_remove_from_wishlist', array( $this, 'remove_from_wishlist' ) );
         add_action( 'wp_ajax_aww_get_wishlist_count', array( $this, 'get_wishlist_count' ) );
         add_action( 'wp_ajax_aww_get_wishlist_items', array( $this, 'get_wishlist_items' ) );
+        add_action( 'wp_ajax_aww_add_to_cart', array( $this, 'add_to_cart' ) );
         add_action( 'wp_ajax_aww_add_all_to_cart', array( $this, 'add_all_to_cart' ) );
         add_action( 'wp_ajax_aww_share_wishlist', array( $this, 'share_wishlist' ) );
         
@@ -54,6 +55,7 @@ class AWW_Ajax {
         add_action( 'wp_ajax_nopriv_aww_remove_from_wishlist', array( $this, 'remove_from_wishlist' ) );
         add_action( 'wp_ajax_nopriv_aww_get_wishlist_count', array( $this, 'get_wishlist_count' ) );
         add_action( 'wp_ajax_nopriv_aww_get_wishlist_items', array( $this, 'get_wishlist_items' ) );
+        add_action( 'wp_ajax_nopriv_aww_add_to_cart', array( $this, 'add_to_cart' ) );
         add_action( 'wp_ajax_nopriv_aww_add_all_to_cart', array( $this, 'add_all_to_cart' ) );
         add_action( 'wp_ajax_nopriv_aww_share_wishlist', array( $this, 'share_wishlist' ) );
         
@@ -104,6 +106,7 @@ class AWW_Ajax {
             wp_send_json_success( array(
                 'message' => __( 'Added to wishlist!', 'advanced-wc-wishlist' ),
                 'count' => $count,
+                'button_action' => 'add',
                 'wishlist_id' => $wishlist_id,
                 'wishlist_url' => $wishlist_url,
                 'product_id' => $product_id,
@@ -595,5 +598,32 @@ class AWW_Ajax {
         }
 
         wp_send_json_success(array('price_drops' => $price_drops));
+    }
+
+    /**
+     * Add single item to cart from wishlist.
+     */
+    public function add_to_cart() {
+        check_ajax_referer( 'aww_nonce', 'nonce' );
+
+        $product_id = isset( $_POST['product_id'] ) ? intval( $_POST['product_id'] ) : 0;
+
+        if ( ! $product_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid product ID.', 'advanced-wc-wishlist' ) ) );
+        }
+
+        try {
+            $result = WC()->cart->add_to_cart( $product_id, 1 );
+            if ( $result ) {
+                wp_send_json_success( array(
+                    'message' => __( 'Product added to cart successfully.', 'advanced-wc-wishlist' ),
+                    'cart_url' => wc_get_cart_url(),
+                ) );
+            } else {
+                wp_send_json_error( array( 'message' => __( 'Could not add product to cart.', 'advanced-wc-wishlist' ) ) );
+            }
+        } catch ( Exception $e ) {
+            wp_send_json_error( array( 'message' => $e->getMessage() ) );
+        }
     }
 } 

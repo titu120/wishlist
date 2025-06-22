@@ -51,24 +51,26 @@
         handleWishlistClick: function(e) {
             e.preventDefault();
             var $btn = $(this);
-            var productId = $btn.data('product-id');
-            var wishlistId = $btn.data('wishlist-id');
-            var nonce = $btn.data('nonce');
-            if ($btn.hasClass('loading')) {
-                return;
-            }
-            var isInWishlist = $btn.hasClass('added');
             
-            // If already in wishlist, go to wishlist page
-            if (isInWishlist) {
-                var wishlistUrl = $btn.data('wishlist-url') || (aww_ajax && aww_ajax.wishlist_url) || '/wishlist/';
+            // If item is already in wishlist, redirect to the wishlist page
+            if ($btn.hasClass('added')) {
+                var wishlistUrl = (aww_ajax && aww_ajax.wishlist_url) || '/wishlist/';
                 if (wishlistUrl) {
                     window.location.href = wishlistUrl;
                 }
                 return;
             }
 
+            if ($btn.hasClass('loading')) {
+                return;
+            }
+
+            var productId = $btn.data('product-id');
+            var wishlistId = $btn.data('wishlist-id');
+            var nonce = $btn.data('nonce');
+
             $btn.addClass('loading');
+            
             $.ajax({
                 url: aww_ajax.ajax_url,
                 type: 'POST',
@@ -82,10 +84,8 @@
                     AWW.handleAjaxResponse(response, $btn);
                 },
                 error: function() {
-                    AWW.showMessage(aww_ajax.strings.error || 'An error occurred. Please try again.', 'error');
-                },
-                complete: function() {
                     $btn.removeClass('loading');
+                    AWW.showMessage(aww_ajax.strings.error || 'An error occurred. Please try again.', 'error');
                 }
             });
         },
@@ -135,7 +135,7 @@
             var productId = $btn.data('product-id');
             var wishlistId = $btn.data('wishlist-id');
 
-            if ($btn.hasClass('loading')) {
+            if ($btn.hasClass('loading') || $btn.hasClass('aww-view-cart-btn')) {
                 return;
             }
 
@@ -151,7 +151,20 @@
                     nonce: aww_ajax.nonce
                 },
                 success: function(response) {
-                    AWW.handleAjaxResponse(response, $btn);
+                    if (response.success) {
+                        AWW.showMessage(response.data.message, 'success');
+                        $btn.text('View Cart');
+                        $btn.removeClass('aww-add-to-cart-btn').addClass('aww-view-cart-btn');
+                        
+                        // Unbind original handler and redirect to cart
+                        $btn.off('click').on('click', function(event) {
+                            event.preventDefault();
+                            window.location.href = response.data.cart_url;
+                        });
+
+                    } else {
+                        AWW.showMessage(response.data.message || 'Could not add to cart.', 'error');
+                    }
                 },
                 error: function() {
                     AWW.showMessage(aww_ajax.strings.error || 'An error occurred. Please try again.', 'error');
@@ -599,34 +612,35 @@
 
         // Handle AJAX response
         handleAjaxResponse: function(response, $btn) {
+            $btn.removeClass('loading');
+
             if (response.success) {
                 AWW.showMessage(response.data.message, 'success');
+
+                // Update button state for all instances of this product
+                var productId = $btn.data('product-id');
+                var $allBtns = $('.aww-wishlist-btn[data-product-id="' + productId + '"]');
+
+                if (response.data.button_action === 'add') {
+                    $allBtns.addClass('added').attr('aria-label', aww_ajax.strings.button_text_added);
+                    $allBtns.find('.aww-text').text(aww_ajax.strings.button_text_added);
+                } else if (response.data.button_action === 'remove' || $btn.hasClass('aww-remove-wishlist-btn')) {
+                    $allBtns.removeClass('added').attr('aria-label', aww_ajax.strings.button_text);
+                    $allBtns.find('.aww-text').text(aww_ajax.strings.button_text);
+                    // Remove the item from the wishlist table
+                    $btn.closest('.aww-wishlist-item, .aww-wishlist-row').fadeOut(300, function() { $(this).remove(); });
+                }
+
+                // Update wishlist count
                 AWW.updateWishlistCount(response.data.count);
 
-                if (response.data.action === 'add') {
-                    $btn.addClass('added').find('.aww-text').text(response.data.button_text_added);
-                    // Update all buttons for this product
-                    $('.aww-wishlist-btn[data-product-id="' + $btn.data('product-id') + '"]').not($btn).each(function() {
-                        $(this).addClass('added').find('.aww-text').text(response.data.button_text_added);
-                    });
-                } else if (response.data.action === 'remove') {
-                    $btn.removeClass('added').find('.aww-text').text(response.data.button_text);
-                    // Update all buttons for this product
-                    $('.aww-wishlist-btn[data-product-id="' + $btn.data('product-id') + '"]').not($btn).each(function() {
-                        $(this).removeClass('added').find('.aww-text').text(response.data.button_text);
-                    });
-                    
-                    // If on wishlist page, remove the item from the list
-                    if ($btn.closest('.aww-wishlist-item').length) {
-                        $btn.closest('.aww-wishlist-item').fadeOut(300, function() { $(this).remove(); });
-                    }
+                // Optional: redirect or update page content
+                if (response.data.redirect) {
+                    window.location.href = response.data.redirect;
                 }
-                
-                // Trigger event for other scripts
-                $(document).trigger('aww_wishlist_updated', response.data);
 
             } else {
-                AWW.showMessage(response.data.message || (aww_ajax.strings && aww_ajax.strings.error) || 'An error occurred.', 'error');
+                AWW.showMessage(response.data.message || aww_ajax.strings.error, 'error');
             }
         },
 
