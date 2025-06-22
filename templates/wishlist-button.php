@@ -49,6 +49,7 @@ $show_text = Advanced_WC_Wishlist::get_option('show_text', 'yes');
 // Get colors
 $button_text_color = Advanced_WC_Wishlist::get_option('button_text_color', '#000000');
 $button_icon_color = Advanced_WC_Wishlist::get_option('button_icon_color', '#000000');
+$button_tooltip = Advanced_WC_Wishlist::get_option('button_tooltip', '');
 $button_custom_css = Advanced_WC_Wishlist::get_option('button_custom_css', '');
 
 // Get custom sizes
@@ -71,7 +72,7 @@ $style = "--aww-text-color: {$button_text_color}; --aww-icon-color: {$button_ico
     data-nonce="<?php echo esc_attr(wp_create_nonce('aww_nonce')); ?>"
     type="button"
     aria-label="<?php echo esc_attr($button_text); ?>"
-    title="<?php echo esc_attr($button_text); ?>"
+    title="<?php echo esc_attr($button_tooltip); ?>"
     style="<?php echo esc_attr($style); ?>"
 >
     <?php if ($show_icon === 'yes') : ?>
