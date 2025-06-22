@@ -61,6 +61,13 @@ a.ast-on-card-button.ast-select-options-trigger.product_type_simple.add_to_cart_
     opacity: 1;
 }
 
+.aww-wishlist-row .aww-action-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    white-space: nowrap;
+}
+
 .aww-wishlist-btn .aww-icon {
     font-size: 16px;
     line-height: 1;

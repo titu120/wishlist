@@ -382,8 +382,8 @@ $selected_icon_svg = isset($icons[$button_icon]) ? $icons[$button_icon] : $icons
 }
 
 .aww-wishlist-btn.overlay.added .aww-icon svg {
-    fill: #000;
-    stroke: #000;
+    fill: #e74c3c;
+    stroke: #e74c3c;
 }
 
 .aww-wishlist-overlay {
