@@ -342,10 +342,16 @@ class AWW_Admin {
         add_settings_field(
             'button_icon',
             __('Button Icon', 'advanced-wc-wishlist'),
-            array($this, 'text_field_callback'),
+            array($this, 'select_field_callback'),
             'aww_settings',
             'aww_button_settings',
-            array('field' => 'button_icon')
+            array('field' => 'button_icon', 'options' => array(
+                'heart' => __('Heart', 'advanced-wc-wishlist'),
+                'star' => __('Star', 'advanced-wc-wishlist'),
+                'plus' => __('Plus', 'advanced-wc-wishlist'),
+                'bookmark' => __('Bookmark', 'advanced-wc-wishlist'),
+                'gift' => __('Gift', 'advanced-wc-wishlist'),
+            ))
         );
 
         // Loop Settings
@@ -1072,7 +1078,23 @@ class AWW_Admin {
                                 <label for="aww_button_icon"><?php esc_html_e( 'Button Icon', 'advanced-wc-wishlist' ); ?></label>
                             </th>
                             <td>
-                                <input type="text" name="aww_button_icon" id="aww_button_icon" value="<?php echo esc_attr( $settings['button_icon'] ); ?>" class="regular-text" />
+                                <select name="aww_button_icon" id="aww_button_icon">
+                                    <option value="heart" <?php selected( $settings['button_icon'], 'heart' ); ?>>
+                                        <?php esc_html_e( 'Heart', 'advanced-wc-wishlist' ); ?>
+                                    </option>
+                                    <option value="star" <?php selected( $settings['button_icon'], 'star' ); ?>>
+                                        <?php esc_html_e( 'Star', 'advanced-wc-wishlist' ); ?>
+                                    </option>
+                                    <option value="plus" <?php selected( $settings['button_icon'], 'plus' ); ?>>
+                                        <?php esc_html_e( 'Plus', 'advanced-wc-wishlist' ); ?>
+                                    </option>
+                                    <option value="bookmark" <?php selected( $settings['button_icon'], 'bookmark' ); ?>>
+                                        <?php esc_html_e( 'Bookmark', 'advanced-wc-wishlist' ); ?>
+                                    </option>
+                                    <option value="gift" <?php selected( $settings['button_icon'], 'gift' ); ?>>
+                                        <?php esc_html_e( 'Gift', 'advanced-wc-wishlist' ); ?>
+                                    </option>
+                                </select>
                             </td>
                         </tr>
                     </table>
@@ -1589,7 +1611,7 @@ class AWW_Admin {
             'button_icon_color' => get_option( 'aww_button_icon_color', '#000000' ),
             'button_tooltip' => get_option( 'aww_button_tooltip', '' ),
             'button_custom_css' => get_option( 'aww_button_custom_css', '' ),
-            'button_icon' => get_option( 'aww_button_icon', '' ),
+            'button_icon' => get_option( 'aww_button_icon', 'heart' ),
             
             // Floating Icon Settings
             'enable_floating_icon' => get_option( 'aww_enable_floating_icon', 'no' ),
