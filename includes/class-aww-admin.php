@@ -1175,8 +1175,21 @@ class AWW_Admin {
                                 <label for="aww_sharing_networks"><?php esc_html_e( 'Sharing Networks', 'advanced-wc-wishlist' ); ?></label>
                             </th>
                             <td>
-                                <input type="text" name="aww_sharing_networks" id="aww_sharing_networks" value="<?php echo esc_attr( $settings['sharing_networks'] ); ?>" class="regular-text" />
-                                <p class="description"><?php esc_html_e( 'Comma-separated list: facebook, twitter, whatsapp, email', 'advanced-wc-wishlist' ); ?></p>
+                                <?php
+                                $networks = array(
+                                    'facebook'  => 'Facebook',
+                                    'twitter'   => 'Twitter',
+                                    'whatsapp'  => 'WhatsApp',
+                                    'email'     => 'Email',
+                                    'pinterest' => 'Pinterest',
+                                    'linkedin'  => 'LinkedIn',
+                                );
+                                $selected_networks = !empty($settings['sharing_networks']) ? explode(',', $settings['sharing_networks']) : array('facebook', 'twitter', 'whatsapp', 'email');
+                                foreach ( $networks as $key => $label ) {
+                                    echo '<label style="margin-right: 15px;"><input type="checkbox" name="aww_sharing_networks[]" value="' . esc_attr( $key ) . '" ' . checked( in_array( $key, $selected_networks ), true, false ) . '> ' . esc_html( $label ) . '</label>';
+                                }
+                                ?>
+                                <p class="description"><?php esc_html_e( 'Select the social networks to enable for sharing.', 'advanced-wc-wishlist' ); ?></p>
                             </td>
                         </tr>
                         <tr>
@@ -1516,6 +1529,11 @@ class AWW_Admin {
      * Save settings
      */
     private function save_settings() {
+        if (isset($_POST['aww_sharing_networks']) && is_array($_POST['aww_sharing_networks'])) {
+            $sharing_networks = implode(',', array_map('sanitize_text_field', $_POST['aww_sharing_networks']));
+        } else {
+            $sharing_networks = '';
+        }
         $settings = array(
             // General Settings
             'enable_guest_wishlist' => isset( $_POST['aww_enable_guest_wishlist'] ) ? 'yes' : 'no',
@@ -1543,7 +1561,7 @@ class AWW_Admin {
             
             // Sharing Settings
             'enable_sharing' => isset( $_POST['aww_enable_sharing'] ) ? 'yes' : 'no',
-            'sharing_networks' => sanitize_text_field( $_POST['aww_sharing_networks'] ),
+            'sharing_networks' => $sharing_networks,
             'sharing_message' => sanitize_text_field( $_POST['aww_sharing_message'] ),
             
             // Behavior Settings

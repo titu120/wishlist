@@ -659,6 +659,9 @@ class AWW_Core {
 
         $networks = Advanced_WC_Wishlist::get_option( 'sharing_networks', 'facebook,twitter,whatsapp,email' );
         $networks = array_map( 'trim', explode( ',', $networks ) );
+        if (empty($networks) || (count($networks) === 1 && empty($networks[0]))) {
+            return '';
+        }
         $message = Advanced_WC_Wishlist::get_option( 'sharing_message', 'Check out this product from {site_name}: {product_name}' );
         
         // Replace placeholders
@@ -671,63 +674,27 @@ class AWW_Core {
             $product_url = $wishlist_url;
         }
 
+        $social_networks = array(
+            'facebook'  => 'facebook',
+            'twitter'   => 'twitter',
+            'whatsapp'  => 'whatsapp',
+            'email'     => 'email',
+            'pinterest' => 'pinterest',
+            'linkedin'  => 'linkedin',
+        );
+
         ob_start();
         ?>
-        <div class="aww-sharing-buttons">
-            <h4><?php esc_html_e( 'Share this wishlist:', 'advanced-wc-wishlist' ); ?></h4>
-            <div class="aww-share-buttons">
-                <?php if ( in_array( 'facebook', $networks ) ) : ?>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode( $wishlist_url ); ?>" 
-                       target="_blank" 
-                       class="aww-share-btn aww-share-facebook" 
-                       title="<?php esc_attr_e( 'Share on Facebook', 'advanced-wc-wishlist' ); ?>">
-                        <span class="aww-share-icon">f</span>
-                    </a>
-                <?php endif; ?>
-                
-                <?php if ( in_array( 'twitter', $networks ) ) : ?>
-                    <a href="https://twitter.com/intent/tweet?text=<?php echo urlencode( $message ); ?>&url=<?php echo urlencode( $wishlist_url ); ?>" 
-                       target="_blank" 
-                       class="aww-share-btn aww-share-twitter" 
-                       title="<?php esc_attr_e( 'Share on Twitter', 'advanced-wc-wishlist' ); ?>">
-                        <span class="aww-share-icon">t</span>
-                    </a>
-                <?php endif; ?>
-                
-                <?php if ( in_array( 'whatsapp', $networks ) ) : ?>
-                    <a href="https://wa.me/?text=<?php echo urlencode( $message . ' ' . $wishlist_url ); ?>" 
-                       target="_blank" 
-                       class="aww-share-btn aww-share-whatsapp" 
-                       title="<?php esc_attr_e( 'Share on WhatsApp', 'advanced-wc-wishlist' ); ?>">
-                        <span class="aww-share-icon">w</span>
-                    </a>
-                <?php endif; ?>
-                
-                <?php if ( in_array( 'email', $networks ) ) : ?>
-                    <a href="mailto:?subject=<?php echo urlencode( $message ); ?>&body=<?php echo urlencode( $message . ' ' . $wishlist_url ); ?>" 
-                       class="aww-share-btn aww-share-email" 
-                       title="<?php esc_attr_e( 'Share via Email', 'advanced-wc-wishlist' ); ?>">
-                        <span class="aww-share-icon">@</span>
-                    </a>
-                <?php endif; ?>
-                
-                <?php if ( in_array( 'pinterest', $networks ) ) : ?>
-                    <a href="https://pinterest.com/pin/create/button/?url=<?php echo urlencode( $wishlist_url ); ?>&description=<?php echo urlencode( $message ); ?>" 
-                       target="_blank" 
-                       class="aww-share-btn aww-share-pinterest" 
-                       title="<?php esc_attr_e( 'Share on Pinterest', 'advanced-wc-wishlist' ); ?>">
-                        <span class="aww-share-icon">p</span>
-                    </a>
-                <?php endif; ?>
-                
-                <?php if ( in_array( 'linkedin', $networks ) ) : ?>
-                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?php echo urlencode( $wishlist_url ); ?>" 
-                       target="_blank" 
-                       class="aww-share-btn aww-share-linkedin" 
-                       title="<?php esc_attr_e( 'Share on LinkedIn', 'advanced-wc-wishlist' ); ?>">
-                        <span class="aww-share-icon">in</span>
-                    </a>
-                <?php endif; ?>
+        <div class="aww-share-buttons aww-share-buttons-bottom" style="margin: 24px auto 0 auto; justify-content: center; border-top: 1px solid #eee; padding-top: 24px; max-width: 600px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <span style="font-weight: 500; color: #333; margin-bottom: 8px;">Share:</span>
+            <div style="display: flex; gap: 16px;">
+                <?php foreach ( $networks as $network ) : ?>
+                    <?php if ( isset( $social_networks[ $network ] ) ) : ?>
+                        <button type="button" class="aww-share-btn aww-share-<?php echo esc_attr( $network ); ?>" data-platform="<?php echo esc_attr( $network ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'aww_nonce' ) ); ?>" data-url="<?php echo esc_url( $wishlist_url ); ?>" title="Share on <?php echo esc_attr( ucfirst( $network ) ); ?>">
+                            <span class="dashicons dashicons-<?php echo esc_attr( $social_networks[ $network ] ); ?>"></span>
+                        </button>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </div>
         </div>
         <?php

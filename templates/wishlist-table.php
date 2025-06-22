@@ -177,23 +177,7 @@ $show_share = AWW()->core->is_social_sharing_enabled();
                 ?>
             </p>
             <?php if ( $show_share ) : ?>
-            <div class="aww-share-buttons aww-share-buttons-bottom" style="margin: 24px auto 0 auto; justify-content: center; border-top: 1px solid #eee; padding-top: 24px; max-width: 600px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px;">
-                <span style="font-weight: 500; color: #333; margin-bottom: 8px;">Share:</span>
-                <div style="display: flex; gap: 16px;">
-                    <button type="button" class="aww-share-btn aww-share-facebook" data-platform="facebook" data-nonce="<?php echo esc_attr( wp_create_nonce( 'aww_nonce' ) ); ?>" data-url="<?php echo esc_url( AWW()->core->get_wishlist_url( $wishlist_id ) ); ?>" title="Share on Facebook">
-                        <span class="dashicons dashicons-facebook"></span>
-                    </button>
-                    <button type="button" class="aww-share-btn aww-share-twitter" data-platform="twitter" data-nonce="<?php echo esc_attr( wp_create_nonce( 'aww_nonce' ) ); ?>" data-url="<?php echo esc_url( AWW()->core->get_wishlist_url( $wishlist_id ) ); ?>" title="Share on Twitter">
-                        <span class="dashicons dashicons-twitter"></span>
-                    </button>
-                    <button type="button" class="aww-share-btn aww-share-whatsapp" data-platform="whatsapp" data-nonce="<?php echo esc_attr( wp_create_nonce( 'aww_nonce' ) ); ?>" data-url="<?php echo esc_url( AWW()->core->get_wishlist_url( $wishlist_id ) ); ?>" title="Share on WhatsApp">
-                        <span class="dashicons dashicons-whatsapp"></span>
-                    </button>
-                    <button type="button" class="aww-share-btn aww-share-email" data-platform="email" data-nonce="<?php echo esc_attr( wp_create_nonce( 'aww_nonce' ) ); ?>" data-url="<?php echo esc_url( AWW()->core->get_wishlist_url( $wishlist_id ) ); ?>" title="Share via Email">
-                        <span class="dashicons dashicons-email"></span>
-                    </button>
-                </div>
-            </div>
+            <?php echo AWW()->core->render_sharing_buttons($wishlist_id); ?>
             <?php endif; ?>
         </div>
     <?php else : ?>
