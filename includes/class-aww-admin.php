@@ -286,21 +286,39 @@ class AWW_Admin {
         );
 
         add_settings_field(
-            'button_color',
-            __('Button Color', 'advanced-wc-wishlist'),
+            'button_text_color',
+            __('Button Text Color', 'advanced-wc-wishlist'),
             array($this, 'color_field_callback'),
             'aww_settings',
             'aww_button_settings',
-            array('field' => 'button_color')
+            array('field' => 'button_text_color')
         );
 
         add_settings_field(
-            'button_color_hover',
-            __('Button Hover Color', 'advanced-wc-wishlist'),
+            'button_icon_color',
+            __('Button Icon Color', 'advanced-wc-wishlist'),
             array($this, 'color_field_callback'),
             'aww_settings',
             'aww_button_settings',
-            array('field' => 'button_color_hover')
+            array('field' => 'button_icon_color')
+        );
+
+        add_settings_field(
+            'enable_hover_border',
+            __('Enable Hover Border', 'advanced-wc-wishlist'),
+            array($this, 'checkbox_field_callback'),
+            'aww_settings',
+            'aww_button_settings',
+            array('field' => 'enable_hover_border')
+        );
+
+        add_settings_field(
+            'button_hover_border_color',
+            __('Button Hover Border Color', 'advanced-wc-wishlist'),
+            array($this, 'color_field_callback'),
+            'aww_settings',
+            'aww_button_settings',
+            array('field' => 'button_hover_border_color')
         );
 
         add_settings_field(
@@ -328,24 +346,6 @@ class AWW_Admin {
             'aww_settings',
             'aww_button_settings',
             array('field' => 'button_icon')
-        );
-
-        add_settings_field(
-            'button_text_color',
-            __('Button Text Color', 'advanced-wc-wishlist'),
-            array($this, 'color_field_callback'),
-            'aww_settings',
-            'aww_button_settings',
-            array('field' => 'button_text_color')
-        );
-
-        add_settings_field(
-            'button_icon_color',
-            __('Button Icon Color', 'advanced-wc-wishlist'),
-            array($this, 'color_field_callback'),
-            'aww_settings',
-            'aww_button_settings',
-            array('field' => 'button_icon_color')
         );
 
         // Loop Settings
@@ -1052,6 +1052,23 @@ class AWW_Admin {
                             </td>
                         </tr>
                         <tr>
+                            <th scope="row"><?php esc_html_e( 'Enable Hover Border', 'advanced-wc-wishlist' ); ?></th>
+                            <td>
+                                <label>
+                                    <input type="checkbox" name="aww_enable_hover_border" value="yes" <?php checked( $settings['enable_hover_border'], 'yes' ); ?> />
+                                    <?php esc_html_e( 'Show border on button hover', 'advanced-wc-wishlist' ); ?>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                <label for="aww_button_hover_border_color"><?php esc_html_e( 'Button Hover Border Color', 'advanced-wc-wishlist' ); ?></label>
+                            </th>
+                            <td>
+                                <input type="color" name="aww_button_hover_border_color" id="aww_button_hover_border_color" value="<?php echo esc_attr( $settings['button_hover_border_color'] ); ?>" />
+                            </td>
+                        </tr>
+                        <tr>
                             <th scope="row">
                                 <label for="aww_button_tooltip"><?php esc_html_e( 'Button Tooltip', 'advanced-wc-wishlist' ); ?></label>
                             </th>
@@ -1517,6 +1534,8 @@ class AWW_Admin {
             'button_text_added' => sanitize_text_field( $_POST['aww_button_text_added'] ),
             'button_text_color' => sanitize_hex_color( $_POST['aww_button_text_color'] ),
             'button_icon_color' => sanitize_hex_color( $_POST['aww_button_icon_color'] ),
+            'enable_hover_border' => isset( $_POST['aww_enable_hover_border'] ) ? 'yes' : 'no',
+            'button_hover_border_color' => sanitize_hex_color( $_POST['aww_button_hover_border_color'] ),
             'button_tooltip' => sanitize_text_field( $_POST['aww_button_tooltip'] ),
             'button_custom_css' => sanitize_textarea_field( $_POST['aww_button_custom_css'] ),
             'button_icon' => sanitize_text_field( $_POST['aww_button_icon'] ),
@@ -1585,6 +1604,8 @@ class AWW_Admin {
             'button_text_added' => get_option( 'aww_button_text_added', __( 'Added to Wishlist', 'advanced-wc-wishlist' ) ),
             'button_text_color' => get_option( 'aww_button_text_color', '#000000' ),
             'button_icon_color' => get_option( 'aww_button_icon_color', '#000000' ),
+            'enable_hover_border' => get_option( 'aww_enable_hover_border', 'no' ),
+            'button_hover_border_color' => get_option( 'aww_button_hover_border_color', '#000000' ),
             'button_tooltip' => get_option( 'aww_button_tooltip', '' ),
             'button_custom_css' => get_option( 'aww_button_custom_css', '' ),
             'button_icon' => get_option( 'aww_button_icon', '' ),

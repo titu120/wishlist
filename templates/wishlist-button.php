@@ -49,6 +49,8 @@ $show_text = Advanced_WC_Wishlist::get_option('show_text', 'yes');
 // Get colors
 $button_text_color = Advanced_WC_Wishlist::get_option('button_text_color', '#000000');
 $button_icon_color = Advanced_WC_Wishlist::get_option('button_icon_color', '#000000');
+$enable_hover_border = Advanced_WC_Wishlist::get_option('enable_hover_border', 'no');
+$button_hover_border_color = Advanced_WC_Wishlist::get_option('button_hover_border_color', '#000000');
 
 // Get custom sizes
 $button_font_size = Advanced_WC_Wishlist::get_option('button_font_size');
@@ -69,11 +71,15 @@ $overlay = ($loop && $loop_position === 'on_image');
     type="button"
     aria-label="<?php echo esc_attr($button_text); ?>"
     title="<?php echo esc_attr($button_text); ?>"
-    style="--aww-text-color: <?php echo esc_attr($button_text_color); ?>; --aww-icon-color: <?php echo esc_attr($button_icon_color); ?>;"
+    style="--aww-text-color: <?php echo esc_attr($button_text_color); ?>; --aww-icon-color: <?php echo esc_attr($button_icon_color); ?>;<?php if ( 'yes' === $enable_hover_border ) : ?> --aww-hover-border-color: <?php echo esc_attr($button_hover_border_color); ?>;<?php endif; ?>"
 >
-    <span class="aww-icon">♥</span>
-    <?php if (!$overlay): ?>
-        <span class="aww-text"><?php echo esc_html($button_text); ?></span>
+    <?php if ($show_icon === 'yes') : ?>
+    <span class="aww-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </span>
+    <?php endif; ?>
+    <?php if ($show_text === 'yes') : ?>
+    <span class="aww-text"><?php echo esc_html($button_text); ?></span>
     <?php endif; ?>
 </button>
 
@@ -104,6 +110,11 @@ $overlay = ($loop && $loop_position === 'on_image');
     border-color: transparent;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    <?php if ( 'yes' === $enable_hover_border ) { ?>
+    border-bottom: 2px solid var(--aww-hover-border-color);
+    <?php } else { ?>
+    border-bottom: none;
+    <?php } ?>
 }
 
 .aww-wishlist-btn:active {
