@@ -38,9 +38,6 @@ class AWW_Core {
         // Add wishlist query vars
         add_filter( 'query_vars', array( $this, 'add_wishlist_query_vars' ) );
         
-        // Add wishlist button to product loops
-        add_action( 'woocommerce_after_shop_loop_item', array( $this, 'add_wishlist_button_loop' ), 15 );
-        
         // Add wishlist count to header
         add_action( 'wp_footer', array( $this, 'add_wishlist_count' ) );
         
@@ -808,7 +805,7 @@ class AWW_Core {
             return;
         }
         $current_wishlist_id = $this->get_current_wishlist_id();
-        echo '<div class="aww-wishlist-overlay" style="position:absolute;top:10px;left:10px;right:auto;z-index:10;">';
+        echo '<div class="aww-wishlist-overlay" style="position:absolute;top:10px;right:10px;left:auto;z-index:10;">';
         $this->load_template( 'wishlist-button.php', array(
             'product' => $product,
             'loop' => true,

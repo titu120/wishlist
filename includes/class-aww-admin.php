@@ -912,8 +912,8 @@ class AWW_Admin {
             
             <h2 class="nav-tab-wrapper">
                 <a href="#general" class="nav-tab nav-tab-active"><?php esc_html_e( 'General', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#button" class="nav-tab"><?php esc_html_e( 'Button Settings', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#loop" class="nav-tab"><?php esc_html_e( 'Loop', 'advanced-wc-wishlist' ); ?></a>
+                <a href="#button" class="nav-tab"><?php esc_html_e( 'Product Details Page', 'advanced-wc-wishlist' ); ?></a>
+                <a href="#loop" class="nav-tab"><?php esc_html_e( 'Shop Page', 'advanced-wc-wishlist' ); ?></a>
                 <a href="#floating" class="nav-tab"><?php esc_html_e( 'Floating Icon', 'advanced-wc-wishlist' ); ?></a>
                 <a href="#sharing" class="nav-tab"><?php esc_html_e( 'Sharing', 'advanced-wc-wishlist' ); ?></a>
                 <a href="#behavior" class="nav-tab"><?php esc_html_e( 'Behavior', 'advanced-wc-wishlist' ); ?></a>
