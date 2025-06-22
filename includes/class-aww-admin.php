@@ -330,6 +330,24 @@ class AWW_Admin {
             array('field' => 'button_icon')
         );
 
+        add_settings_field(
+            'button_text_color',
+            __('Button Text Color', 'advanced-wc-wishlist'),
+            array($this, 'color_field_callback'),
+            'aww_settings',
+            'aww_button_settings',
+            array('field' => 'button_text_color')
+        );
+
+        add_settings_field(
+            'button_icon_color',
+            __('Button Icon Color', 'advanced-wc-wishlist'),
+            array($this, 'color_field_callback'),
+            'aww_settings',
+            'aww_button_settings',
+            array('field' => 'button_icon_color')
+        );
+
         // Loop Settings
         add_settings_section(
             'aww_loop_settings',
@@ -1019,18 +1037,18 @@ class AWW_Admin {
                         </tr>
                         <tr>
                             <th scope="row">
-                                <label for="aww_button_color"><?php esc_html_e( 'Button Color', 'advanced-wc-wishlist' ); ?></label>
+                                <label for="aww_button_text_color"><?php esc_html_e( 'Button Text Color', 'advanced-wc-wishlist' ); ?></label>
                             </th>
                             <td>
-                                <input type="color" name="aww_button_color" id="aww_button_color" value="<?php echo esc_attr( $settings['button_color'] ); ?>" />
+                                <input type="color" name="aww_button_text_color" id="aww_button_text_color" value="<?php echo esc_attr( $settings['button_text_color'] ); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">
-                                <label for="aww_button_color_hover"><?php esc_html_e( 'Button Hover Color', 'advanced-wc-wishlist' ); ?></label>
+                                <label for="aww_button_icon_color"><?php esc_html_e( 'Button Icon Color', 'advanced-wc-wishlist' ); ?></label>
                             </th>
                             <td>
-                                <input type="color" name="aww_button_color_hover" id="aww_button_color_hover" value="<?php echo esc_attr( $settings['button_color_hover'] ); ?>" />
+                                <input type="color" name="aww_button_icon_color" id="aww_button_icon_color" value="<?php echo esc_attr( $settings['button_icon_color'] ); ?>" />
                             </td>
                         </tr>
                         <tr>
@@ -1497,8 +1515,8 @@ class AWW_Admin {
             'button_icon_size' => absint( $_POST['aww_button_icon_size'] ),
             'button_text' => sanitize_text_field( $_POST['aww_button_text'] ),
             'button_text_added' => sanitize_text_field( $_POST['aww_button_text_added'] ),
-            'button_color' => sanitize_hex_color( $_POST['aww_button_color'] ),
-            'button_color_hover' => sanitize_hex_color( $_POST['aww_button_color_hover'] ),
+            'button_text_color' => sanitize_hex_color( $_POST['aww_button_text_color'] ),
+            'button_icon_color' => sanitize_hex_color( $_POST['aww_button_icon_color'] ),
             'button_tooltip' => sanitize_text_field( $_POST['aww_button_tooltip'] ),
             'button_custom_css' => sanitize_textarea_field( $_POST['aww_button_custom_css'] ),
             'button_icon' => sanitize_text_field( $_POST['aww_button_icon'] ),
@@ -1565,8 +1583,8 @@ class AWW_Admin {
             'button_icon_size' => get_option( 'aww_button_icon_size', 16 ),
             'button_text' => get_option( 'aww_button_text', __( 'Add to Wishlist', 'advanced-wc-wishlist' ) ),
             'button_text_added' => get_option( 'aww_button_text_added', __( 'Added to Wishlist', 'advanced-wc-wishlist' ) ),
-            'button_color' => get_option( 'aww_button_color', '#e74c3c' ),
-            'button_color_hover' => get_option( 'aww_button_color_hover', '#c0392b' ),
+            'button_text_color' => get_option( 'aww_button_text_color', '#000000' ),
+            'button_icon_color' => get_option( 'aww_button_icon_color', '#000000' ),
             'button_tooltip' => get_option( 'aww_button_tooltip', '' ),
             'button_custom_css' => get_option( 'aww_button_custom_css', '' ),
             'button_icon' => get_option( 'aww_button_icon', '' ),

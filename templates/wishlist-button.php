@@ -47,8 +47,8 @@ $show_icon = Advanced_WC_Wishlist::get_option('show_icon', 'yes');
 $show_text = Advanced_WC_Wishlist::get_option('show_text', 'yes');
 
 // Get colors
-$button_color = Advanced_WC_Wishlist::get_option('button_color', '#e74c3c');
-$button_color_hover = Advanced_WC_Wishlist::get_option('button_color_hover', '#c0392b');
+$button_text_color = Advanced_WC_Wishlist::get_option('button_text_color', '#000000');
+$button_icon_color = Advanced_WC_Wishlist::get_option('button_icon_color', '#000000');
 
 // Get custom sizes
 $button_font_size = Advanced_WC_Wishlist::get_option('button_font_size');
@@ -69,6 +69,7 @@ $overlay = ($loop && $loop_position === 'on_image');
     type="button"
     aria-label="<?php echo esc_attr($button_text); ?>"
     title="<?php echo esc_attr($button_text); ?>"
+    style="--aww-text-color: <?php echo esc_attr($button_text_color); ?>; --aww-icon-color: <?php echo esc_attr($button_icon_color); ?>;"
 >
     <span class="aww-icon">♥</span>
     <?php if (!$overlay): ?>
@@ -83,9 +84,9 @@ $overlay = ($loop && $loop_position === 'on_image');
     justify-content: center;
     gap: 8px;
     padding: 10px 16px;
-    border: 2px solid <?php echo esc_attr($button_color); ?>;
-    background: <?php echo esc_attr($button_color); ?>;
-    color: white;
+    border: 2px solid transparent;
+    background: #EEEEEE;
+    color: var(--aww-text-color);
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
@@ -99,8 +100,8 @@ $overlay = ($loop && $loop_position === 'on_image');
 }
 
 .aww-wishlist-btn:hover {
-    background: <?php echo esc_attr($button_color_hover); ?>;
-    border-color: <?php echo esc_attr($button_color_hover); ?>;
+    background: #DDDDDD;
+    border-color: transparent;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -108,6 +109,7 @@ $overlay = ($loop && $loop_position === 'on_image');
 .aww-wishlist-btn:active {
     transform: translateY(0);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-color: #218838;
 }
 
 .aww-wishlist-btn.added {
@@ -120,25 +122,28 @@ $overlay = ($loop && $loop_position === 'on_image');
     border-color: #218838;
 }
 
-.aww-wishlist-btn .aww-icon {
-    font-size: 16px;
+.aww-wishlist-btn .aww-icon,
+.aww-wishlist-btn .aww-icon:before {
     line-height: 1;
+    color: var(--aww-icon-color) !important;
 }
 
 <?php if ( ! empty( $button_font_size ) ) : ?>
 .aww-wishlist-btn .aww-text {
-    font-size: <?php echo esc_attr($button_font_size); ?>px !important;
+    font-size: <?php echo esc_attr($button_font_size); ?>px;
 }
 <?php endif; ?>
 
 <?php if ( ! empty( $button_icon_size ) ) : ?>
-.aww-wishlist-btn .aww-icon {
+.aww-wishlist-btn .aww-icon,
+.aww-wishlist-btn .aww-icon:before {
     font-size: <?php echo esc_attr($button_icon_size); ?>px !important;
 }
 <?php endif; ?>
 
 .aww-wishlist-btn .aww-text {
     font-weight: 500;
+    color: var(--aww-text-color);
 }
 
 /* Button sizes */
@@ -169,11 +174,11 @@ $overlay = ($loop && $loop_position === 'on_image');
 
 .aww-wishlist-btn.outline {
     background: transparent;
-    color: <?php echo esc_attr($button_color); ?>;
+    color: var(--aww-text-color);
 }
 
 .aww-wishlist-btn.outline:hover {
-    background: <?php echo esc_attr($button_color); ?>;
+    background: var(--aww-text-color);
     color: white;
 }
 
@@ -190,12 +195,12 @@ $overlay = ($loop && $loop_position === 'on_image');
 .aww-wishlist-btn.ghost {
     background: transparent;
     border-color: transparent;
-    color: <?php echo esc_attr($button_color); ?>;
+    color: var(--aww-text-color);
 }
 
 .aww-wishlist-btn.ghost:hover {
     background: rgba(231, 76, 60, 0.1);
-    border-color: <?php echo esc_attr($button_color); ?>;
+    border-color: var(--aww-text-color);
 }
 
 .aww-wishlist-btn.ghost.added {
@@ -236,6 +241,7 @@ $overlay = ($loop && $loop_position === 'on_image');
 .aww-wishlist-btn.loop {
     width: 100%;
     margin-top: 10px;
+    outline-offset: 2px;
 }
 
 /* Responsive styles */
@@ -266,7 +272,7 @@ $overlay = ($loop && $loop_position === 'on_image');
 
 /* Accessibility */
 .aww-wishlist-btn:focus {
-    outline: 2px solid <?php echo esc_attr($button_color); ?>;
+    outline: 2px solid var(--aww-text-color);
     outline-offset: 2px;
 }
 

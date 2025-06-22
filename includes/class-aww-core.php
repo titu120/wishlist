@@ -503,21 +503,21 @@ class AWW_Core {
     }
 
     /**
-     * Get button color
+     * Get button text color
      *
      * @return string
      */
-    public function get_button_color() {
-        return Advanced_WC_Wishlist::get_option( 'button_color', '#e74c3c' );
+    public function get_button_text_color() {
+        return Advanced_WC_Wishlist::get_option( 'button_text_color', '#e74c3c' );
     }
 
     /**
-     * Get button hover color
+     * Get button icon color
      *
      * @return string
      */
-    public function get_button_hover_color() {
-        return Advanced_WC_Wishlist::get_option( 'button_color_hover', '#c0392b' );
+    public function get_button_icon_color() {
+        return Advanced_WC_Wishlist::get_option( 'button_icon_color', '#c0392b' );
     }
 
     /**
