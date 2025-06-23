@@ -70,6 +70,9 @@ class AWW_Ajax {
      * Add product to wishlist
      */
     public function add_to_wishlist() {
+        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to add to wishlist.', 'advanced-wc-wishlist' ) ) );
+        }
         check_ajax_referer( 'aww_nonce', 'nonce' );
         
         $product_id = intval( $_POST['product_id'] );
@@ -120,6 +123,9 @@ class AWW_Ajax {
      * Remove product from wishlist
      */
     public function remove_from_wishlist() {
+        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to remove from wishlist.', 'advanced-wc-wishlist' ) ) );
+        }
         // Verify nonce
         if ( ! wp_verify_nonce( $_POST['nonce'], 'aww_nonce' ) ) {
             wp_send_json_error( array(
@@ -220,6 +226,9 @@ class AWW_Ajax {
      * Add all wishlist items to cart
      */
     public function add_all_to_cart() {
+        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to add all to cart.', 'advanced-wc-wishlist' ) ) );
+        }
         // Verify nonce
         if ( ! wp_verify_nonce( $_POST['nonce'], 'aww_nonce' ) ) {
             wp_send_json_error( array(
@@ -455,6 +464,9 @@ class AWW_Ajax {
      * Create new wishlist
      */
     public function create_wishlist() {
+        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to create wishlists.', 'advanced-wc-wishlist' ) ) );
+        }
         if (!wp_verify_nonce($_POST['nonce'], 'aww_nonce')) {
             wp_send_json_error(array('message' => __('Security check failed.', 'advanced-wc-wishlist')));
         }
@@ -480,6 +492,9 @@ class AWW_Ajax {
      * Update wishlist name
      */
     public function update_wishlist() {
+        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to update wishlists.', 'advanced-wc-wishlist' ) ) );
+        }
         if (!wp_verify_nonce($_POST['nonce'], 'aww_nonce')) {
             wp_send_json_error(array('message' => __('Security check failed.', 'advanced-wc-wishlist')));
         }
@@ -507,6 +522,9 @@ class AWW_Ajax {
      * Delete wishlist
      */
     public function delete_wishlist() {
+        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to delete wishlists.', 'advanced-wc-wishlist' ) ) );
+        }
         if (!wp_verify_nonce($_POST['nonce'], 'aww_nonce')) {
             wp_send_json_error(array('message' => __('Security check failed.', 'advanced-wc-wishlist')));
         }
@@ -604,6 +622,9 @@ class AWW_Ajax {
      * Add single item to cart from wishlist.
      */
     public function add_to_cart() {
+        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to add to cart.', 'advanced-wc-wishlist' ) ) );
+        }
         check_ajax_referer( 'aww_nonce', 'nonce' );
 
         $product_id = isset( $_POST['product_id'] ) ? intval( $_POST['product_id'] ) : 0;

@@ -396,6 +396,9 @@ class AWW_Core {
 
         if ( file_exists( $template_path ) ) {
             include $template_path;
+        } else {
+            error_log( 'AWW: Template not found: ' . $template_path );
+            echo '<div class="aww-template-missing">Template not found: ' . esc_html( $template ) . '</div>';
         }
     }
 
