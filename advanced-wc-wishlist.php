@@ -97,6 +97,20 @@ final class Advanced_WC_Wishlist {
     public $admin;
 
     /**
+     * Export/Import class instance
+     *
+     * @var AWW_Export_Import
+     */
+    public $export_import;
+
+    /**
+     * Pre-import settings storage
+     *
+     * @var array
+     */
+    private $pre_import_settings = array();
+
+    /**
      * Get plugin instance
      *
      * @return Advanced_WC_Wishlist
@@ -259,6 +273,7 @@ final class Advanced_WC_Wishlist {
         require_once AWW_PLUGIN_DIR . 'includes/class-aww-ajax.php';
         require_once AWW_PLUGIN_DIR . 'includes/class-aww-shortcodes.php';
         require_once AWW_PLUGIN_DIR . 'includes/class-aww-admin.php';
+        require_once AWW_PLUGIN_DIR . 'includes/class-aww-export-import.php';
     }
 
     /**
@@ -273,6 +288,8 @@ final class Advanced_WC_Wishlist {
         if ( is_admin() ) {
             $this->admin = new AWW_Admin();
         }
+
+        $this->export_import = new AWW_Export_Import();
     }
 
     /**
@@ -479,6 +496,113 @@ final class Advanced_WC_Wishlist {
             return false;
         }
         return AWW()->database->is_product_in_wishlist( $product_id, $wishlist_id );
+    }
+
+    /**
+     * Add plugin settings to WordPress export
+     *
+     * @param array $args Export arguments
+     * @return array
+     */
+    public function add_plugin_settings_to_export( $args ) {
+        // Get all plugin settings
+        global $wpdb;
+        $plugin_options = $wpdb->get_results( "SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'aww_%'" );
+        
+        if ( ! empty( $plugin_options ) ) {
+            // Create custom export data structure
+            $export_data = array(
+                'plugin_name' => 'Advanced WooCommerce Wishlist',
+                'version' => AWW_VERSION,
+                'export_date' => current_time( 'mysql' ),
+                'settings' => array()
+            );
+            
+            foreach ( $plugin_options as $option ) {
+                $export_data['settings'][ $option->option_name ] = maybe_unserialize( $option->option_value );
+            }
+            
+            // Add to export arguments
+            $args['aww_plugin_settings'] = $export_data;
+        }
+        
+        return $args;
+    }
+
+    /**
+     * Handle import start
+     */
+    public function import_start() {
+        // Store current settings before import
+        global $wpdb;
+        $this->pre_import_settings = $wpdb->get_results( "SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'aww_%'" );
+        
+        // Add admin notice about plugin settings import
+        add_action( 'admin_notices', array( $this, 'import_notice' ) );
+    }
+
+    /**
+     * Handle import end and restore plugin settings
+     */
+    public function import_end() {
+        // Check if imported XML contains our plugin settings
+        if ( isset( $_POST['aww_plugin_settings'] ) && is_array( $_POST['aww_plugin_settings'] ) ) {
+            $imported_settings = $_POST['aww_plugin_settings'];
+            
+            // Check if it's our enhanced format
+            if ( isset( $imported_settings['plugin_name'] ) && $imported_settings['plugin_name'] === 'Advanced WooCommerce Wishlist' ) {
+                // Import settings from enhanced format
+                if ( isset( $imported_settings['settings'] ) && is_array( $imported_settings['settings'] ) ) {
+                    foreach ( $imported_settings['settings'] as $option_name => $option_value ) {
+                        if ( strpos( $option_name, 'aww_' ) === 0 ) {
+                            update_option( $option_name, $option_value );
+                        }
+                    }
+                    
+                    // Store import success message
+                    set_transient( 'aww_import_success', true, 60 );
+                }
+            } else {
+                // Legacy format - direct settings array
+                foreach ( $imported_settings as $option_name => $option_value ) {
+                    if ( strpos( $option_name, 'aww_' ) === 0 ) {
+                        update_option( $option_name, $option_value );
+                    }
+                }
+                
+                // Store import success message
+                set_transient( 'aww_import_success', true, 60 );
+            }
+        } elseif ( ! empty( $this->pre_import_settings ) ) {
+            // If no settings in import, restore pre-import settings
+            foreach ( $this->pre_import_settings as $option ) {
+                update_option( $option->option_name, maybe_unserialize( $option->option_value ) );
+            }
+            
+            // Store no settings found message
+            set_transient( 'aww_import_no_settings', true, 60 );
+        }
+    }
+
+    /**
+     * Show import notice
+     */
+    public function import_notice() {
+        if ( get_transient( 'aww_import_success' ) ) {
+            delete_transient( 'aww_import_success' );
+            ?>
+            <div class="notice notice-success is-dismissible">
+                <p><?php esc_html_e( 'Advanced WooCommerce Wishlist settings have been successfully imported from the XML file.', 'advanced-wc-wishlist' ); ?></p>
+            </div>
+            <?php
+        } elseif ( get_transient( 'aww_import_no_settings' ) ) {
+            delete_transient( 'aww_import_no_settings' );
+            ?>
+            <div class="notice notice-warning is-dismissible">
+                <p><?php esc_html_e( 'No Advanced WooCommerce Wishlist settings found in the imported XML file. Your current settings have been preserved.', 'advanced-wc-wishlist' ); ?></p>
+            </div>
+            <?php
+        }
     }
 }
 

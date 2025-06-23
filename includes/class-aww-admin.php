@@ -24,7 +24,46 @@ class AWW_Admin {
      * Constructor
      */
     public function __construct() {
-        $this->init_hooks();
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
+        add_action('admin_init', array($this, 'add_backup_restore_settings'));
+        
+        // Product meta box
+        add_action('add_meta_boxes', array($this, 'add_product_meta_box'));
+        add_action('save_post', array($this, 'save_product_meta'));
+        
+        // Bulk actions
+        add_filter('bulk_actions-edit-product', array($this, 'add_bulk_actions'));
+        add_filter('handle_bulk_actions-edit-product', array($this, 'handle_bulk_actions'), 10, 3);
+        
+        // Plugin links
+        add_filter('plugin_action_links_' . AWW_PLUGIN_BASENAME, array($this, 'add_plugin_links'));
+        
+        // Dashboard widget
+        add_action('wp_dashboard_setup', array($this, 'add_dashboard_widget'));
+        
+        // Admin notices
+        add_action('admin_notices', array($this, 'admin_notices'));
+        
+        // Price drop checking
+        add_action('admin_init', array($this, 'schedule_price_drop_check'));
+        add_action('aww_check_price_drops', array($this, 'check_price_drops'));
+        
+        // Export functionality
+        add_action('admin_post_aww_export_wishlist', array($this, 'handle_export_wishlist'));
+        
+        // AJAX handlers
+        add_action( 'wp_ajax_aww_get_analytics', array( $this, 'get_analytics' ) );
+        add_action( 'wp_ajax_aww_export_data', array( $this, 'export_data' ) );
+        add_action( 'wp_ajax_aww_clean_expired', array( $this, 'clean_expired' ) );
+        
+        // Admin scripts
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+        
+        // Product columns
+        add_filter( 'manage_product_posts_columns', array( $this, 'add_wishlist_column' ) );
+        add_action( 'manage_product_posts_custom_column', array( $this, 'wishlist_column_content' ), 10, 2 );
+        add_filter( 'manage_edit-product_sortable_columns', array( $this, 'make_wishlist_column_sortable' ) );
     }
 
     /**
@@ -73,6 +112,13 @@ class AWW_Admin {
         add_filter( 'manage_product_posts_columns', array( $this, 'add_wishlist_column' ) );
         add_action( 'manage_product_posts_custom_column', array( $this, 'wishlist_column_content' ), 10, 2 );
         add_filter( 'manage_edit-product_sortable_columns', array( $this, 'make_wishlist_column_sortable' ) );
+
+        // Add backup/restore settings functionality
+        add_action( 'aww_settings_after_general', array( $this, 'render_backup_restore_section' ) );
+        
+        // Handle backup/restore actions
+        add_action( 'admin_post_aww_backup_settings', array( $this, 'handle_backup_settings' ) );
+        add_action( 'admin_post_aww_restore_settings', array( $this, 'handle_restore_settings' ) );
     }
 
     /**
@@ -1847,14 +1893,25 @@ class AWW_Admin {
     }
 
     /**
-     * Admin notices
+     * Display admin notices
      */
     public function admin_notices() {
-        // Check if WooCommerce is active
-        if ( ! class_exists( 'WooCommerce' ) ) {
+        // Show success message for restored settings
+        if ( isset( $_GET['settings_restored'] ) && $_GET['settings_restored'] == '1' ) {
             ?>
-            <div class="notice notice-error">
-                <p><?php esc_html_e( 'Advanced WooCommerce Wishlist requires WooCommerce to be installed and activated.', 'advanced-wc-wishlist' ); ?></p>
+            <div class="notice notice-success is-dismissible">
+                <p><?php esc_html_e( 'Wishlist settings restored successfully!', 'advanced-wc-wishlist' ); ?></p>
+            </div>
+            <?php
+        }
+
+        // Show other admin notices
+        if ( isset( $_GET['aww_notice'] ) ) {
+            $notice_type = isset( $_GET['aww_notice_type'] ) ? sanitize_text_field( $_GET['aww_notice_type'] ) : 'success';
+            $message = sanitize_text_field( $_GET['aww_notice'] );
+            ?>
+            <div class="notice notice-<?php echo esc_attr( $notice_type ); ?> is-dismissible">
+                <p><?php echo esc_html( $message ); ?></p>
             </div>
             <?php
         }
@@ -2180,5 +2237,128 @@ class AWW_Admin {
             <?php endforeach; ?>
         </div>
         <?php
+    }
+
+    /**
+     * Render backup/restore settings section
+     */
+    public function render_backup_restore_section() {
+        ?>
+        <h3><?php esc_html_e( 'Backup & Restore Settings', 'advanced-wc-wishlist' ); ?></h3>
+        <p><?php esc_html_e( 'Backup your current settings before demo import, then restore them after import.', 'advanced-wc-wishlist' ); ?></p>
+        
+        <table class="form-table">
+            <tr>
+                <th scope="row"><?php esc_html_e( 'Backup Settings', 'advanced-wc-wishlist' ); ?></th>
+                <td>
+                    <a href="<?php echo esc_url( admin_url( 'admin-post.php?action=aww_backup_settings&_wpnonce=' . wp_create_nonce( 'aww_backup_settings' ) ) ); ?>" class="button button-secondary">
+                        <?php esc_html_e( 'Download Settings Backup', 'advanced-wc-wishlist' ); ?>
+                    </a>
+                    <p class="description"><?php esc_html_e( 'Download a JSON file with all your current settings.', 'advanced-wc-wishlist' ); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php esc_html_e( 'Restore Settings', 'advanced-wc-wishlist' ); ?></th>
+                <td>
+                    <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="aww_restore_settings">
+                        <?php wp_nonce_field( 'aww_restore_settings' ); ?>
+                        <input type="file" name="aww_settings_file" accept=".json" required>
+                        <input type="submit" class="button button-secondary" value="<?php esc_attr_e( 'Restore Settings', 'advanced-wc-wishlist' ); ?>">
+                        <p class="description"><?php esc_html_e( 'Upload a previously downloaded settings file to restore your settings.', 'advanced-wc-wishlist' ); ?></p>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php esc_html_e( 'Manual Database Backup', 'advanced-wc-wishlist' ); ?></th>
+                <td>
+                    <p><strong><?php esc_html_e( 'For advanced users - SQL backup commands:', 'advanced-wc-wishlist' ); ?></strong></p>
+                    <textarea readonly style="width: 100%; height: 100px; font-family: monospace; font-size: 12px;">-- Backup plugin settings before XML import
+-- Run this in phpMyAdmin or your database tool
+
+-- Backup all wishlist plugin options
+SELECT option_name, option_value 
+FROM <?php echo esc_html( $GLOBALS['wpdb']->options ); ?> 
+WHERE option_name LIKE 'aww_%';
+
+-- After XML import, restore with:
+-- INSERT INTO <?php echo esc_html( $GLOBALS['wpdb']->options ); ?> (option_name, option_value) VALUES 
+-- ('aww_button_text_color', '#your_color'),
+-- ('aww_button_size', 'your_size'),
+-- etc...</textarea>
+                    <p class="description"><?php esc_html_e( 'Copy these SQL commands to backup/restore settings manually via database.', 'advanced-wc-wishlist' ); ?></p>
+                </td>
+            </tr>
+        </table>
+        <?php
+    }
+
+    /**
+     * Handle backup settings
+     */
+    public function handle_backup_settings() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'You do not have permission to backup settings.', 'advanced-wc-wishlist' ) );
+        }
+
+        if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'aww_backup_settings' ) ) {
+            wp_die( __( 'Security check failed.', 'advanced-wc-wishlist' ) );
+        }
+
+        // Get all plugin settings
+        global $wpdb;
+        $settings = array();
+        $options = $wpdb->get_results( "SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'aww_%'" );
+        
+        foreach ( $options as $option ) {
+            $settings[ $option->option_name ] = maybe_unserialize( $option->option_value );
+        }
+
+        // Add backup metadata
+        $backup_data = array(
+            'plugin' => 'Advanced WooCommerce Wishlist',
+            'version' => AWW_VERSION,
+            'date' => current_time( 'mysql' ),
+            'settings' => $settings
+        );
+
+        // Output JSON file
+        header( 'Content-Type: application/json' );
+        header( 'Content-Disposition: attachment; filename="aww-settings-backup-' . date( 'Y-m-d-H-i-s' ) . '.json"' );
+        echo wp_json_encode( $backup_data, JSON_PRETTY_PRINT );
+        exit;
+    }
+
+    /**
+     * Handle restore settings
+     */
+    public function handle_restore_settings() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'You do not have permission to restore settings.', 'advanced-wc-wishlist' ) );
+        }
+
+        if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'aww_restore_settings' ) ) {
+            wp_die( __( 'Security check failed.', 'advanced-wc-wishlist' ) );
+        }
+
+        if ( ! isset( $_FILES['aww_settings_file'] ) || $_FILES['aww_settings_file']['error'] !== UPLOAD_ERR_OK ) {
+            wp_die( __( 'Please select a valid settings file.', 'advanced-wc-wishlist' ) );
+        }
+
+        $file_content = file_get_contents( $_FILES['aww_settings_file']['tmp_name'] );
+        $backup_data = json_decode( $file_content, true );
+
+        if ( ! $backup_data || ! isset( $backup_data['settings'] ) ) {
+            wp_die( __( 'Invalid settings file format.', 'advanced-wc-wishlist' ) );
+        }
+
+        // Restore settings
+        foreach ( $backup_data['settings'] as $option_name => $option_value ) {
+            update_option( $option_name, $option_value );
+        }
+
+        // Redirect with success message
+        wp_redirect( add_query_arg( 'page', 'aww-settings', admin_url( 'admin.php' ) ) . '&settings_restored=1' );
+        exit;
     }
 } 
