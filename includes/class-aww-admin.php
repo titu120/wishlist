@@ -1545,13 +1545,13 @@ class AWW_Admin {
             'button_icon_size' => absint( $_POST['aww_button_icon_size'] ),
             'button_text' => sanitize_text_field( $_POST['aww_button_text'] ),
             'button_text_added' => sanitize_text_field( $_POST['aww_button_text_added'] ),
-            'button_text_color' => sanitize_hex_color( $_POST['aww_button_text_color'] ),
-            'button_icon_color' => sanitize_hex_color( $_POST['aww_button_icon_color'] ),
+            'button_text_color' => isset($_POST['aww_button_text_color']) ? sanitize_hex_color($_POST['aww_button_text_color']) : '',
+            'button_icon_color' => isset($_POST['aww_button_icon_color']) ? sanitize_hex_color($_POST['aww_button_icon_color']) : '',
             'enable_hover_border' => isset( $_POST['aww_enable_hover_border'] ) ? 'yes' : 'no',
-            'button_hover_border_color' => sanitize_hex_color( $_POST['aww_button_hover_border_color'] ),
-            'button_tooltip' => sanitize_text_field( $_POST['aww_button_tooltip'] ),
-            'button_custom_css' => sanitize_textarea_field( $_POST['aww_button_custom_css'] ),
-            'button_icon' => sanitize_text_field( $_POST['aww_button_icon'] ),
+            'button_hover_border_color' => isset($_POST['aww_button_hover_border_color']) ? sanitize_hex_color( $_POST['aww_button_hover_border_color'] ) : '',
+            'button_tooltip' => isset($_POST['aww_button_tooltip']) ? sanitize_text_field( $_POST['aww_button_tooltip'] ) : '',
+            'button_custom_css' => isset($_POST['aww_button_custom_css']) ? sanitize_textarea_field( $_POST['aww_button_custom_css'] ) : '',
+            'button_icon' => isset($_POST['aww_button_icon']) ? sanitize_text_field( $_POST['aww_button_icon'] ) : '',
             
             // Floating Icon Settings
             'enable_floating_icon' => isset( $_POST['aww_enable_floating_icon'] ) ? 'yes' : 'no',
@@ -1582,7 +1582,7 @@ class AWW_Admin {
             'enable_responsive' => isset( $_POST['aww_enable_responsive'] ) ? 'yes' : 'no',
             'enable_accessibility' => isset( $_POST['aww_enable_accessibility'] ) ? 'yes' : 'no',
             'enable_rtl' => isset( $_POST['aww_enable_rtl'] ) ? 'yes' : 'no',
-            'custom_css' => sanitize_textarea_field( $_POST['aww_custom_css'] ),
+            'custom_css' => isset($_POST['aww_custom_css']) ? sanitize_textarea_field( $_POST['aww_custom_css'] ) : '',
 
             // Loop Settings
             'loop_button_position' => isset( $_POST['aww_loop_button_position'] ) ? sanitize_text_field( $_POST['aww_loop_button_position'] ) : 'before_add_to_cart',

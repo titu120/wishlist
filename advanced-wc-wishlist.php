@@ -13,6 +13,7 @@
  * Requires PHP: 7.4
  * WC requires at least: 3.0
  * WC tested up to: 8.0
+ * WC requires PHP: 7.4
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Network: false
@@ -112,8 +113,25 @@ final class Advanced_WC_Wishlist {
         // Register shortcodes early, regardless of WooCommerce status
         add_action( 'init', array( $this, 'register_shortcodes' ), 5 );
         
+        // Declare WooCommerce compatibility
+        add_action( 'before_woocommerce_init', array( $this, 'declare_woocommerce_compatibility' ) );
+        
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
         register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+    }
+
+    /**
+     * Declare WooCommerce compatibility
+     */
+    public function declare_woocommerce_compatibility() {
+        // Declare compatibility with WooCommerce features
+        if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'product_block_editor', __FILE__, true );
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'product_editor', __FILE__, true );
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'analytics', __FILE__, true );
+        }
     }
 
     /**
@@ -123,6 +141,12 @@ final class Advanced_WC_Wishlist {
         // Check if WooCommerce is active
         if ( ! $this->is_woocommerce_active() ) {
             add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
+            return;
+        }
+
+        // Check WooCommerce version compatibility
+        if ( ! $this->is_woocommerce_version_compatible() ) {
+            add_action( 'admin_notices', array( $this, 'woocommerce_version_notice' ) );
             return;
         }
 
@@ -152,12 +176,53 @@ final class Advanced_WC_Wishlist {
     }
 
     /**
+     * Check WooCommerce version compatibility
+     *
+     * @return bool
+     */
+    private function is_woocommerce_version_compatible() {
+        // Check if WooCommerce is loaded
+        if ( ! class_exists( 'WooCommerce' ) ) {
+            return false;
+        }
+        
+        // Check minimum WooCommerce version using a safer approach
+        $wc_version = '0.0.0';
+        
+        // Try to get version from WC() object first
+        if ( function_exists( 'WC' ) && is_object( WC() ) && property_exists( WC(), 'version' ) ) {
+            $wc_version = WC()->version;
+        } 
+        // Fallback to constant if available
+        elseif ( defined( 'WC_VERSION' ) ) {
+            $wc_version = constant( 'WC_VERSION' );
+        }
+        
+        if ( version_compare( $wc_version, '3.0', '<' ) ) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
      * WooCommerce missing notice
      */
     public function woocommerce_missing_notice() {
         ?>
         <div class="notice notice-error">
             <p><?php esc_html_e( 'Advanced WooCommerce Wishlist requires WooCommerce to be installed and activated.', 'advanced-wc-wishlist' ); ?></p>
+        </div>
+        <?php
+    }
+
+    /**
+     * WooCommerce version compatibility notice
+     */
+    public function woocommerce_version_notice() {
+        ?>
+        <div class="notice notice-error">
+            <p><?php esc_html_e( 'Advanced WooCommerce Wishlist requires WooCommerce version 3.0 or higher.', 'advanced-wc-wishlist' ); ?></p>
         </div>
         <?php
     }
@@ -250,37 +315,65 @@ final class Advanced_WC_Wishlist {
 
     /**
      * Plugin activation
+     *
+     * @param bool $network_wide Whether to activate for the entire network
      */
-    public function activate() {
-        // Include database class
-        require_once AWW_PLUGIN_DIR . 'includes/class-aww-database.php';
-        
-        // Create database object and tables
-        $database = new AWW_Database();
-        $database->create_tables();
-        
-        // Set default options
-        $this->set_default_options();
-        
-        // Auto-create Wishlist page if not exists
-        $wishlist_page = get_page_by_path( 'wishlist' );
-        if ( ! $wishlist_page ) {
-            $page_id = wp_insert_post( array(
-                'post_title'   => __( 'Wishlist', 'advanced-wc-wishlist' ),
-                'post_name'    => 'wishlist',
-                'post_content' => '[aww_wishlist]',
-                'post_status'  => 'publish',
-                'post_type'    => 'page',
-            ) );
-            if ( $page_id && ! is_wp_error( $page_id ) ) {
-                update_option( 'aww_wishlist_page_id', $page_id );
+    public function activate( $network_wide = false ) {
+        // Run activation for each site in the network
+        if ( is_multisite() && $network_wide ) {
+            foreach ( get_sites( array( 'fields' => 'ids' ) ) as $blog_id ) {
+                switch_to_blog( $blog_id );
+                $this->run_activation();
+                restore_current_blog();
             }
         } else {
-            update_option( 'aww_wishlist_page_id', $wishlist_page->ID );
+            $this->run_activation();
         }
+    }
+
+    private function run_activation() {
+        // Include and initialize database class for activation
+        require_once AWW_PLUGIN_DIR . 'includes/class-aww-database.php';
+        $database = new AWW_Database();
         
-        // Flush rewrite rules
-        flush_rewrite_rules();
+        // Create database table
+        $database->create_table();
+
+        // Set default options
+        $this->set_default_options();
+
+        if ( ! get_option( 'aww_wishlist_page_id' ) ) {
+            // Check if page already exists using modern approach
+            $page = get_page_by_path( 'wishlist' );
+            
+            if ( ! $page ) {
+                // Try to find by title as fallback
+                $pages = get_pages( array(
+                    'title' => 'Wishlist',
+                    'post_type' => 'page',
+                    'post_status' => 'publish',
+                    'numberposts' => 1
+                ) );
+                $page = ! empty( $pages ) ? $pages[0] : null;
+            }
+
+            if ( ! $page ) {
+                // Create page
+                $page_id = wp_insert_post( array(
+                    'post_title'   => 'Wishlist',
+                    'post_name'    => 'wishlist',
+                    'post_content' => '[aww_wishlist]',
+                    'post_status'  => 'publish',
+                    'post_type'    => 'page',
+                ) );
+
+                if ( $page_id ) {
+                    update_option( 'aww_wishlist_page', $page_id );
+                }
+            } else {
+                update_option( 'aww_wishlist_page', $page->ID );
+            }
+        }
     }
 
     /**

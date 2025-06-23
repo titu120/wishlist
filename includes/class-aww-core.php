@@ -62,6 +62,7 @@ class AWW_Core {
         // Add custom script for button positioning
         add_action( 'wp_footer', array( $this, 'add_button_positioning_script' ) );
         
+        add_action( 'the_content', array( $this, 'display_wishlist_on_selected_page' ) );
         add_action('wp_footer', array($this, 'render_floating_icon'));
         // Add wishlist button to footer for JS positioning
         add_action( 'wp_footer', array( $this, 'add_wishlist_button_to_footer' ) );
@@ -72,6 +73,7 @@ class AWW_Core {
      */
     public function enqueue_scripts() {
         $should_enqueue = false;
+        $wishlist_page_id = get_option('aww_wishlist_page');
 
         // Always enqueue on WooCommerce pages, cart, checkout, account, and wishlist endpoint
         if (
@@ -79,6 +81,7 @@ class AWW_Core {
             is_cart() ||
             is_checkout() ||
             is_account_page() ||
+            ($wishlist_page_id && is_page($wishlist_page_id)) ||
             (function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('wishlist'))
         ) {
             $should_enqueue = true;
@@ -273,14 +276,33 @@ class AWW_Core {
     }
 
     /**
-     * Transfer guest wishlist on register
+     * Safely start a session if possible
+     *
+     * @return bool Whether session was successfully started
+     */
+    private function safe_session_start() {
+        // Check if we can start a session safely
+        if ( ! headers_sent() && ! session_id() ) {
+            try {
+                session_start();
+                return true;
+            } catch ( Exception $e ) {
+                // Session start failed, log the error
+                error_log( 'Advanced WC Wishlist: Could not start session: ' . $e->getMessage() );
+                return false;
+            }
+        }
+        return session_id() ? true : false;
+    }
+
+    /**
+     * Transfer guest wishlist to user on registration
      *
      * @param int $user_id User ID
      */
     public function transfer_guest_wishlist_on_register( $user_id ) {
-        if ( ! session_id() ) {
-            session_start();
-        }
+        // Try to start session safely
+        $this->safe_session_start();
 
         $session_id = session_id();
         if ( $session_id ) {
@@ -392,7 +414,7 @@ class AWW_Core {
      */
     public function get_wishlist_url( $wishlist_id = null ) {
         // Get the wishlist page ID from options
-        $wishlist_page_id = get_option( 'aww_wishlist_page_id' );
+        $wishlist_page_id = get_option( 'aww_wishlist_page' );
         
         if ( $wishlist_page_id ) {
             $base_url = get_permalink( $wishlist_page_id );
@@ -695,9 +717,8 @@ class AWW_Core {
      * Get session ID for guest users
      */
     public function get_session_id() {
-        if ( ! session_id() ) {
-            session_start();
-        }
+        // Try to start session safely
+        $this->safe_session_start();
         return session_id();
     }
 
@@ -833,5 +854,16 @@ class AWW_Core {
             $this->add_wishlist_button();
             echo '</div>';
         }
+    }
+
+    public function display_wishlist_on_selected_page($content) {
+        $wishlist_page_id = get_option('aww_wishlist_page');
+        if (is_page() && get_the_ID() == $wishlist_page_id) {
+            if (has_shortcode($content, 'aww_wishlist')) {
+                return $content;
+            }
+            return $content . AWW()->shortcodes->wishlist_shortcode(array());
+        }
+        return $content;
     }
 } 

@@ -88,6 +88,13 @@ class AWW_Database {
     }
 
     /**
+     * Create database table (alias for create_tables for backward compatibility)
+     */
+    public function create_table() {
+        return $this->create_tables();
+    }
+
+    /**
      * Migrate old wishlist schema to new multiple wishlist schema
      */
     private function migrate_old_wishlist_schema() {
@@ -314,7 +321,27 @@ class AWW_Database {
     }
 
     /**
-     * Get user info (user_id and session_id)
+     * Safely start a session if possible
+     *
+     * @return bool Whether session was successfully started
+     */
+    private function safe_session_start() {
+        // Check if we can start a session safely
+        if ( ! headers_sent() && ! session_id() ) {
+            try {
+                session_start();
+                return true;
+            } catch ( Exception $e ) {
+                // Session start failed, log the error
+                error_log( 'Advanced WC Wishlist: Could not start session: ' . $e->getMessage() );
+                return false;
+            }
+        }
+        return session_id() ? true : false;
+    }
+
+    /**
+     * Get user info for wishlist operations
      *
      * @return array
      */
@@ -323,10 +350,13 @@ class AWW_Database {
         $session_id = null;
 
         if ( ! $user_id ) {
-            if ( ! session_id() ) {
-                session_start();
+            // Try to start session safely
+            $this->safe_session_start();
+            
+            // Only use session_id if session was successfully started
+            if ( session_id() ) {
+                $session_id = session_id();
             }
-            $session_id = session_id();
         }
 
         return array(
