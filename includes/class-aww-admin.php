@@ -125,22 +125,41 @@ class AWW_Admin {
      * Add admin menu
      */
     public function add_admin_menu() {
-        add_submenu_page(
-            'woocommerce',
-            __('Wishlist Settings', 'advanced-wc-wishlist'),
-            __('Wishlist', 'advanced-wc-wishlist'),
-            'manage_woocommerce',
-            'aww-settings',
-            array($this, 'settings_page')
+        add_menu_page(
+            __( 'Advanced Wishlist', 'advanced-wc-wishlist' ),
+            __( 'Advanced Wishlist', 'advanced-wc-wishlist' ),
+            'manage_options',
+            'advanced-wc-wishlist',
+            array( $this, 'admin_page' ),
+            'dashicons-heart',
+            56
         );
 
         add_submenu_page(
-            'woocommerce',
-            __('Wishlist Analytics', 'advanced-wc-wishlist'),
-            __('Wishlist Analytics', 'advanced-wc-wishlist'),
-            'manage_woocommerce',
-            'aww-analytics',
-            array($this, 'analytics_page')
+            'advanced-wc-wishlist',
+            __( 'Settings', 'advanced-wc-wishlist' ),
+            __( 'Settings', 'advanced-wc-wishlist' ),
+            'manage_options',
+            'advanced-wc-wishlist',
+            array( $this, 'admin_page' )
+        );
+
+        add_submenu_page(
+            'advanced-wc-wishlist',
+            __( 'Import/Export', 'advanced-wc-wishlist' ),
+            __( 'Import/Export', 'advanced-wc-wishlist' ),
+            'manage_options',
+            'advanced-wc-wishlist-import-export',
+            array( $this, 'import_export_page' )
+        );
+
+        add_submenu_page(
+            'advanced-wc-wishlist',
+            __( 'Analytics', 'advanced-wc-wishlist' ),
+            __( 'Analytics', 'advanced-wc-wishlist' ),
+            'manage_options',
+            'advanced-wc-wishlist-analytics',
+            array( $this, 'analytics_page' )
         );
     }
 
@@ -2360,5 +2379,426 @@ WHERE option_name LIKE 'aww_%';
         // Redirect with success message
         wp_redirect( add_query_arg( 'page', 'aww-settings', admin_url( 'admin.php' ) ) . '&settings_restored=1' );
         exit;
+    }
+
+    /**
+     * Add backup/restore settings functionality
+     * 
+     * SECURITY: Adds backup/restore settings with proper capability checks
+     */
+    public function add_backup_restore_settings() {
+        // SECURITY: Check user capabilities
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            return;
+        }
+
+        // Add backup/restore settings section
+        add_settings_section(
+            'aww_backup_restore_settings',
+            __('Backup & Restore Settings', 'advanced-wc-wishlist'),
+            array($this, 'backup_restore_settings_section_callback'),
+            'aww_settings'
+        );
+
+        // Add backup/restore settings fields
+        add_settings_field(
+            'backup_settings',
+            __('Backup Settings', 'advanced-wc-wishlist'),
+            array($this, 'backup_settings_field_callback'),
+            'aww_settings',
+            'aww_backup_restore_settings'
+        );
+
+        add_settings_field(
+            'restore_settings',
+            __('Restore Settings', 'advanced-wc-wishlist'),
+            array($this, 'restore_settings_field_callback'),
+            'aww_settings',
+            'aww_backup_restore_settings'
+        );
+    }
+
+    /**
+     * Backup/restore settings section callback
+     * 
+     * SECURITY: Displays section description with proper escaping
+     */
+    public function backup_restore_settings_section_callback() {
+        echo '<p>' . esc_html__('Backup and restore your plugin settings. This is useful before importing demo data or making major changes.', 'advanced-wc-wishlist') . '</p>';
+    }
+
+    /**
+     * Backup settings field callback
+     * 
+     * SECURITY: Renders backup button with proper nonce
+     */
+    public function backup_settings_field_callback() {
+        $backup_url = wp_nonce_url(
+            admin_url('admin-post.php?action=aww_backup_settings'),
+            'aww_backup_settings',
+            'aww_backup_nonce'
+        );
+        ?>
+        <p>
+            <a href="<?php echo esc_url($backup_url); ?>" class="button button-secondary">
+                <?php esc_html_e('Download Settings Backup', 'advanced-wc-wishlist'); ?>
+            </a>
+        </p>
+        <p class="description">
+            <?php esc_html_e('Download a JSON file containing all your current plugin settings.', 'advanced-wc-wishlist'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Restore settings field callback
+     * 
+     * SECURITY: Renders restore form with proper nonce and file validation
+     */
+    public function restore_settings_field_callback() {
+        ?>
+        <form method="post" enctype="multipart/form-data" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <?php wp_nonce_field('aww_restore_settings', 'aww_restore_nonce'); ?>
+            <input type="hidden" name="action" value="aww_restore_settings">
+            <input type="file" name="settings_file" accept=".json" required>
+            <input type="submit" class="button button-secondary" value="<?php esc_attr_e('Restore Settings', 'advanced-wc-wishlist'); ?>">
+        </form>
+        <p class="description">
+            <?php esc_html_e('Upload a previously downloaded settings backup file to restore your settings.', 'advanced-wc-wishlist'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Admin page
+     */
+    public function admin_page() {
+        // SECURITY: Check user capabilities
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'advanced-wc-wishlist' ) );
+        }
+        
+        // SECURITY: Verify nonce
+        if ( isset( $_POST['aww_settings_nonce'] ) && wp_verify_nonce( sanitize_text_field( $_POST['aww_settings_nonce'] ), 'aww_save_settings' ) ) {
+            $this->save_settings();
+        }
+        
+        $this->settings_page();
+    }
+
+    /**
+     * Import/Export page
+     * 
+     * SECURITY: Provides secure import/export functionality for plugin settings
+     */
+    public function import_export_page() {
+        // SECURITY: Check user capabilities
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'advanced-wc-wishlist' ) );
+        }
+        
+        // Handle import/export actions
+        if ( isset( $_POST['aww_import_export_nonce'] ) && wp_verify_nonce( sanitize_text_field( $_POST['aww_import_export_nonce'] ), 'aww_import_export' ) ) {
+            if ( isset( $_POST['action'] ) ) {
+                $action = sanitize_text_field( $_POST['action'] );
+                
+                switch ( $action ) {
+                    case 'export':
+                        $this->export_settings();
+                        break;
+                    case 'import':
+                        $this->import_settings();
+                        break;
+                    case 'import_xml':
+                        $this->import_xml_settings();
+                        break;
+                }
+            }
+        }
+        
+        ?>
+        <div class="wrap">
+            <h1><?php esc_html_e( 'Import/Export Settings', 'advanced-wc-wishlist' ); ?></h1>
+            
+            <div class="aww-import-export-container">
+                <!-- Export Section -->
+                <div class="aww-section">
+                    <h2><?php esc_html_e( 'Export Settings', 'advanced-wc-wishlist' ); ?></h2>
+                    <p><?php esc_html_e( 'Export your current plugin settings to a JSON file. This file can be imported on another site or used as a backup.', 'advanced-wc-wishlist' ); ?></p>
+                    
+                    <form method="post" action="">
+                        <?php wp_nonce_field( 'aww_import_export', 'aww_import_export_nonce' ); ?>
+                        <input type="hidden" name="action" value="export" />
+                        <button type="submit" class="button button-primary">
+                            <?php esc_html_e( 'Export Settings', 'advanced-wc-wishlist' ); ?>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Import Section -->
+                <div class="aww-section">
+                    <h2><?php esc_html_e( 'Import Settings', 'advanced-wc-wishlist' ); ?></h2>
+                    <p><?php esc_html_e( 'Import settings from a previously exported JSON file. This will replace your current settings.', 'advanced-wc-wishlist' ); ?></p>
+                    
+                    <form method="post" action="" enctype="multipart/form-data">
+                        <?php wp_nonce_field( 'aww_import_export', 'aww_import_export_nonce' ); ?>
+                        <input type="hidden" name="action" value="import" />
+                        <input type="file" name="aww_settings_file" accept=".json" required />
+                        <br><br>
+                        <button type="submit" class="button button-secondary">
+                            <?php esc_html_e( 'Import Settings', 'advanced-wc-wishlist' ); ?>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- XML Import Section -->
+                <div class="aww-section">
+                    <h2><?php esc_html_e( 'Import from WordPress XML', 'advanced-wc-wishlist' ); ?></h2>
+                    <p><?php esc_html_e( 'If you have exported your site using WordPress Tools > Export and included plugin settings, you can import them here.', 'advanced-wc-wishlist' ); ?></p>
+                    
+                    <form method="post" action="" enctype="multipart/form-data">
+                        <?php wp_nonce_field( 'aww_import_export', 'aww_import_export_nonce' ); ?>
+                        <input type="hidden" name="action" value="import_xml" />
+                        <input type="file" name="aww_xml_file" accept=".xml" />
+                        <br><br>
+                        <button type="submit" class="button button-secondary">
+                            <?php esc_html_e( 'Import from XML', 'advanced-wc-wishlist' ); ?>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <style>
+                .aww-import-export-container {
+                    max-width: 800px;
+                }
+                .aww-section {
+                    background: #fff;
+                    border: 1px solid #ccd0d4;
+                    padding: 20px;
+                    margin: 20px 0;
+                    border-radius: 4px;
+                }
+                .aww-section h2 {
+                    margin-top: 0;
+                    color: #23282d;
+                }
+            </style>
+        </div>
+        <?php
+    }
+
+    /**
+     * Export settings to JSON file
+     * 
+     * SECURITY: Exports settings with proper validation and sanitization
+     */
+    private function export_settings() {
+        // SECURITY: Verify nonce again
+        if ( ! wp_verify_nonce( sanitize_text_field( $_POST['aww_import_export_nonce'] ), 'aww_import_export' ) ) {
+            wp_die( esc_html__( 'Security check failed.', 'advanced-wc-wishlist' ) );
+        }
+        
+        // Get all plugin settings
+        global $wpdb;
+        $plugin_options = $wpdb->get_results( "SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'aww_%'" );
+        
+        if ( empty( $plugin_options ) ) {
+            add_settings_error( 'aww_import_export', 'no_settings', esc_html__( 'No plugin settings found to export.', 'advanced-wc-wishlist' ), 'warning' );
+            return;
+        }
+        
+        $export_data = array(
+            'plugin_name' => 'Advanced WooCommerce Wishlist',
+            'version' => AWW_VERSION,
+            'export_date' => current_time( 'mysql' ),
+            'settings' => array()
+        );
+        
+        foreach ( $plugin_options as $option ) {
+            $export_data['settings'][ $option->option_name ] = maybe_unserialize( $option->option_value );
+        }
+        
+        // Set headers for file download
+        header( 'Content-Type: application/json' );
+        header( 'Content-Disposition: attachment; filename="aww-settings-' . date( 'Y-m-d-H-i-s' ) . '.json"' );
+        header( 'Content-Length: ' . strlen( json_encode( $export_data ) ) );
+        
+        echo json_encode( $export_data, JSON_PRETTY_PRINT );
+        exit;
+    }
+
+    /**
+     * Import settings from JSON file
+     * 
+     * SECURITY: Imports settings with proper validation and sanitization
+     */
+    private function import_settings() {
+        // SECURITY: Verify nonce again
+        if ( ! wp_verify_nonce( sanitize_text_field( $_POST['aww_import_export_nonce'] ), 'aww_import_export' ) ) {
+            wp_die( esc_html__( 'Security check failed.', 'advanced-wc-wishlist' ) );
+        }
+        
+        // SECURITY: Check file upload
+        if ( ! isset( $_FILES['aww_settings_file'] ) || $_FILES['aww_settings_file']['error'] !== UPLOAD_ERR_OK ) {
+            add_settings_error( 'aww_import_export', 'upload_error', esc_html__( 'File upload failed. Please try again.', 'advanced-wc-wishlist' ), 'error' );
+            return;
+        }
+        
+        $file = $_FILES['aww_settings_file'];
+        
+        // SECURITY: Validate file type
+        if ( $file['type'] !== 'application/json' && pathinfo( $file['name'], PATHINFO_EXTENSION ) !== 'json' ) {
+            add_settings_error( 'aww_import_export', 'invalid_file', esc_html__( 'Please upload a valid JSON file.', 'advanced-wc-wishlist' ), 'error' );
+            return;
+        }
+        
+        // SECURITY: Check file size (max 1MB)
+        if ( $file['size'] > 1024 * 1024 ) {
+            add_settings_error( 'aww_import_export', 'file_too_large', esc_html__( 'File is too large. Maximum size is 1MB.', 'advanced-wc-wishlist' ), 'error' );
+            return;
+        }
+        
+        $json_content = file_get_contents( $file['tmp_name'] );
+        $import_data = json_decode( $json_content, true );
+        
+        if ( json_last_error() !== JSON_ERROR_NONE ) {
+            add_settings_error( 'aww_import_export', 'invalid_json', esc_html__( 'Invalid JSON file. Please check the file format.', 'advanced-wc-wishlist' ), 'error' );
+            return;
+        }
+        
+        // SECURITY: Validate import data structure
+        if ( ! isset( $import_data['plugin_name'] ) || 
+             $import_data['plugin_name'] !== 'Advanced WooCommerce Wishlist' ||
+             ! isset( $import_data['settings'] ) || 
+             ! is_array( $import_data['settings'] ) ) {
+            add_settings_error( 'aww_import_export', 'invalid_data', esc_html__( 'Invalid settings file format.', 'advanced-wc-wishlist' ), 'error' );
+            return;
+        }
+        
+        $imported_count = 0;
+        foreach ( $import_data['settings'] as $option_name => $option_value ) {
+            // SECURITY: Validate option name format
+            if ( is_string( $option_name ) && strpos( $option_name, 'aww_' ) === 0 ) {
+                // Use the sanitization method from export-import class
+                $sanitized_value = $this->sanitize_option_value( $option_value, $option_name );
+                update_option( $option_name, $sanitized_value );
+                $imported_count++;
+            }
+        }
+        
+        if ( $imported_count > 0 ) {
+            add_settings_error( 
+                'aww_import_export', 
+                'import_success', 
+                sprintf( esc_html__( 'Successfully imported %d settings.', 'advanced-wc-wishlist' ), $imported_count ), 
+                'success' 
+            );
+        } else {
+            add_settings_error( 'aww_import_export', 'no_valid_settings', esc_html__( 'No valid settings found in the file.', 'advanced-wc-wishlist' ), 'warning' );
+        }
+    }
+
+    /**
+     * Import settings from XML file
+     * 
+     * SECURITY: Imports settings from XML with proper validation
+     */
+    private function import_xml_settings() {
+        // SECURITY: Verify nonce again
+        if ( ! wp_verify_nonce( sanitize_text_field( $_POST['aww_import_export_nonce'] ), 'aww_import_export' ) ) {
+            wp_die( esc_html__( 'Security check failed.', 'advanced-wc-wishlist' ) );
+        }
+        
+        // SECURITY: Check file upload
+        if ( ! isset( $_FILES['aww_xml_file'] ) || $_FILES['aww_xml_file']['error'] !== UPLOAD_ERR_OK ) {
+            add_settings_error( 'aww_import_export', 'upload_error', esc_html__( 'File upload failed. Please try again.', 'advanced-wc-wishlist' ), 'error' );
+            return;
+        }
+        
+        $file = $_FILES['aww_xml_file'];
+        
+        // SECURITY: Validate file type
+        if ( $file['type'] !== 'text/xml' && pathinfo( $file['name'], PATHINFO_EXTENSION ) !== 'xml' ) {
+            add_settings_error( 'aww_import_export', 'invalid_file', esc_html__( 'Please upload a valid XML file.', 'advanced-wc-wishlist' ), 'error' );
+            return;
+        }
+        
+        $xml_content = file_get_contents( $file['tmp_name'] );
+        
+        // Use the export-import class to parse XML
+        $export_import = new AWW_Export_Import();
+        $plugin_settings = $export_import->parse_xml_settings( $xml_content );
+        
+        if ( $plugin_settings === false ) {
+            add_settings_error( 'aww_import_export', 'no_settings_in_xml', esc_html__( 'No plugin settings found in the XML file.', 'advanced-wc-wishlist' ), 'warning' );
+            return;
+        }
+        
+        $imported_count = 0;
+        foreach ( $plugin_settings['settings'] as $option_name => $option_value ) {
+            // SECURITY: Validate option name format
+            if ( is_string( $option_name ) && strpos( $option_name, 'aww_' ) === 0 ) {
+                $sanitized_value = $this->sanitize_option_value( $option_value, $option_name );
+                update_option( $option_name, $sanitized_value );
+                $imported_count++;
+            }
+        }
+        
+        if ( $imported_count > 0 ) {
+            add_settings_error( 
+                'aww_import_export', 
+                'import_success', 
+                sprintf( esc_html__( 'Successfully imported %d settings from XML file.', 'advanced-wc-wishlist' ), $imported_count ), 
+                'success' 
+            );
+        } else {
+            add_settings_error( 'aww_import_export', 'no_valid_settings', esc_html__( 'No valid settings found in the XML file.', 'advanced-wc-wishlist' ), 'warning' );
+        }
+    }
+
+    /**
+     * Sanitize option value based on option name
+     * 
+     * SECURITY: Sanitizes different types of option values
+     *
+     * @param mixed $value Option value
+     * @param string $option_name Option name
+     * @return mixed Sanitized value
+     */
+    private function sanitize_option_value( $value, $option_name ) {
+        // SECURITY: Sanitize based on option type
+        if ( strpos( $option_name, 'aww_general_' ) === 0 ) {
+            // General settings - sanitize text fields
+            if ( is_string( $value ) ) {
+                return sanitize_text_field( $value );
+            }
+        } elseif ( strpos( $option_name, 'aww_display_' ) === 0 ) {
+            // Display settings - sanitize HTML
+            if ( is_string( $value ) ) {
+                return wp_kses_post( $value );
+            }
+        } elseif ( strpos( $option_name, 'aww_email_' ) === 0 ) {
+            // Email settings - sanitize email content
+            if ( is_string( $value ) ) {
+                return wp_kses_post( $value );
+            }
+        } elseif ( strpos( $option_name, 'aww_analytics_' ) === 0 ) {
+            // Analytics settings - validate boolean/array
+            if ( is_bool( $value ) ) {
+                return $value;
+            } elseif ( is_array( $value ) ) {
+                return array_map( 'sanitize_text_field', $value );
+            }
+        }
+        
+        // Default sanitization
+        if ( is_string( $value ) ) {
+            return sanitize_text_field( $value );
+        } elseif ( is_array( $value ) ) {
+            return array_map( array( $this, 'sanitize_option_value' ), $value );
+        }
+        
+        return $value;
     }
 } 

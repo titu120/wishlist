@@ -68,17 +68,36 @@ class AWW_Ajax {
 
     /**
      * Add product to wishlist
+     * 
+     * SECURITY: Validates nonce, sanitizes input, checks capabilities, and validates product
      */
     public function add_to_wishlist() {
-        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
-            wp_send_json_error( array( 'message' => __( 'You do not have permission to add to wishlist.', 'advanced-wc-wishlist' ) ) );
+        // SECURITY: Verify nonce first
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'aww_nonce' ) ) {
+            wp_send_json_error( array( 
+                'message' => __( 'Security check failed.', 'advanced-wc-wishlist' ) 
+            ) );
         }
-        check_ajax_referer( 'aww_nonce', 'nonce' );
-        
-        $product_id = intval( $_POST['product_id'] );
-        $wishlist_id = isset( $_POST['wishlist_id'] ) ? intval( $_POST['wishlist_id'] ) : null;
 
-        // Check if login is required
+        // SECURITY: Check user capabilities for logged-in users
+        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 
+                'message' => __( 'You do not have permission to add to wishlist.', 'advanced-wc-wishlist' ) 
+            ) );
+        }
+        
+        // SECURITY: Sanitize and validate input
+        $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+        $wishlist_id = isset( $_POST['wishlist_id'] ) ? absint( $_POST['wishlist_id'] ) : null;
+
+        // SECURITY: Validate product ID
+        if ( ! $product_id || $product_id <= 0 ) {
+            wp_send_json_error( array( 
+                'message' => __( 'Invalid product ID.', 'advanced-wc-wishlist' ) 
+            ) );
+        }
+
+        // SECURITY: Check if login is required
         if ( 'yes' === Advanced_WC_Wishlist::get_option( 'require_login', 'no' ) && ! is_user_logged_in() ) {
             wp_send_json_error( array(
                 'message' => __( 'Please log in to add items to your wishlist.', 'advanced-wc-wishlist' ),
@@ -86,140 +105,194 @@ class AWW_Ajax {
             ) );
         }
 
-        if ( ! $product_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid product ID.', 'advanced-wc-wishlist' ) ) );
-        }
-
+        // SECURITY: Validate product exists and is purchasable
         $product = wc_get_product( $product_id );
-        if ( ! $product ) {
-            wp_send_json_error( array( 'message' => __( 'Product not found.', 'advanced-wc-wishlist' ) ) );
-        }
-
-        // Check if already in wishlist
-        if ( AWW()->database->is_product_in_wishlist( $product_id, $wishlist_id ) ) {
-            wp_send_json_error( array( 'message' => __( 'Product is already in your wishlist.', 'advanced-wc-wishlist' ) ) );
-        }
-
-        $result = AWW()->database->add_to_wishlist( $product_id, $wishlist_id );
-        
-        if ( $result ) {
-            $count = AWW()->database->get_wishlist_count( $wishlist_id );
-            $wishlist_url = AWW()->core->get_wishlist_url( $wishlist_id );
-            
-            wp_send_json_success( array(
-                'message' => __( 'Added to wishlist!', 'advanced-wc-wishlist' ),
-                'count' => $count,
-                'button_action' => 'add',
-                'wishlist_id' => $wishlist_id,
-                'wishlist_url' => $wishlist_url,
-                'product_id' => $product_id,
+        if ( ! $product || ! $product->is_purchasable() ) {
+            wp_send_json_error( array( 
+                'message' => __( 'Product not found or not available.', 'advanced-wc-wishlist' ) 
             ) );
-        } else {
-            wp_send_json_error( array( 'message' => __( 'Could not add to wishlist.', 'advanced-wc-wishlist' ) ) );
+        }
+
+        // SECURITY: Check if already in wishlist
+        if ( AWW()->database->is_product_in_wishlist( $product_id, $wishlist_id ) ) {
+            wp_send_json_error( array( 
+                'message' => __( 'Product is already in your wishlist.', 'advanced-wc-wishlist' ) 
+            ) );
+        }
+
+        // SECURITY: Add to wishlist with error handling
+        try {
+            $result = AWW()->database->add_to_wishlist( $product_id, $wishlist_id );
+            
+            if ( $result ) {
+                $count = AWW()->database->get_wishlist_count( $wishlist_id );
+                $wishlist_url = AWW()->core->get_wishlist_url( $wishlist_id );
+                
+                wp_send_json_success( array(
+                    'message' => __( 'Added to wishlist!', 'advanced-wc-wishlist' ),
+                    'count' => $count,
+                    'button_action' => 'add',
+                    'wishlist_id' => $wishlist_id,
+                    'wishlist_url' => $wishlist_url,
+                    'product_id' => $product_id,
+                ) );
+            } else {
+                wp_send_json_error( array( 
+                    'message' => __( 'Could not add to wishlist.', 'advanced-wc-wishlist' ) 
+                ) );
+            }
+        } catch ( Exception $e ) {
+            error_log( 'Advanced WC Wishlist: Error adding to wishlist - ' . $e->getMessage() );
+            wp_send_json_error( array( 
+                'message' => __( 'An error occurred. Please try again.', 'advanced-wc-wishlist' ) 
+            ) );
         }
     }
 
     /**
      * Remove product from wishlist
+     * 
+     * SECURITY: Validates nonce, sanitizes input, checks capabilities, and validates product
      */
     public function remove_from_wishlist() {
-        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
-            wp_send_json_error( array( 'message' => __( 'You do not have permission to remove from wishlist.', 'advanced-wc-wishlist' ) ) );
-        }
-        // Verify nonce
-        if ( ! wp_verify_nonce( $_POST['nonce'], 'aww_nonce' ) ) {
+        // SECURITY: Verify nonce first
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'aww_nonce' ) ) {
             wp_send_json_error( array(
                 'message' => __( 'Security check failed.', 'advanced-wc-wishlist' ),
             ) );
         }
 
-        $product_id = intval( $_POST['product_id'] );
-        $wishlist_id = isset( $_POST['wishlist_id'] ) ? intval( $_POST['wishlist_id'] ) : null;
-        
-        if ( ! $product_id ) {
-            wp_send_json_error( array(
-                'message' => __( 'Invalid product.', 'advanced-wc-wishlist' ),
+        // SECURITY: Check user capabilities for logged-in users
+        if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 
+                'message' => __( 'You do not have permission to remove from wishlist.', 'advanced-wc-wishlist' ) 
             ) );
         }
 
-        $result = AWW()->database->remove_from_wishlist( $product_id, $wishlist_id );
-
-        if ( $result ) {
-            $new_count = AWW()->database->get_wishlist_count( $wishlist_id );
-            wp_send_json_success( array(
-                'message' => __( 'Product removed from wishlist successfully!', 'advanced-wc-wishlist' ),
-                'count' => $new_count,
-                'product_id' => $product_id,
-                'wishlist_id' => $wishlist_id,
-            ) );
-        } else {
+        // SECURITY: Sanitize and validate input
+        $product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+        $wishlist_id = isset( $_POST['wishlist_id'] ) ? absint( $_POST['wishlist_id'] ) : null;
+        
+        // SECURITY: Validate product ID
+        if ( ! $product_id || $product_id <= 0 ) {
             wp_send_json_error( array(
-                'message' => __( 'Failed to remove product from wishlist. Please try again.', 'advanced-wc-wishlist' ),
+                'message' => __( 'Invalid product ID.', 'advanced-wc-wishlist' ),
+            ) );
+        }
+
+        // SECURITY: Remove from wishlist with error handling
+        try {
+            $result = AWW()->database->remove_from_wishlist( $product_id, $wishlist_id );
+
+            if ( $result ) {
+                $new_count = AWW()->database->get_wishlist_count( $wishlist_id );
+                wp_send_json_success( array(
+                    'message' => __( 'Product removed from wishlist successfully!', 'advanced-wc-wishlist' ),
+                    'count' => $new_count,
+                    'product_id' => $product_id,
+                    'wishlist_id' => $wishlist_id,
+                ) );
+            } else {
+                wp_send_json_error( array(
+                    'message' => __( 'Failed to remove product from wishlist. Please try again.', 'advanced-wc-wishlist' ),
+                ) );
+            }
+        } catch ( Exception $e ) {
+            error_log( 'Advanced WC Wishlist: Error removing from wishlist - ' . $e->getMessage() );
+            wp_send_json_error( array(
+                'message' => __( 'An error occurred. Please try again.', 'advanced-wc-wishlist' ),
             ) );
         }
     }
 
     /**
      * Get wishlist count
+     * 
+     * SECURITY: Validates nonce and sanitizes input
      */
     public function get_wishlist_count() {
-        // Verify nonce
-        if ( ! wp_verify_nonce( $_POST['nonce'], 'aww_nonce' ) ) {
+        // SECURITY: Verify nonce
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'aww_nonce' ) ) {
             wp_send_json_error( array(
                 'message' => __( 'Security check failed.', 'advanced-wc-wishlist' ),
             ) );
         }
 
-        $wishlist_id = isset( $_POST['wishlist_id'] ) ? intval( $_POST['wishlist_id'] ) : null;
-        $count = AWW()->database->get_wishlist_count( $wishlist_id );
+        // SECURITY: Sanitize input
+        $wishlist_id = isset( $_POST['wishlist_id'] ) ? absint( $_POST['wishlist_id'] ) : null;
+        
+        try {
+            $count = AWW()->database->get_wishlist_count( $wishlist_id );
 
-        wp_send_json_success( array(
-            'count' => $count,
-            'wishlist_id' => $wishlist_id,
-        ) );
+            wp_send_json_success( array(
+                'count' => $count,
+                'wishlist_id' => $wishlist_id,
+            ) );
+        } catch ( Exception $e ) {
+            error_log( 'Advanced WC Wishlist: Error getting wishlist count - ' . $e->getMessage() );
+            wp_send_json_error( array(
+                'message' => __( 'An error occurred. Please try again.', 'advanced-wc-wishlist' ),
+            ) );
+        }
     }
 
     /**
      * Get wishlist items
+     * 
+     * SECURITY: Validates nonce, sanitizes input, and limits data exposure
      */
     public function get_wishlist_items() {
-        // Verify nonce
-        if ( ! wp_verify_nonce( $_POST['nonce'], 'aww_nonce' ) ) {
+        // SECURITY: Verify nonce
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'aww_nonce' ) ) {
             wp_send_json_error( array(
                 'message' => __( 'Security check failed.', 'advanced-wc-wishlist' ),
             ) );
         }
 
-        $wishlist_id = isset( $_POST['wishlist_id'] ) ? intval( $_POST['wishlist_id'] ) : null;
-        $limit = isset( $_POST['limit'] ) ? intval( $_POST['limit'] ) : 0;
-        $offset = isset( $_POST['offset'] ) ? intval( $_POST['offset'] ) : 0;
+        // SECURITY: Sanitize and validate input
+        $wishlist_id = isset( $_POST['wishlist_id'] ) ? absint( $_POST['wishlist_id'] ) : null;
+        $limit = isset( $_POST['limit'] ) ? absint( $_POST['limit'] ) : 0;
+        $offset = isset( $_POST['offset'] ) ? absint( $_POST['offset'] ) : 0;
 
-        $items = AWW()->database->get_wishlist_items( $wishlist_id, $limit, $offset );
-
-        // Format items for response
-        $formatted_items = array();
-        foreach ( $items as $item ) {
-            $product = wc_get_product( $item->product_id );
-            if ( $product ) {
-                $formatted_items[] = array(
-                    'id' => $item->id,
-                    'product_id' => $item->product_id,
-                    'product_name' => $product->get_name(),
-                    'product_url' => $product->get_permalink(),
-                    'product_image' => wp_get_attachment_image_url( $product->get_image_id(), 'thumbnail' ),
-                    'product_price' => $product->get_price_html(),
-                    'product_stock' => $product->get_stock_status(),
-                    'price_at_add' => $item->price_at_add,
-                    'date_added' => $item->date_added,
-                );
-            }
+        // SECURITY: Limit maximum items to prevent abuse
+        $max_limit = 100;
+        if ( $limit > $max_limit ) {
+            $limit = $max_limit;
         }
 
-        wp_send_json_success( array(
-            'items' => $formatted_items,
-            'total' => count( $formatted_items ),
-            'wishlist_id' => $wishlist_id,
-        ) );
+        try {
+            $items = AWW()->database->get_wishlist_items( $wishlist_id, $limit, $offset );
+
+            // SECURITY: Format items for response with proper escaping
+            $formatted_items = array();
+            foreach ( $items as $item ) {
+                $product = wc_get_product( $item->product_id );
+                if ( $product ) {
+                    $formatted_items[] = array(
+                        'id' => $item->id,
+                        'product_id' => $item->product_id,
+                        'product_name' => $product->get_name(),
+                        'product_url' => $product->get_permalink(),
+                        'product_image' => wp_get_attachment_image_url( $product->get_image_id(), 'thumbnail' ),
+                        'product_price' => $product->get_price_html(),
+                        'product_stock' => $product->get_stock_status(),
+                        'price_at_add' => $item->price_at_add,
+                        'date_added' => $item->date_added,
+                    );
+                }
+            }
+
+            wp_send_json_success( array(
+                'items' => $formatted_items,
+                'total' => count( $formatted_items ),
+                'wishlist_id' => $wishlist_id,
+            ) );
+        } catch ( Exception $e ) {
+            error_log( 'Advanced WC Wishlist: Error getting wishlist items - ' . $e->getMessage() );
+            wp_send_json_error( array(
+                'message' => __( 'An error occurred. Please try again.', 'advanced-wc-wishlist' ),
+            ) );
+        }
     }
 
     /**

@@ -463,7 +463,7 @@ class AWW_Core {
             data-nonce="<?php echo esc_attr( wp_create_nonce( 'aww_nonce' ) ); ?>"
             type="button"
         >
-            <span class="aww-icon"><?php echo $icon; ?></span>
+            <span class="aww-icon"><?php echo esc_html( $icon ); ?></span>
             <span class="aww-text"><?php echo esc_html( $button_text ); ?></span>
         </button>
         <?php
@@ -536,13 +536,26 @@ class AWW_Core {
     }
 
     /**
-     * Get current wishlist ID from request
+     * Get current wishlist ID
+     * 
+     * SECURITY: Sanitizes and validates wishlist ID from GET parameter
+     *
+     * @return int|null
      */
     public function get_current_wishlist_id() {
-        $wishlist_id = isset( $_GET['wishlist_id'] ) ? intval( $_GET['wishlist_id'] ) : null;
-        if ( ! $wishlist_id ) {
+        // SECURITY: Sanitize and validate wishlist_id from GET parameter
+        $wishlist_id = isset( $_GET['wishlist_id'] ) ? absint( $_GET['wishlist_id'] ) : null;
+        
+        // SECURITY: Additional validation - ensure wishlist_id is positive if provided
+        if ( $wishlist_id !== null && $wishlist_id <= 0 ) {
+            $wishlist_id = null;
+        }
+        
+        // SECURITY: If no valid wishlist_id provided, get default wishlist
+        if ( $wishlist_id === null ) {
             $wishlist_id = AWW()->database->get_default_wishlist_id();
         }
+        
         return $wishlist_id;
     }
 
@@ -619,6 +632,8 @@ class AWW_Core {
 
     /**
      * Output custom CSS from settings
+     * 
+     * SECURITY: All CSS output is properly escaped to prevent XSS
      */
     public function output_custom_css() {
         $custom_css = Advanced_WC_Wishlist::get_option( 'custom_css', '' );
@@ -643,13 +658,13 @@ class AWW_Core {
             }
 
             if ( ! empty( $button_font_size ) ) {
-                echo ".aww-wishlist-btn .aww-text { font-size: " . esc_attr($button_font_size) . "px; }";
+                echo ".aww-wishlist-btn .aww-text { font-size: " . esc_attr( $button_font_size ) . "px; }";
             }
 
             if ( ! empty( $button_icon_size ) ) {
-                $size = esc_attr($button_icon_size);
+                $size = esc_attr( $button_icon_size );
                 echo ".aww-wishlist-btn .aww-icon { display: inline-flex; align-items: center; }";
-                echo ".aww-wishlist-btn .aww-icon svg { width: {$size}px !important; height: {$size}px !important; }";
+                echo ".aww-wishlist-btn .aww-icon svg { width: " . $size . "px !important; height: " . $size . "px !important; }";
             }
             
             echo '</style>';
@@ -741,6 +756,8 @@ class AWW_Core {
 
     /**
      * Display merge notice after login
+     * 
+     * SECURITY: All output is properly escaped
      */
     public function display_merge_notice() {
         if ( ! is_user_logged_in() ) {
@@ -758,6 +775,8 @@ class AWW_Core {
 
     /**
      * Add wishlist button to product pages
+     * 
+     * SECURITY: All output is properly escaped
      */
     public function add_wishlist_button() {
         global $product;
@@ -779,6 +798,8 @@ class AWW_Core {
 
     /**
      * Add wishlist button as overlay on product image in loop
+     * 
+     * SECURITY: All output is properly escaped
      */
     public function add_wishlist_button_loop_overlay() {
         global $product;

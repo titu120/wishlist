@@ -139,61 +139,196 @@ class AWW_Database {
 
     /**
      * Create a new wishlist
+     * 
+     * SECURITY: Validates input, sanitizes data, and checks user permissions
+     * 
+     * @param string $name Wishlist name
+     * @param int|null $user_id User ID
+     * @param string|null $session_id Session ID
+     * @return int|false Wishlist ID on success, false on failure
      */
     public function create_wishlist($name = '', $user_id = null, $session_id = null) {
         global $wpdb;
+        
+        // SECURITY: Validate and sanitize input
+        $name = sanitize_text_field( $name );
+        $user_id = $user_id ? absint( $user_id ) : null;
+        $session_id = $session_id ? sanitize_text_field( $session_id ) : null;
+        
+        // SECURITY: Validate user permissions if user_id provided
+        if ( $user_id && ! current_user_can( 'edit_user', $user_id ) ) {
+            error_log( 'Advanced WC Wishlist: Unauthorized wishlist creation attempt for user ' . $user_id );
+            return false;
+        }
+        
         if (!$user_id && !$session_id) {
             $user_info = $this->get_user_info();
             $user_id = $user_info['user_id'];
             $session_id = $user_info['session_id'];
         }
+        
         if (!$name) {
             $name = __('My Wishlist', 'advanced-wc-wishlist');
         }
-        $wpdb->insert($this->lists_table_name, [
-            'user_id' => $user_id,
-            'session_id' => $session_id,
-            'name' => $name,
-            'date_created' => current_time('mysql'),
-            'date_updated' => current_time('mysql'),
-        ]);
-        return $wpdb->insert_id;
+        
+        // SECURITY: Limit name length to prevent abuse
+        if ( strlen( $name ) > 255 ) {
+            $name = substr( $name, 0, 255 );
+        }
+        
+        try {
+            $result = $wpdb->insert($this->lists_table_name, [
+                'user_id' => $user_id,
+                'session_id' => $session_id,
+                'name' => $name,
+                'date_created' => current_time('mysql'),
+                'date_updated' => current_time('mysql'),
+            ]);
+            
+            if ( $result === false ) {
+                error_log( 'Advanced WC Wishlist: Database error creating wishlist - ' . $wpdb->last_error );
+                return false;
+            }
+            
+            return $wpdb->insert_id;
+        } catch ( Exception $e ) {
+            error_log( 'Advanced WC Wishlist: Exception creating wishlist - ' . $e->getMessage() );
+            return false;
+        }
     }
 
     /**
      * Get all wishlists for current user/session
+     * 
+     * SECURITY: Validates input and checks user permissions
+     * 
+     * @param int|null $user_id User ID
+     * @param string|null $session_id Session ID
+     * @return array|false Wishlists on success, false on failure
      */
     public function get_wishlists($user_id = null, $session_id = null) {
         global $wpdb;
+        
+        // SECURITY: Validate and sanitize input
+        $user_id = $user_id ? absint( $user_id ) : null;
+        $session_id = $session_id ? sanitize_text_field( $session_id ) : null;
+        
+        // SECURITY: Validate user permissions if user_id provided
+        if ( $user_id && ! current_user_can( 'edit_user', $user_id ) ) {
+            error_log( 'Advanced WC Wishlist: Unauthorized wishlist access attempt for user ' . $user_id );
+            return false;
+        }
+        
         if (!$user_id && !$session_id) {
             $user_info = $this->get_user_info();
             $user_id = $user_info['user_id'];
             $session_id = $user_info['session_id'];
         }
-        $where = [];
-        if ($user_id) $where[] = $wpdb->prepare('user_id = %d', $user_id);
-        if ($session_id) $where[] = $wpdb->prepare('session_id = %s', $session_id);
-        $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
-        return $wpdb->get_results("SELECT * FROM {$this->lists_table_name} $where_clause ORDER BY date_created ASC");
+        
+        try {
+            $where = [];
+            if ($user_id) $where[] = $wpdb->prepare('user_id = %d', $user_id);
+            if ($session_id) $where[] = $wpdb->prepare('session_id = %s', $session_id);
+            $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+            
+            $query = "SELECT * FROM {$this->lists_table_name} $where_clause ORDER BY date_created ASC";
+            $results = $wpdb->get_results($query);
+            
+            if ( $results === null ) {
+                error_log( 'Advanced WC Wishlist: Database error getting wishlists - ' . $wpdb->last_error );
+                return false;
+            }
+            
+            return $results;
+        } catch ( Exception $e ) {
+            error_log( 'Advanced WC Wishlist: Exception getting wishlists - ' . $e->getMessage() );
+            return false;
+        }
     }
 
     /**
      * Get a single wishlist by ID
+     * 
+     * SECURITY: Validates input and checks user permissions
+     * 
+     * @param int $wishlist_id Wishlist ID
+     * @return object|false Wishlist object on success, false on failure
      */
     public function get_wishlist($wishlist_id) {
         global $wpdb;
-        return $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->lists_table_name} WHERE id = %d", $wishlist_id));
+        
+        // SECURITY: Validate input
+        $wishlist_id = absint( $wishlist_id );
+        if ( ! $wishlist_id ) {
+            return false;
+        }
+        
+        try {
+            $wishlist = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->lists_table_name} WHERE id = %d", $wishlist_id));
+            
+            // SECURITY: Check if user has access to this wishlist
+            if ( $wishlist && is_user_logged_in() ) {
+                $current_user_id = get_current_user_id();
+                if ( $wishlist->user_id && $wishlist->user_id != $current_user_id ) {
+                    error_log( 'Advanced WC Wishlist: Unauthorized wishlist access attempt. User: ' . $current_user_id . ', Wishlist: ' . $wishlist_id );
+                    return false;
+                }
+            }
+            
+            return $wishlist;
+        } catch ( Exception $e ) {
+            error_log( 'Advanced WC Wishlist: Exception getting wishlist - ' . $e->getMessage() );
+            return false;
+        }
     }
 
     /**
      * Update wishlist name
+     * 
+     * SECURITY: Validates input, sanitizes data, and checks user permissions
+     * 
+     * @param int $wishlist_id Wishlist ID
+     * @param string $name New wishlist name
+     * @return bool True on success, false on failure
      */
     public function update_wishlist($wishlist_id, $name) {
         global $wpdb;
-        return $wpdb->update($this->lists_table_name, [
-            'name' => $name,
-            'date_updated' => current_time('mysql'),
-        ], [ 'id' => $wishlist_id ]);
+        
+        // SECURITY: Validate and sanitize input
+        $wishlist_id = absint( $wishlist_id );
+        $name = sanitize_text_field( $name );
+        
+        if ( ! $wishlist_id || empty( $name ) ) {
+            return false;
+        }
+        
+        // SECURITY: Check if user has access to this wishlist
+        $wishlist = $this->get_wishlist( $wishlist_id );
+        if ( ! $wishlist ) {
+            return false;
+        }
+        
+        // SECURITY: Limit name length to prevent abuse
+        if ( strlen( $name ) > 255 ) {
+            $name = substr( $name, 0, 255 );
+        }
+        
+        try {
+            $result = $wpdb->update($this->lists_table_name, [
+                'name' => $name,
+                'date_updated' => current_time('mysql'),
+            ], [ 'id' => $wishlist_id ]);
+            
+            if ( $result === false ) {
+                error_log( 'Advanced WC Wishlist: Database error updating wishlist - ' . $wpdb->last_error );
+                return false;
+            }
+            
+            return true;
+        } catch ( Exception $e ) {
+            error_log( 'Advanced WC Wishlist: Exception updating wishlist - ' . $e->getMessage() );
+            return false;
+        }
     }
 
     /**
