@@ -130,6 +130,8 @@ final class Advanced_WC_Wishlist {
         
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
         register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+        // Always ensure wishlist page exists in admin
+        add_action( 'admin_init', array( $this, 'ensure_wishlist_page_exists' ) );
     }
 
     /**
@@ -331,16 +333,17 @@ final class Advanced_WC_Wishlist {
      * @param bool $network_wide Whether to activate for the entire network
      */
     public function activate( $network_wide = false ) {
-        // Run activation for each site in the network
-        if ( is_multisite() && $network_wide ) {
-            foreach ( get_sites( array( 'fields' => 'ids' ) ) as $blog_id ) {
-                switch_to_blog( $blog_id );
-                $this->run_activation();
-                restore_current_blog();
-            }
-        } else {
-            $this->run_activation();
-        }
+        // Include the database class
+        require_once AWW_PLUGIN_DIR . 'includes/class-aww-database.php';
+        // Create a local instance
+        $database = new AWW_Database();
+        // Create the tables
+        $database->create_tables();
+        // Force the default for all users
+        update_option( 'aww_loop_button_position', 'on_image' );
+        // Now run your page creation logic
+        $this->create_wishlist_page();
+        // (Any other activation logic you need)
     }
 
     private function run_activation() {
@@ -422,7 +425,7 @@ final class Advanced_WC_Wishlist {
             'show_price' => 'yes',
             'show_stock' => 'yes',
             'show_date' => 'no',
-            'loop_button_position' => 'on_image',
+            'loop_button_position' => 'on_image', // Ensure this is the default
         );
 
         foreach ( $defaults as $key => $value ) {
@@ -479,6 +482,66 @@ final class Advanced_WC_Wishlist {
             return false;
         }
         return AWW()->database->is_product_in_wishlist( $product_id, $wishlist_id );
+    }
+
+    /**
+     * Ensure the wishlist page exists.
+     */
+    public function ensure_wishlist_page_exists() {
+        $wishlist_page_id = get_option( 'aww_wishlist_page' );
+
+        if ( ! $wishlist_page_id || get_post_status( $wishlist_page_id ) !== 'publish' ) {
+            $this->create_wishlist_page();
+        }
+    }
+
+    /**
+     * Create the wishlist page if it doesn't exist or is not published.
+     */
+    private function create_wishlist_page() {
+        if ( ! function_exists('error_log') ) return;
+        error_log('AWW: create_wishlist_page() called', 3, WP_CONTENT_DIR . '/debug.log');
+        $wishlist_page_id = get_option( 'aww_wishlist_page' );
+        $page = $wishlist_page_id ? get_post( $wishlist_page_id ) : null;
+
+        // If the page is missing, trashed, or not published, try to find or create it
+        if ( ! $page || $page->post_status === 'trash' || $page->post_status !== 'publish' ) {
+            error_log('AWW: Wishlist page missing or not published', 3, WP_CONTENT_DIR . '/debug.log');
+            // Try to find a page with slug 'wishlist'
+            $existing = get_page_by_path( 'wishlist' );
+            if ( $existing ) {
+                error_log('AWW: Found existing page with slug wishlist, status: ' . $existing->post_status, 3, WP_CONTENT_DIR . '/debug.log');
+                // If trashed, restore and publish
+                if ( $existing->post_status === 'trash' ) {
+                    wp_untrash_post( $existing->ID );
+                    wp_publish_post( $existing->ID );
+                    error_log('AWW: Untrashed and published existing wishlist page', 3, WP_CONTENT_DIR . '/debug.log');
+                } elseif ( $existing->post_status !== 'publish' ) {
+                    wp_publish_post( $existing->ID );
+                    error_log('AWW: Published existing wishlist page', 3, WP_CONTENT_DIR . '/debug.log');
+                }
+                update_option( 'aww_wishlist_page', $existing->ID );
+                flush_rewrite_rules();
+                return;
+            }
+            // Create new page
+            $page_id = wp_insert_post( array(
+                'post_title'   => 'Wishlist',
+                'post_name'    => 'wishlist',
+                'post_content' => '[aww_wishlist]',
+                'post_status'  => 'publish',
+                'post_type'    => 'page',
+            ) );
+            if ( $page_id && ! is_wp_error( $page_id ) ) {
+                error_log('AWW: Created new wishlist page, ID: ' . $page_id, 3, WP_CONTENT_DIR . '/debug.log');
+                update_option( 'aww_wishlist_page', $page_id );
+                flush_rewrite_rules();
+            } else {
+                error_log('AWW: Failed to create wishlist page: ' . ( is_wp_error($page_id) ? $page_id->get_error_message() : 'Unknown error' ), 3, WP_CONTENT_DIR . '/debug.log');
+            }
+        } else {
+            error_log('AWW: Wishlist page already exists and is published, ID: ' . $wishlist_page_id, 3, WP_CONTENT_DIR . '/debug.log');
+        }
     }
 }
 
