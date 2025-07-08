@@ -420,16 +420,80 @@ class AWW_Core {
         $wishlist_page_id = get_option( 'aww_wishlist_page' );
         
         if ( $wishlist_page_id ) {
-            $base_url = get_permalink( $wishlist_page_id );
+            $page = get_post( $wishlist_page_id );
+            if ( $page && $page->post_type === 'page' && $page->post_status === 'publish' ) {
+                $base_url = get_permalink( $wishlist_page_id );
+            } else {
+                // Page doesn't exist or is invalid, try to recreate it
+                $this->recreate_wishlist_page();
+                $wishlist_page_id = get_option( 'aww_wishlist_page' );
+                $base_url = $wishlist_page_id ? get_permalink( $wishlist_page_id ) : home_url( '/wishlist/' );
+            }
         } else {
-            // Fallback to home URL if page doesn't exist
-            $base_url = home_url( '/wishlist/' );
+            // No page ID stored, try to recreate it
+            $this->recreate_wishlist_page();
+            $wishlist_page_id = get_option( 'aww_wishlist_page' );
+            $base_url = $wishlist_page_id ? get_permalink( $wishlist_page_id ) : home_url( '/wishlist/' );
         }
         
         if ( $wishlist_id ) {
             return add_query_arg( 'wishlist_id', $wishlist_id, $base_url );
         }
         return $base_url;
+    }
+
+    /**
+     * Recreate wishlist page if it doesn't exist
+     */
+    private function recreate_wishlist_page() {
+        // First, try to find existing wishlist page by slug (most reliable)
+        $page = get_page_by_path( 'wishlist' );
+        
+        if ( ! $page ) {
+            // Try to find by exact title match (more specific)
+            $pages = get_pages( array(
+                'title' => 'Wishlist',
+                'post_type' => 'page',
+                'post_status' => 'publish',
+                'numberposts' => 1
+            ) );
+            
+            // Only use this page if it has the wishlist shortcode or correct slug
+            if ( ! empty( $pages ) ) {
+                $potential_page = $pages[0];
+                if ( $potential_page->post_name === 'wishlist' || has_shortcode( $potential_page->post_content, 'aww_wishlist' ) ) {
+                    $page = $potential_page;
+                }
+            }
+        }
+
+        if ( ! $page ) {
+            // Create new wishlist page
+            $page_id = wp_insert_post( array(
+                'post_title'   => __( 'Wishlist', 'advanced-wc-wishlist' ),
+                'post_name'    => 'wishlist',
+                'post_content' => '[aww_wishlist]',
+                'post_status'  => 'publish',
+                'post_type'    => 'page',
+                'post_author'  => 1,
+            ) );
+
+            if ( ! is_wp_error( $page_id ) && $page_id ) {
+                update_option( 'aww_wishlist_page', $page_id );
+                flush_rewrite_rules();
+            }
+        } else {
+            // Use existing page
+            update_option( 'aww_wishlist_page', $page->ID );
+            
+            // Update content if it doesn't have the shortcode
+            if ( ! has_shortcode( $page->post_content, 'aww_wishlist' ) ) {
+                wp_update_post( array(
+                    'ID' => $page->ID,
+                    'post_content' => $page->post_content . "\n\n[aww_wishlist]"
+                ) );
+            }
+        }
     }
 
     /**
@@ -463,7 +527,7 @@ class AWW_Core {
             data-nonce="<?php echo esc_attr( wp_create_nonce( 'aww_nonce' ) ); ?>"
             type="button"
         >
-            <span class="aww-icon"><?php echo esc_html( $icon ); ?></span>
+            <span class="aww-icon"><?php echo $icon; ?></span>
             <span class="aww-text"><?php echo esc_html( $button_text ); ?></span>
         </button>
         <?php
@@ -536,26 +600,13 @@ class AWW_Core {
     }
 
     /**
-     * Get current wishlist ID
-     * 
-     * SECURITY: Sanitizes and validates wishlist ID from GET parameter
-     *
-     * @return int|null
+     * Get current wishlist ID from request
      */
     public function get_current_wishlist_id() {
-        // SECURITY: Sanitize and validate wishlist_id from GET parameter
-        $wishlist_id = isset( $_GET['wishlist_id'] ) ? absint( $_GET['wishlist_id'] ) : null;
-        
-        // SECURITY: Additional validation - ensure wishlist_id is positive if provided
-        if ( $wishlist_id !== null && $wishlist_id <= 0 ) {
-            $wishlist_id = null;
-        }
-        
-        // SECURITY: If no valid wishlist_id provided, get default wishlist
-        if ( $wishlist_id === null ) {
+        $wishlist_id = isset( $_GET['wishlist_id'] ) ? intval( $_GET['wishlist_id'] ) : null;
+        if ( ! $wishlist_id ) {
             $wishlist_id = AWW()->database->get_default_wishlist_id();
         }
-        
         return $wishlist_id;
     }
 
@@ -632,8 +683,6 @@ class AWW_Core {
 
     /**
      * Output custom CSS from settings
-     * 
-     * SECURITY: All CSS output is properly escaped to prevent XSS
      */
     public function output_custom_css() {
         $custom_css = Advanced_WC_Wishlist::get_option( 'custom_css', '' );
@@ -658,13 +707,13 @@ class AWW_Core {
             }
 
             if ( ! empty( $button_font_size ) ) {
-                echo ".aww-wishlist-btn .aww-text { font-size: " . esc_attr( $button_font_size ) . "px; }";
+                echo ".aww-wishlist-btn .aww-text { font-size: " . esc_attr($button_font_size) . "px; }";
             }
 
             if ( ! empty( $button_icon_size ) ) {
-                $size = esc_attr( $button_icon_size );
+                $size = esc_attr($button_icon_size);
                 echo ".aww-wishlist-btn .aww-icon { display: inline-flex; align-items: center; }";
-                echo ".aww-wishlist-btn .aww-icon svg { width: " . $size . "px !important; height: " . $size . "px !important; }";
+                echo ".aww-wishlist-btn .aww-icon svg { width: {$size}px !important; height: {$size}px !important; }";
             }
             
             echo '</style>';
@@ -756,8 +805,6 @@ class AWW_Core {
 
     /**
      * Display merge notice after login
-     * 
-     * SECURITY: All output is properly escaped
      */
     public function display_merge_notice() {
         if ( ! is_user_logged_in() ) {
@@ -775,8 +822,6 @@ class AWW_Core {
 
     /**
      * Add wishlist button to product pages
-     * 
-     * SECURITY: All output is properly escaped
      */
     public function add_wishlist_button() {
         global $product;
@@ -798,8 +843,6 @@ class AWW_Core {
 
     /**
      * Add wishlist button as overlay on product image in loop
-     * 
-     * SECURITY: All output is properly escaped
      */
     public function add_wishlist_button_loop_overlay() {
         global $product;

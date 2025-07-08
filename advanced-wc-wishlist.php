@@ -97,20 +97,6 @@ final class Advanced_WC_Wishlist {
     public $admin;
 
     /**
-     * Export/Import class instance
-     *
-     * @var AWW_Export_Import
-     */
-    public $export_import;
-
-    /**
-     * Pre-import settings storage
-     *
-     * @var array
-     */
-    private $pre_import_settings = array();
-
-    /**
      * Get plugin instance
      *
      * @return Advanced_WC_Wishlist
@@ -190,6 +176,52 @@ final class Advanced_WC_Wishlist {
 
         // Hook into WooCommerce
         $this->hook_woocommerce();
+
+        // Check and recreate wishlist page if needed
+        $this->ensure_wishlist_page_exists();
+    }
+
+    /**
+     * Ensure wishlist page exists
+     */
+    private function ensure_wishlist_page_exists() {
+        $wishlist_page_id = get_option( 'aww_wishlist_page' );
+        
+        // If no page ID is stored, or the page doesn't exist, recreate it
+        if ( ! $wishlist_page_id ) {
+            $this->create_wishlist_page();
+            add_action( 'admin_notices', array( $this, 'wishlist_page_created_notice' ) );
+            return;
+        }
+        
+        // Check if the page actually exists
+        $page = get_post( $wishlist_page_id );
+        if ( ! $page || $page->post_type !== 'page' || $page->post_status !== 'publish' ) {
+            $this->create_wishlist_page();
+            add_action( 'admin_notices', array( $this, 'wishlist_page_created_notice' ) );
+        }
+    }
+
+    /**
+     * Wishlist page created notice
+     */
+    public function wishlist_page_created_notice() {
+        $wishlist_page_id = get_option( 'aww_wishlist_page' );
+        if ( $wishlist_page_id ) {
+            ?>
+            <div class="notice notice-success is-dismissible">
+                <p>
+                    <?php 
+                    printf( 
+                        esc_html__( 'Advanced WooCommerce Wishlist: Wishlist page has been created successfully! %sView Wishlist Page%s', 'advanced-wc-wishlist' ),
+                        '<a href="' . esc_url( get_permalink( $wishlist_page_id ) ) . '" target="_blank">',
+                        '</a>'
+                    ); 
+                    ?>
+                </p>
+            </div>
+            <?php
+        }
     }
 
     /**
@@ -273,7 +305,6 @@ final class Advanced_WC_Wishlist {
         require_once AWW_PLUGIN_DIR . 'includes/class-aww-ajax.php';
         require_once AWW_PLUGIN_DIR . 'includes/class-aww-shortcodes.php';
         require_once AWW_PLUGIN_DIR . 'includes/class-aww-admin.php';
-        require_once AWW_PLUGIN_DIR . 'includes/class-aww-export-import.php';
     }
 
     /**
@@ -288,8 +319,6 @@ final class Advanced_WC_Wishlist {
         if ( is_admin() ) {
             $this->admin = new AWW_Admin();
         }
-
-        $this->export_import = new AWW_Export_Import();
     }
 
     /**
@@ -371,36 +400,81 @@ final class Advanced_WC_Wishlist {
         // Set default options
         $this->set_default_options();
 
-        if ( ! get_option( 'aww_wishlist_page' ) ) {
-            // Check if page already exists using modern approach
-            $page = get_page_by_path( 'wishlist' );
+        // Create or find wishlist page
+        $this->create_wishlist_page();
+    }
+
+    /**
+     * Create or find wishlist page
+     */
+    private function create_wishlist_page() {
+        $wishlist_page_id = get_option( 'aww_wishlist_page' );
+        
+        // If we already have a valid page ID, verify it still exists and is actually a wishlist page
+        if ( $wishlist_page_id ) {
+            $page = get_post( $wishlist_page_id );
+            if ( $page && $page->post_type === 'page' && $page->post_status === 'publish' ) {
+                // Check if this page is actually a wishlist page (has the shortcode or correct slug)
+                if ( $page->post_name === 'wishlist' || has_shortcode( $page->post_content, 'aww_wishlist' ) ) {
+                    return; // Page exists and is valid wishlist page
+                }
+            }
+        }
+
+        // First, try to find existing wishlist page by slug (most reliable)
+        $page = get_page_by_path( 'wishlist' );
+        
+        if ( ! $page ) {
+            // Try to find by exact title match (more specific)
+            $pages = get_pages( array(
+                'title' => 'Wishlist',
+                'post_type' => 'page',
+                'post_status' => 'publish',
+                'numberposts' => 1
+            ) );
             
-            if ( ! $page ) {
-                // Try to find by title as fallback
-                $pages = get_pages( array(
-                    'title' => 'Wishlist',
-                    'post_type' => 'page',
-                    'post_status' => 'publish',
-                    'numberposts' => 1
-                ) );
-                $page = ! empty( $pages ) ? $pages[0] : null;
+            // Only use this page if it has the wishlist shortcode or correct slug
+            if ( ! empty( $pages ) ) {
+                $potential_page = $pages[0];
+                if ( $potential_page->post_name === 'wishlist' || has_shortcode( $potential_page->post_content, 'aww_wishlist' ) ) {
+                    $page = $potential_page;
+                }
+            }
+        }
+
+        if ( ! $page ) {
+            // Create new wishlist page
+            $page_id = wp_insert_post( array(
+                'post_title'   => __( 'Wishlist', 'advanced-wc-wishlist' ),
+                'post_name'    => 'wishlist',
+                'post_content' => '[aww_wishlist]',
+                'post_status'  => 'publish',
+                'post_type'    => 'page',
+                'post_author'  => 1,
+            ) );
+
+            if ( is_wp_error( $page_id ) ) {
+                // Log error for debugging
+                error_log( 'Advanced WC Wishlist: Failed to create wishlist page - ' . $page_id->get_error_message() );
+                return;
             }
 
-            if ( ! $page ) {
-                // Create page
-                $page_id = wp_insert_post( array(
-                    'post_title'   => 'Wishlist',
-                    'post_name'    => 'wishlist',
-                    'post_content' => '[aww_wishlist]',
-                    'post_status'  => 'publish',
-                    'post_type'    => 'page',
+            if ( $page_id ) {
+                update_option( 'aww_wishlist_page', $page_id );
+                
+                // Flush rewrite rules to ensure the page is accessible
+                flush_rewrite_rules();
+            }
+        } else {
+            // Use existing page
+            update_option( 'aww_wishlist_page', $page->ID );
+            
+            // Update content if it doesn't have the shortcode
+            if ( ! has_shortcode( $page->post_content, 'aww_wishlist' ) ) {
+                wp_update_post( array(
+                    'ID' => $page->ID,
+                    'post_content' => $page->post_content . "\n\n[aww_wishlist]"
                 ) );
-
-                if ( $page_id ) {
-                    update_option( 'aww_wishlist_page', $page_id );
-                }
-            } else {
-                update_option( 'aww_wishlist_page', $page->ID );
             }
         }
     }
@@ -499,302 +573,11 @@ final class Advanced_WC_Wishlist {
     }
 
     /**
-     * Add plugin settings to WordPress export
-     *
-     * @param array $args Export arguments
-     * @return array
+     * Force recreate wishlist page
      */
-    public function add_plugin_settings_to_export( $args ) {
-        // Get all plugin settings
-        global $wpdb;
-        $plugin_options = $wpdb->get_results( "SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'aww_%'" );
-        
-        if ( ! empty( $plugin_options ) ) {
-            // Create custom export data structure
-            $export_data = array(
-                'plugin_name' => 'Advanced WooCommerce Wishlist',
-                'version' => AWW_VERSION,
-                'export_date' => current_time( 'mysql' ),
-                'settings' => array()
-            );
-            
-            foreach ( $plugin_options as $option ) {
-                $export_data['settings'][ $option->option_name ] = maybe_unserialize( $option->option_value );
-            }
-            
-            // Add to export arguments
-            $args['aww_plugin_settings'] = $export_data;
-        }
-        
-        return $args;
-    }
-
-    /**
-     * Handle import start
-     */
-    public function import_start() {
-        // Store current settings before import
-        global $wpdb;
-        $this->pre_import_settings = $wpdb->get_results( "SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'aww_%'" );
-        
-        // Add admin notice about plugin settings import
-        add_action( 'admin_notices', array( $this, 'import_notice' ) );
-    }
-
-    /**
-     * Handle import end and restore plugin settings
-     * 
-     * SECURITY: Validates and sanitizes all imported data before processing
-     */
-    public function import_end() {
-        // SECURITY: Verify nonce for import operation
-        if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['_wpnonce'] ), 'import-wordpress' ) ) {
-            // Log security violation attempt
-            error_log( 'Advanced WC Wishlist: Invalid nonce in import operation' );
-            return;
-        }
-
-        // SECURITY: Check user capabilities for import operation
-        if ( ! current_user_can( 'import' ) ) {
-            error_log( 'Advanced WC Wishlist: Unauthorized import attempt by user ' . get_current_user_id() );
-            return;
-        }
-
-        // SECURITY: Validate and sanitize imported settings
-        if ( isset( $_POST['aww_plugin_settings'] ) && is_array( $_POST['aww_plugin_settings'] ) ) {
-            $imported_settings = wp_kses_post_deep( $_POST['aww_plugin_settings'] );
-            
-            // SECURITY: Validate plugin settings structure
-            if ( ! $this->validate_imported_settings( $imported_settings ) ) {
-                error_log( 'Advanced WC Wishlist: Invalid settings structure in import' );
-                set_transient( 'aww_import_error', __( 'Invalid plugin settings structure detected.', 'advanced-wc-wishlist' ), 60 );
-                return;
-            }
-            
-            // Check if it's our enhanced format
-            if ( isset( $imported_settings['plugin_name'] ) && $imported_settings['plugin_name'] === 'Advanced WooCommerce Wishlist' ) {
-                // Import settings from enhanced format
-                if ( isset( $imported_settings['settings'] ) && is_array( $imported_settings['settings'] ) ) {
-                    $import_success = $this->import_settings_safely( $imported_settings['settings'] );
-                    
-                    if ( $import_success ) {
-                        set_transient( 'aww_import_success', true, 60 );
-                    } else {
-                        set_transient( 'aww_import_error', __( 'Failed to import plugin settings.', 'advanced-wc-wishlist' ), 60 );
-                    }
-                }
-            } else {
-                // Legacy format - direct settings array
-                $import_success = $this->import_settings_safely( $imported_settings );
-                
-                if ( $import_success ) {
-                    set_transient( 'aww_import_success', true, 60 );
-                } else {
-                    set_transient( 'aww_import_error', __( 'Failed to import plugin settings.', 'advanced-wc-wishlist' ), 60 );
-                }
-            }
-        } elseif ( ! empty( $this->pre_import_settings ) ) {
-            // If no settings in import, restore pre-import settings
-            $restore_success = $this->restore_pre_import_settings();
-            
-            if ( $restore_success ) {
-                set_transient( 'aww_import_no_settings', true, 60 );
-            } else {
-                set_transient( 'aww_import_error', __( 'Failed to restore previous settings.', 'advanced-wc-wishlist' ), 60 );
-            }
-        }
-    }
-
-    /**
-     * Validate imported settings structure
-     * 
-     * SECURITY: Ensures imported data has expected structure and valid values
-     * 
-     * @param array $settings Imported settings
-     * @return bool True if valid, false otherwise
-     */
-    private function validate_imported_settings( $settings ) {
-        // Check if settings is an array
-        if ( ! is_array( $settings ) ) {
-            return false;
-        }
-
-        // Validate plugin name if present
-        if ( isset( $settings['plugin_name'] ) && $settings['plugin_name'] !== 'Advanced WooCommerce Wishlist' ) {
-            return false;
-        }
-
-        // Validate version if present
-        if ( isset( $settings['version'] ) && ! is_string( $settings['version'] ) ) {
-            return false;
-        }
-
-        // Validate settings array if present
-        if ( isset( $settings['settings'] ) && ! is_array( $settings['settings'] ) ) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Import settings safely with validation
-     * 
-     * SECURITY: Validates each setting before importing to prevent malicious data
-     * 
-     * @param array $settings Settings to import
-     * @return bool True if successful, false otherwise
-     */
-    private function import_settings_safely( $settings ) {
-        if ( ! is_array( $settings ) ) {
-            return false;
-        }
-
-        $success_count = 0;
-        $total_count = count( $settings );
-
-        foreach ( $settings as $option_name => $option_value ) {
-            // SECURITY: Validate option name format
-            if ( ! is_string( $option_name ) || strpos( $option_name, 'aww_' ) !== 0 ) {
-                continue;
-            }
-
-            // SECURITY: Sanitize option name
-            $sanitized_name = sanitize_key( $option_name );
-            
-            // SECURITY: Validate option value (basic validation)
-            if ( ! $this->validate_option_value( $option_value ) ) {
-                continue;
-            }
-
-            // SECURITY: Sanitize option value based on type
-            $sanitized_value = $this->sanitize_option_value( $option_value );
-
-            // Update option
-            if ( update_option( $sanitized_name, $sanitized_value ) ) {
-                $success_count++;
-            }
-        }
-
-        // Log import results
-        error_log( sprintf( 'Advanced WC Wishlist: Imported %d/%d settings successfully', $success_count, $total_count ) );
-
-        return $success_count > 0;
-    }
-
-    /**
-     * Validate option value
-     * 
-     * SECURITY: Basic validation to prevent malicious data
-     * 
-     * @param mixed $value Option value to validate
-     * @return bool True if valid, false otherwise
-     */
-    private function validate_option_value( $value ) {
-        // Allow null, boolean, string, integer, float, and arrays
-        if ( is_null( $value ) || is_bool( $value ) || is_string( $value ) || 
-             is_int( $value ) || is_float( $value ) || is_array( $value ) ) {
-            return true;
-        }
-
-        // Reject objects and other types
-        return false;
-    }
-
-    /**
-     * Sanitize option value based on type
-     * 
-     * SECURITY: Applies appropriate sanitization based on data type
-     * 
-     * @param mixed $value Option value to sanitize
-     * @return mixed Sanitized value
-     */
-    private function sanitize_option_value( $value ) {
-        if ( is_string( $value ) ) {
-            return sanitize_text_field( $value );
-        } elseif ( is_array( $value ) ) {
-            return wp_kses_post_deep( $value );
-        } elseif ( is_int( $value ) ) {
-            return intval( $value );
-        } elseif ( is_float( $value ) ) {
-            return floatval( $value );
-        }
-
-        return $value;
-    }
-
-    /**
-     * Restore pre-import settings safely
-     * 
-     * SECURITY: Safely restores previously stored settings
-     * 
-     * @return bool True if successful, false otherwise
-     */
-    private function restore_pre_import_settings() {
-        if ( empty( $this->pre_import_settings ) ) {
-            return false;
-        }
-
-        $success_count = 0;
-        $total_count = count( $this->pre_import_settings );
-
-        foreach ( $this->pre_import_settings as $option ) {
-            if ( ! isset( $option->option_name, $option->option_value ) ) {
-                continue;
-            }
-
-            // SECURITY: Validate option name
-            if ( ! is_string( $option->option_name ) || strpos( $option->option_name, 'aww_' ) !== 0 ) {
-                continue;
-            }
-
-            $sanitized_name = sanitize_key( $option->option_name );
-            $sanitized_value = maybe_unserialize( $option->option_value );
-
-            // SECURITY: Validate restored value
-            if ( ! $this->validate_option_value( $sanitized_value ) ) {
-                continue;
-            }
-
-            if ( update_option( $sanitized_name, $sanitized_value ) ) {
-                $success_count++;
-            }
-        }
-
-        error_log( sprintf( 'Advanced WC Wishlist: Restored %d/%d settings successfully', $success_count, $total_count ) );
-
-        return $success_count > 0;
-    }
-
-    /**
-     * Show import notice with enhanced error handling
-     * 
-     * SECURITY: Displays user-friendly messages while logging security events
-     */
-    public function import_notice() {
-        if ( get_transient( 'aww_import_success' ) ) {
-            delete_transient( 'aww_import_success' );
-            ?>
-            <div class="notice notice-success is-dismissible">
-                <p><?php esc_html_e( 'Advanced WooCommerce Wishlist settings have been successfully imported from the XML file.', 'advanced-wc-wishlist' ); ?></p>
-            </div>
-            <?php
-        } elseif ( get_transient( 'aww_import_no_settings' ) ) {
-            delete_transient( 'aww_import_no_settings' );
-            ?>
-            <div class="notice notice-warning is-dismissible">
-                <p><?php esc_html_e( 'No Advanced WooCommerce Wishlist settings found in the imported XML file. Your current settings have been preserved.', 'advanced-wc-wishlist' ); ?></p>
-            </div>
-            <?php
-        } elseif ( get_transient( 'aww_import_error' ) ) {
-            $error_message = get_transient( 'aww_import_error' );
-            delete_transient( 'aww_import_error' );
-            ?>
-            <div class="notice notice-error is-dismissible">
-                <p><?php echo esc_html( $error_message ); ?></p>
-            </div>
-            <?php
-        }
+    public static function force_recreate_wishlist_page() {
+        $instance = self::instance();
+        $instance->create_wishlist_page();
     }
 }
 
