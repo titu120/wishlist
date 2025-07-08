@@ -1,0 +1,355 @@
+/* Advanced WC Wishlist - Beautiful Admin Settings CSS */
+
+#aww-settings-wrap, .aww-settings-beauty {
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+    background: #f8f9fb;
+    padding: 30px 0 40px 0;
+    min-height: 100vh;
+}
+
+#aww-settings-wrap .wrap, .aww-settings-beauty .wrap {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 32px 36px 36px 36px;
+    max-width: 100% !important;
+    width: 100%;
+    margin: 30px auto 0 auto;
+    box-sizing: border-box;
+}
+
+@media (min-width: 1200px) {
+    #aww-settings-wrap .wrap, .aww-settings-beauty .wrap {
+        padding-left: 60px;
+        padding-right: 60px;
+    }
+}
+
+#aww-settings-wrap h1, .aww-settings-beauty h1 {
+    font-size: 2.1em;
+    margin-bottom: 24px;
+    color: #23282d;
+    font-weight: 600;
+}
+
+#aww-settings-wrap .nav-tab-wrapper, .aww-settings-beauty .nav-tab-wrapper {
+    border-bottom: none;
+    flex-direction: column;
+    margin: 0 0 32px 0;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    background: none;
+    padding: 0 36px 0 36px;
+    box-sizing: border-box;
+    gap: 0;
+}
+
+#aww-settings-wrap .nav-tab, .aww-settings-beauty .nav-tab {
+    background: #F1F5F9;
+    border: none;
+    color: #555;
+    font-size: 14px;
+    margin-right: 4px;
+    padding: 16px 0 14px 0;
+    min-width: 0;
+    text-align: center;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none;
+    font-weight: 500;
+    position: relative;
+    top: 8px;
+    flex: 1 1 0;
+    max-width: none;
+    white-space: nowrap;
+}
+#aww-settings-wrap .nav-tab-active, .aww-settings-beauty .nav-tab-active {
+    background: #E2E8F0;
+
+    font-weight: 600;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.03);
+    z-index: 2;
+}
+
+#aww-settings-wrap .form-table, .aww-settings-beauty .form-table {
+    width: 100%;
+    background: none;
+    border-collapse: separate;
+    border-spacing: 0 50px;
+}
+#aww-settings-wrap .form-table th, .aww-settings-beauty .form-table th {
+    text-align: left;
+    font-weight: 500;
+    color: #333;
+    padding: 0 18px 0 0;
+    width: 220px;
+    vertical-align: top;
+    font-size: 1.04em;
+}
+#aww-settings-wrap .form-table td, .aww-settings-beauty .form-table td {
+    padding: 0;
+}
+
+#aww-settings-wrap input[type="text"],
+#aww-settings-wrap input[type="number"],
+#aww-settings-wrap input[type="color"],
+#aww-settings-wrap select,
+#aww-settings-wrap textarea,
+.aww-settings-beauty input[type="text"],
+.aww-settings-beauty input[type="number"],
+.aww-settings-beauty input[type="color"],
+.aww-settings-beauty select,
+.aww-settings-beauty textarea {
+    font-size: 1.08em;
+    padding: 10px 14px;
+    border-radius: 7px;
+    border: 1px solid #d1d5db;
+    background: #f7fafd;
+    color: #222;
+    width: 100%;
+    max-width: 340px;
+    box-sizing: border-box;
+    margin-bottom: 2px;
+    transition: border 0.2s;
+}
+#aww-settings-wrap input[type="color"], .aww-settings-beauty input[type="color"] {
+    padding: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: none;
+}
+#aww-settings-wrap input[type="text"]:focus,
+#aww-settings-wrap input[type="number"]:focus,
+#aww-settings-wrap select:focus,
+#aww-settings-wrap textarea:focus,
+.aww-settings-beauty input[type="text"]:focus,
+.aww-settings-beauty input[type="number"]:focus,
+.aww-settings-beauty select:focus,
+.aww-settings-beauty textarea:focus {
+    border-color: #007cba;
+    background: #fff;
+}
+
+#aww-settings-wrap textarea, .aww-settings-beauty textarea {
+    min-height: 70px;
+    font-size: 1.05em;
+}
+
+#aww-settings-wrap .form-table .description, .aww-settings-beauty .form-table .description {
+    color: #888;
+    font-size: 0.98em;
+    margin-top: 2px;
+    margin-bottom: 0;
+}
+
+#aww-settings-wrap .button-primary, .aww-settings-beauty .button-primary {
+    background: linear-gradient(90deg, #007cba 0%, #005fa3 100%);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 1.08em;
+    padding: 12px 32px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,124,186,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+#aww-settings-wrap .button-primary:hover, .aww-settings-beauty .button-primary:hover {
+    background: linear-gradient(90deg, #005fa3 0%, #007cba 100%);
+    box-shadow: 0 4px 16px rgba(0,124,186,0.13);
+}
+
+#aww-settings-wrap .button-secondary, .aww-settings-beauty .button-secondary {
+    background: #f1f3f7;
+    color: #007cba;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 1.04em;
+    padding: 10px 22px;
+    font-weight: 500;
+    margin-left: 8px;
+    transition: background 0.2s, color 0.2s;
+}
+#aww-settings-wrap .button-secondary:hover, .aww-settings-beauty .button-secondary:hover {
+    background: #e6f4fa;
+    color: #005fa3;
+}
+
+#aww-settings-wrap .tab-content, .aww-settings-beauty .tab-content {
+    margin-top: 18px;
+    background: #f8fafd;
+    border-radius: 10px;
+    padding: 28px 36px 18px 36px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+#aww-settings-wrap label, .aww-settings-beauty label {
+    font-size: 1em;
+    color: #444;
+    font-weight: 600;
+}
+
+#aww-settings-wrap select, .aww-settings-beauty select {
+    min-width: 120px;
+}
+
+#aww-settings-wrap input[type="checkbox"], .aww-settings-beauty input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid #b5b5b5;
+    margin-right: 7px;
+    vertical-align: middle;
+}
+
+#aww-settings-wrap input[type="checkbox"]:checked, .aww-settings-beauty input[type="checkbox"]:checked {
+    accent-color: #007cba;
+    border-color: #007cba;
+}
+
+#aww-settings-wrap .form-table td > *:not(:last-child), .aww-settings-beauty .form-table td > *:not(:last-child) {
+    margin-bottom: 8px;
+}
+
+#aww-settings-wrap .form-table tr, .aww-settings-beauty .form-table tr {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#aww-settings-wrap .aww-settings-flex {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    min-height: 600px;
+}
+#aww-settings-wrap .aww-settings-sidebar {
+    background: #f8fafc;
+    border-right: 1px solid #e2e8f0;
+    min-width: 220px;
+    max-width: 260px;
+    width: 22%;
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    box-sizing: border-box;
+}
+#aww-settings-wrap .aww-settings-sidebar .nav-tab-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: none;
+    background: none;
+    padding: 0 0 0 0;
+    margin: 0;
+    width: 100%;
+    overflow: visible;
+}
+#aww-settings-wrap .aww-settings-sidebar .nav-tab {
+    background: #f1f5f9;
+    color: #334155;
+    border: none;
+    border-radius: 8px;
+    margin: 0 18px 10px 18px;
+    padding: 14px 18px;
+    font-size: 1.08em;
+    font-weight: 500;
+    text-align: left;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    box-shadow: none;
+    outline: none;
+    cursor: pointer;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
+}
+#aww-settings-wrap .aww-settings-sidebar .nav-tab:hover {
+    background: #e0e7ef;
+    color: #007cba;
+}
+#aww-settings-wrap .aww-settings-sidebar .nav-tab-active {
+    background: #007cba;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,124,186,0.10);
+    z-index: 2;
+}
+#aww-settings-wrap .aww-settings-content {
+    flex: 1;
+    min-width: 0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    border: 1px solid #e5e7eb;
+    margin: 0 36px 36px 36px;
+    padding: 0px 40px 40px 40px;
+    box-sizing: border-box;
+}
+#aww-settings-wrap .tab-content {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+}
+@media (max-width: 1100px) {
+    #aww-settings-wrap .aww-settings-content {
+        margin: 0 12px 24px 12px;
+        padding: 24px 10px 24px 10px;
+    }
+    #aww-settings-wrap .aww-settings-sidebar {
+        min-width: 140px;
+        max-width: 180px;
+        padding: 18px 0 0 0;
+    }
+}
+@media (max-width: 900px) {
+    #aww-settings-wrap .aww-settings-flex {
+        flex-direction: column;
+    }
+    #aww-settings-wrap .aww-settings-sidebar {
+        flex-direction: row;
+        min-width: 0;
+        max-width: 100vw;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 0 0 0 0;
+        margin-bottom: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        background: #f8fafc;
+    }
+    #aww-settings-wrap .aww-settings-sidebar .nav-tab-wrapper {
+        flex-direction: row;
+        gap: 0;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0 0 0 0;
+    }
+    #aww-settings-wrap .aww-settings-sidebar .nav-tab {
+        margin: 0 8px 0 0;
+        padding: 12px 18px;
+        min-width: max-content;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+    }
+    #aww-settings-wrap .aww-settings-content {
+        margin: 0 0 0 0;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        padding: 18px 4vw 18px 4vw;
+    }
+}
+@media (max-width: 600px) {
+    #aww-settings-wrap .aww-settings-content {
+        padding: 8px 2vw 8px 2vw;
+    }
+    #aww-settings-wrap .aww-settings-sidebar .nav-tab {
+        font-size: 0.98em;
+        padding: 10px 10px;
+    }
+} 

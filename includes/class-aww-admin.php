@@ -938,524 +938,513 @@ class AWW_Admin {
 
         $settings = $this->get_settings();
         ?>
-        <div class="wrap">
-            <h1><?php esc_html_e( 'Advanced WooCommerce Wishlist Settings', 'advanced-wc-wishlist' ); ?></h1>
-            
-            <h2 class="nav-tab-wrapper">
-                <a href="#general" class="nav-tab nav-tab-active"><?php esc_html_e( 'General', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#button" class="nav-tab"><?php esc_html_e( 'Product Details Page', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#loop" class="nav-tab"><?php esc_html_e( 'Shop Page', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#floating" class="nav-tab"><?php esc_html_e( 'Floating Icon', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#sharing" class="nav-tab"><?php esc_html_e( 'Sharing', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#behavior" class="nav-tab"><?php esc_html_e( 'Behavior', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#page" class="nav-tab"><?php esc_html_e( 'Page & Shortcode', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#display" class="nav-tab"><?php esc_html_e( 'Display & UX', 'advanced-wc-wishlist' ); ?></a>
-                <a href="#shortcodes" class="nav-tab"><?php esc_html_e( 'Shortcodes', 'advanced-wc-wishlist' ); ?></a>
-            </h2>
-
-            <form method="post" action="">
-                <?php wp_nonce_field( 'aww_settings', 'aww_settings_nonce' ); ?>
-
-                <!-- General Settings Tab -->
-                <div id="general" class="tab-content active">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Guest Wishlist', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_guest_wishlist" value="yes" <?php checked( $settings['enable_guest_wishlist'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Enable wishlist for guest users', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_wishlist_expiry_days"><?php esc_html_e( 'Guest Wishlist Expiry (Days)', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="number" name="aww_wishlist_expiry_days" id="aww_wishlist_expiry_days" value="<?php echo esc_attr( $settings['wishlist_expiry_days'] ); ?>" min="1" max="365" />
-                            </td>
-                        </tr>
-                    </table>
+        <div id="aww-settings-wrap">
+            <div class="wrap">
+                <h1><?php esc_html_e( 'Advanced WooCommerce Wishlist Settings', 'advanced-wc-wishlist' ); ?></h1>
+                <div class="aww-settings-flex" style="display: flex; gap: 0; align-items: flex-start;">
+                    <div class="aww-settings-sidebar" style="min-width:220px;max-width:260px;width:22%;padding-right:32px;">
+                        <div class="nav-tab-wrapper">
+                            <a href="#general" class="nav-tab nav-tab-active"><?php esc_html_e( 'General', 'advanced-wc-wishlist' ); ?></a>
+                            <a href="#button" class="nav-tab"><?php esc_html_e( 'Product Details Page', 'advanced-wc-wishlist' ); ?></a>
+                            <a href="#loop" class="nav-tab"><?php esc_html_e( 'Shop Page', 'advanced-wc-wishlist' ); ?></a>
+                            <a href="#floating" class="nav-tab"><?php esc_html_e( 'Floating Icon', 'advanced-wc-wishlist' ); ?></a>
+                            <a href="#sharing" class="nav-tab"><?php esc_html_e( 'Sharing', 'advanced-wc-wishlist' ); ?></a>
+                            <a href="#behavior" class="nav-tab"><?php esc_html_e( 'Behavior', 'advanced-wc-wishlist' ); ?></a>
+                            <a href="#page" class="nav-tab"><?php esc_html_e( 'Page & Shortcode', 'advanced-wc-wishlist' ); ?></a>
+                            <a href="#display" class="nav-tab"><?php esc_html_e( 'Display & UX', 'advanced-wc-wishlist' ); ?></a>
+                            <a href="#shortcodes" class="nav-tab"><?php esc_html_e( 'Shortcodes', 'advanced-wc-wishlist' ); ?></a>
+                        </div>
+                    </div>
+                    <div class="aww-settings-content" style="flex:1;min-width:0;">
+                        <!-- General Settings Tab -->
+                        <div id="general" class="tab-content active">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Guest Wishlist', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_enable_guest_wishlist" value="yes" <?php checked( $settings['enable_guest_wishlist'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Enable wishlist for guest users', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_wishlist_expiry_days"><?php esc_html_e( 'Guest Wishlist Expiry (Days)', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="number" name="aww_wishlist_expiry_days" id="aww_wishlist_expiry_days" value="<?php echo esc_attr( $settings['wishlist_expiry_days'] ); ?>" min="1" max="365" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Button Settings Tab -->
+                        <div id="button" class="tab-content">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_position"><?php esc_html_e( 'Button Position', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <select name="aww_button_position" id="aww_button_position">
+                                            <option value="after_add_to_cart" <?php selected( $settings['button_position'], 'after_add_to_cart' ); ?>>
+                                                <?php esc_html_e( 'After Add to Cart Button', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+                                            <option value="before_add_to_cart" <?php selected( $settings['button_position'], 'before_add_to_cart' ); ?>>
+                                                <?php esc_html_e( 'Before Add to Cart Button', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+                                            <option value="after_title" <?php selected( $settings['button_position'], 'after_title' ); ?>>
+                                                <?php esc_html_e( 'After Product Title', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+                                            <option value="after_price" <?php selected( $settings['button_position'], 'after_price' ); ?>>
+                                                <?php esc_html_e( 'After Product Price', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+											<option value="after_meta" <?php selected( $settings['button_position'], 'after_meta' ); ?>>
+                                                <?php esc_html_e( 'After Product Meta', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+                                            <option value="custom" <?php selected( $settings['button_position'], 'custom' ); ?>><?php esc_html_e( 'Custom (use shortcode)', 'advanced-wc-wishlist' ); ?></option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_font_size"><?php esc_html_e( 'Button Font Size (px)', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="number" name="aww_button_font_size" id="aww_button_font_size" value="<?php echo esc_attr( $settings['button_font_size'] ); ?>" min="10" max="50" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_icon_size"><?php esc_html_e( 'Button Icon Size (px)', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="number" name="aww_button_icon_size" id="aww_button_icon_size" value="<?php echo esc_attr( $settings['button_icon_size'] ); ?>" min="16" max="100" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_text"><?php esc_html_e( 'Button Text', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="text" name="aww_button_text" id="aww_button_text" value="<?php echo esc_attr( $settings['button_text'] ); ?>" class="regular-text" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_text_added"><?php esc_html_e( 'Button Text (Added)', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="text" name="aww_button_text_added" id="aww_button_text_added" value="<?php echo esc_attr( $settings['button_text_added'] ); ?>" class="regular-text" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_text_color"><?php esc_html_e( 'Button Text Color', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="color" name="aww_button_text_color" id="aww_button_text_color" value="<?php echo esc_attr( $settings['button_text_color'] ); ?>" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_icon_color"><?php esc_html_e( 'Button Icon Color', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="color" name="aww_button_icon_color" id="aww_button_icon_color" value="<?php echo esc_attr( $settings['button_icon_color'] ); ?>" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_tooltip"><?php esc_html_e( 'Button Tooltip', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="text" name="aww_button_tooltip" id="aww_button_tooltip" value="<?php echo esc_attr( $settings['button_tooltip'] ); ?>" class="regular-text" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_custom_css"><?php esc_html_e( 'Custom Button CSS', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <textarea name="aww_button_custom_css" id="aww_button_custom_css" rows="5" cols="50"><?php echo esc_textarea( $settings['button_custom_css'] ); ?></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_button_icon"><?php esc_html_e( 'Button Icon', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <select name="aww_button_icon" id="aww_button_icon">
+                                            <option value="heart" <?php selected( $settings['button_icon'], 'heart' ); ?>>
+                                                <?php esc_html_e( 'Heart', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+                                            <option value="star" <?php selected( $settings['button_icon'], 'star' ); ?>>
+                                                <?php esc_html_e( 'Star', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+                                            <option value="plus" <?php selected( $settings['button_icon'], 'plus' ); ?>>
+                                                <?php esc_html_e( 'Plus', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+                                            <option value="bookmark" <?php selected( $settings['button_icon'], 'bookmark' ); ?>>
+                                                <?php esc_html_e( 'Bookmark', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+                                            <option value="gift" <?php selected( $settings['button_icon'], 'gift' ); ?>>
+                                                <?php esc_html_e( 'Gift', 'advanced-wc-wishlist' ); ?>
+                                            </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Loop Settings Tab -->
+                        <div id="loop" class="tab-content">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Position of "Add to wishlist" in loop', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <select name="aww_loop_button_position" id="aww_loop_button_position">
+                                            <option value="on_image" <?php selected( $settings['loop_button_position'], 'on_image' ); ?>><?php esc_html_e( 'On top of the image', 'advanced-wc-wishlist' ); ?></option>
+                                            <option value="before_add_to_cart" <?php selected( $settings['loop_button_position'], 'before_add_to_cart' ); ?>><?php esc_html_e( 'Before "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
+                                            <option value="after_add_to_cart" <?php selected( $settings['loop_button_position'], 'after_add_to_cart' ); ?>><?php esc_html_e( 'After "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
+                                            <option value="shortcode" <?php selected( $settings['loop_button_position'], 'shortcode' ); ?>><?php esc_html_e( 'Use shortcode', 'advanced-wc-wishlist' ); ?></option>
+                                        </select>
+                                        <p class="description"><?php esc_html_e( 'Choose where to show the wishlist button in product loops (shop, category, etc).', 'advanced-wc-wishlist' ); ?></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Floating Icon Tab -->
+                        <div id="floating" class="tab-content">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Enable Floating Icon', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_enable_floating_icon" value="yes" <?php checked( $settings['enable_floating_icon'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Show floating wishlist icon/counter', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_floating_icon_position"><?php esc_html_e( 'Floating Icon Position', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <select name="aww_floating_icon_position" id="aww_floating_icon_position">
+                                            <option value="top_right" <?php selected( $settings['floating_icon_position'], 'top_right' ); ?>><?php esc_html_e( 'Top Right', 'advanced-wc-wishlist' ); ?></option>
+                                            <option value="top_left" <?php selected( $settings['floating_icon_position'], 'top_left' ); ?>><?php esc_html_e( 'Top Left', 'advanced-wc-wishlist' ); ?></option>
+                                            <option value="bottom_right" <?php selected( $settings['floating_icon_position'], 'bottom_right' ); ?>><?php esc_html_e( 'Bottom Right', 'advanced-wc-wishlist' ); ?></option>
+                                            <option value="bottom_left" <?php selected( $settings['floating_icon_position'], 'bottom_left' ); ?>><?php esc_html_e( 'Bottom Left', 'advanced-wc-wishlist' ); ?></option>
+                                            <option value="header" <?php selected( $settings['floating_icon_position'], 'header' ); ?>><?php esc_html_e( 'Header', 'advanced-wc-wishlist' ); ?></option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_floating_icon_style"><?php esc_html_e( 'Floating Icon Style', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <select name="aww_floating_icon_style" id="aww_floating_icon_style">
+                                            <option value="circle" <?php selected( $settings['floating_icon_style'], 'circle' ); ?>><?php esc_html_e( 'Circle', 'advanced-wc-wishlist' ); ?></option>
+                                            <option value="square" <?php selected( $settings['floating_icon_style'], 'square' ); ?>><?php esc_html_e( 'Square', 'advanced-wc-wishlist' ); ?></option>
+                                            <option value="minimal" <?php selected( $settings['floating_icon_style'], 'minimal' ); ?>><?php esc_html_e( 'Minimal', 'advanced-wc-wishlist' ); ?></option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_floating_icon_custom_css"><?php esc_html_e( 'Custom Floating Icon CSS', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <textarea name="aww_floating_icon_custom_css" id="aww_floating_icon_custom_css" rows="5" cols="50"><?php echo esc_textarea( $settings['floating_icon_custom_css'] ); ?></textarea>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Sharing Tab -->
+                        <div id="sharing" class="tab-content">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Enable Sharing', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_enable_sharing" value="yes" <?php checked( $settings['enable_sharing'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Enable social sharing functionality', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_sharing_networks"><?php esc_html_e( 'Sharing Networks', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <?php
+                                        $networks = array(
+                                            'facebook'  => 'Facebook',
+                                            'twitter'   => 'Twitter',
+                                            'whatsapp'  => 'WhatsApp',
+                                            'email'     => 'Email',
+                                            'pinterest' => 'Pinterest',
+                                            'linkedin'  => 'LinkedIn',
+                                        );
+                                        $selected_networks = !empty($settings['sharing_networks']) ? explode(',', $settings['sharing_networks']) : array('facebook', 'twitter', 'whatsapp', 'email');
+                                        foreach ( $networks as $key => $label ) {
+                                            echo '<label style="margin-right: 15px;"><input type="checkbox" name="aww_sharing_networks[]" value="' . esc_attr( $key ) . '" ' . checked( in_array( $key, $selected_networks ), true, false ) . '> ' . esc_html( $label ) . '</label>';
+                                        }
+                                        ?>
+                                        <p class="description"><?php esc_html_e( 'Select the social networks to enable for sharing.', 'advanced-wc-wishlist' ); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_sharing_message"><?php esc_html_e( 'Custom Sharing Message', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="text" name="aww_sharing_message" id="aww_sharing_message" value="<?php echo esc_attr( $settings['sharing_message'] ); ?>" class="regular-text" />
+                                        <p class="description"><?php esc_html_e( 'Use {product_name} and {site_name} as placeholders', 'advanced-wc-wishlist' ); ?></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Behavior Tab -->
+                        <div id="behavior" class="tab-content">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Require Login', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_require_login" value="yes" <?php checked( $settings['require_login'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Require users to login before adding to wishlist', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Merge Guest Wishlist', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_merge_guest_on_login" value="yes" <?php checked( $settings['merge_guest_on_login'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Merge guest wishlist items when user logs in', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Remove After Add to Cart', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_remove_after_add_to_cart" value="yes" <?php checked( $settings['remove_after_add_to_cart'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Remove item from wishlist after adding to cart', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Redirect to Cart', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_redirect_to_cart" value="yes" <?php checked( $settings['redirect_to_cart'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Redirect to cart page after adding to cart from wishlist', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Page & Shortcode Tab -->
+                        <div id="page" class="tab-content">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_wishlist_page"><?php esc_html_e( 'Wishlist Page', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <select name="aww_wishlist_page" id="aww_wishlist_page">
+                                            <?php foreach ( $this->get_pages_list() as $page_id => $page_title ) : ?>
+                                                <option value="<?php echo esc_attr( $page_id ); ?>" <?php selected( $settings['wishlist_page'], $page_id ); ?>>
+                                                    <?php echo esc_html( $page_title ); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <p class="description"><?php esc_html_e( 'Select the page where your wishlist will be displayed.', 'advanced-wc-wishlist' ); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Wishlist Page Status', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <?php 
+                                        $wishlist_page_id = get_option( 'aww_wishlist_page' );
+                                        if ( $wishlist_page_id ) {
+                                            $page = get_post( $wishlist_page_id );
+                                            if ( $page && $page->post_type === 'page' && $page->post_status === 'publish' ) {
+                                                echo '<span style="color: green;">✓ ' . esc_html__( 'Wishlist page exists and is accessible', 'advanced-wc-wishlist' ) . '</span>';
+                                                echo '<br><a href="' . esc_url( get_permalink( $wishlist_page_id ) ) . '" target="_blank">' . esc_html__( 'View Wishlist Page', 'advanced-wc-wishlist' ) . '</a>';
+                                            } else {
+                                                echo '<span style="color: red;">✗ ' . esc_html__( 'Wishlist page not found or not accessible', 'advanced-wc-wishlist' ) . '</span>';
+                                            }
+                                        } else {
+                                            echo '<span style="color: orange;">⚠ ' . esc_html__( 'No wishlist page configured', 'advanced-wc-wishlist' ) . '</span>';
+                                        }
+                                        ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Recreate Wishlist Page', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=aww-settings&action=recreate_wishlist_page' ), 'recreate_wishlist_page' ) ); ?>" class="button button-secondary">
+                                            <?php esc_html_e( 'Recreate Wishlist Page', 'advanced-wc-wishlist' ); ?>
+                                        </a>
+                                        <p class="description"><?php esc_html_e( 'Click this button to recreate the wishlist page if it\'s missing or not working properly.', 'advanced-wc-wishlist' ); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_wishlist_shortcode"><?php esc_html_e( 'Wishlist Shortcode', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="text" name="aww_wishlist_shortcode" id="aww_wishlist_shortcode" value="<?php echo esc_attr( $settings['wishlist_shortcode'] ); ?>" class="regular-text" />
+                                        <p class="description"><?php esc_html_e( 'Default: [aww_wishlist]', 'advanced-wc-wishlist' ); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_wishlist_endpoint"><?php esc_html_e( 'Wishlist Endpoint', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="text" name="aww_wishlist_endpoint" id="aww_wishlist_endpoint" value="<?php echo esc_attr( $settings['wishlist_endpoint'] ); ?>" class="regular-text" />
+                                        <p class="description"><?php esc_html_e( 'Default: wishlist', 'advanced-wc-wishlist' ); ?></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Display & UX Tab -->
+                        <div id="display" class="tab-content">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Enable Modal Popups', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_enable_modal" value="yes" <?php checked( $settings['enable_modal'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Show modal popups for wishlist actions', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Enable Tooltips', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_enable_tooltips" value="yes" <?php checked( $settings['enable_tooltips'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Show tooltips on wishlist elements', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Enable AJAX Feedback', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_enable_ajax_feedback" value="yes" <?php checked( $settings['enable_ajax_feedback'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Show AJAX feedback messages', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Enable Responsive Styles', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_enable_responsive" value="yes" <?php checked( $settings['enable_responsive'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Enable responsive design for mobile devices', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Enable Accessibility Features', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_enable_accessibility" value="yes" <?php checked( $settings['enable_accessibility'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Enable accessibility features (ARIA labels, keyboard navigation)', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php esc_html_e( 'Enable RTL Support', 'advanced-wc-wishlist' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="aww_enable_rtl" value="yes" <?php checked( $settings['enable_rtl'], 'yes' ); ?> />
+                                            <?php esc_html_e( 'Enable right-to-left language support', 'advanced-wc-wishlist' ); ?>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <label for="aww_custom_css"><?php esc_html_e( 'Custom CSS', 'advanced-wc-wishlist' ); ?></label>
+                                    </th>
+                                    <td>
+                                        <textarea name="aww_custom_css" id="aww_custom_css" rows="10" cols="50"><?php echo esc_textarea( $settings['custom_css'] ); ?></textarea>
+                                        <p class="description"><?php esc_html_e( 'Add custom CSS to style wishlist elements', 'advanced-wc-wishlist' ); ?></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Shortcodes Tab -->
+                        <div id="shortcodes" class="tab-content">
+                            <h3><?php esc_html_e( 'Available Shortcodes', 'advanced-wc-wishlist' ); ?></h3>
+                            <p><?php esc_html_e( 'Use these shortcodes to display wishlist functionality anywhere on your site:', 'advanced-wc-wishlist' ); ?></p>
+                            
+                            <table class="widefat">
+                                <thead>
+                                    <tr>
+                                        <th><?php esc_html_e( 'Shortcode', 'advanced-wc-wishlist' ); ?></th>
+                                        <th><?php esc_html_e( 'Description', 'advanced-wc-wishlist' ); ?></th>
+                                        <th><?php esc_html_e( 'Attributes', 'advanced-wc-wishlist' ); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>[aww_wishlist]</code></td>
+                                        <td><?php esc_html_e( 'Display the full wishlist page', 'advanced-wc-wishlist' ); ?></td>
+                                        <td><code>wishlist_id="1"</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[aww_wishlist_count]</code></td>
+                                        <td><?php esc_html_e( 'Display wishlist item count', 'advanced-wc-wishlist' ); ?></td>
+                                        <td><code>wishlist_id="1" show_text="yes" show_icon="yes"</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[aww_wishlist_button]</code></td>
+                                        <td><?php esc_html_e( 'Display wishlist button for current product', 'advanced-wc-wishlist' ); ?></td>
+                                        <td><code>product_id="123" style="default" size="medium"</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[aww_wishlist_products]</code></td>
+                                        <td><?php esc_html_e( 'Display wishlist products in a grid', 'advanced-wc-wishlist' ); ?></td>
+                                        <td><code>columns="3" show_price="yes" show_add_to_cart="yes"</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[aww_popular_wishlisted]</code></td>
+                                        <td><?php esc_html_e( 'Display most popular wishlisted products', 'advanced-wc-wishlist' ); ?></td>
+                                        <td><code>limit="10" columns="4" show_count="yes"</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[aww_wishlist_manager]</code></td>
+                                        <td><?php esc_html_e( 'Display wishlist management interface', 'advanced-wc-wishlist' ); ?></td>
+                                        <td><code>show_create="yes" show_rename="yes" show_delete="yes"</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php submit_button(); ?>
+                    </div>
                 </div>
-
-                <!-- Button Settings Tab -->
-                <div id="button" class="tab-content">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_position"><?php esc_html_e( 'Button Position', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <select name="aww_button_position" id="aww_button_position">
-                                    <option value="after_add_to_cart" <?php selected( $settings['button_position'], 'after_add_to_cart' ); ?>>
-                                        <?php esc_html_e( 'After Add to Cart Button', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-                                    <option value="before_add_to_cart" <?php selected( $settings['button_position'], 'before_add_to_cart' ); ?>>
-                                        <?php esc_html_e( 'Before Add to Cart Button', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-                                    <option value="after_title" <?php selected( $settings['button_position'], 'after_title' ); ?>>
-                                        <?php esc_html_e( 'After Product Title', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-                                    <option value="after_price" <?php selected( $settings['button_position'], 'after_price' ); ?>>
-                                        <?php esc_html_e( 'After Product Price', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-									<option value="after_meta" <?php selected( $settings['button_position'], 'after_meta' ); ?>>
-                                        <?php esc_html_e( 'After Product Meta', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-                                    <option value="custom" <?php selected( $settings['button_position'], 'custom' ); ?>><?php esc_html_e( 'Custom (use shortcode)', 'advanced-wc-wishlist' ); ?></option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_font_size"><?php esc_html_e( 'Button Font Size (px)', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="number" name="aww_button_font_size" id="aww_button_font_size" value="<?php echo esc_attr( $settings['button_font_size'] ); ?>" min="10" max="50" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_icon_size"><?php esc_html_e( 'Button Icon Size (px)', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="number" name="aww_button_icon_size" id="aww_button_icon_size" value="<?php echo esc_attr( $settings['button_icon_size'] ); ?>" min="16" max="100" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_text"><?php esc_html_e( 'Button Text', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="text" name="aww_button_text" id="aww_button_text" value="<?php echo esc_attr( $settings['button_text'] ); ?>" class="regular-text" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_text_added"><?php esc_html_e( 'Button Text (Added)', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="text" name="aww_button_text_added" id="aww_button_text_added" value="<?php echo esc_attr( $settings['button_text_added'] ); ?>" class="regular-text" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_text_color"><?php esc_html_e( 'Button Text Color', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="color" name="aww_button_text_color" id="aww_button_text_color" value="<?php echo esc_attr( $settings['button_text_color'] ); ?>" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_icon_color"><?php esc_html_e( 'Button Icon Color', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="color" name="aww_button_icon_color" id="aww_button_icon_color" value="<?php echo esc_attr( $settings['button_icon_color'] ); ?>" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_tooltip"><?php esc_html_e( 'Button Tooltip', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="text" name="aww_button_tooltip" id="aww_button_tooltip" value="<?php echo esc_attr( $settings['button_tooltip'] ); ?>" class="regular-text" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_custom_css"><?php esc_html_e( 'Custom Button CSS', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <textarea name="aww_button_custom_css" id="aww_button_custom_css" rows="5" cols="50"><?php echo esc_textarea( $settings['button_custom_css'] ); ?></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_button_icon"><?php esc_html_e( 'Button Icon', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <select name="aww_button_icon" id="aww_button_icon">
-                                    <option value="heart" <?php selected( $settings['button_icon'], 'heart' ); ?>>
-                                        <?php esc_html_e( 'Heart', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-                                    <option value="star" <?php selected( $settings['button_icon'], 'star' ); ?>>
-                                        <?php esc_html_e( 'Star', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-                                    <option value="plus" <?php selected( $settings['button_icon'], 'plus' ); ?>>
-                                        <?php esc_html_e( 'Plus', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-                                    <option value="bookmark" <?php selected( $settings['button_icon'], 'bookmark' ); ?>>
-                                        <?php esc_html_e( 'Bookmark', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-                                    <option value="gift" <?php selected( $settings['button_icon'], 'gift' ); ?>>
-                                        <?php esc_html_e( 'Gift', 'advanced-wc-wishlist' ); ?>
-                                    </option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <!-- Loop Settings Tab -->
-                <div id="loop" class="tab-content">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Position of "Add to wishlist" in loop', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <select name="aww_loop_button_position" id="aww_loop_button_position">
-                                    <option value="on_image" <?php selected( $settings['loop_button_position'], 'on_image' ); ?>><?php esc_html_e( 'On top of the image', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="before_add_to_cart" <?php selected( $settings['loop_button_position'], 'before_add_to_cart' ); ?>><?php esc_html_e( 'Before "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="after_add_to_cart" <?php selected( $settings['loop_button_position'], 'after_add_to_cart' ); ?>><?php esc_html_e( 'After "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="shortcode" <?php selected( $settings['loop_button_position'], 'shortcode' ); ?>><?php esc_html_e( 'Use shortcode', 'advanced-wc-wishlist' ); ?></option>
-                                </select>
-                                <p class="description"><?php esc_html_e( 'Choose where to show the wishlist button in product loops (shop, category, etc).', 'advanced-wc-wishlist' ); ?></p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <!-- Floating Icon Tab -->
-                <div id="floating" class="tab-content">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Enable Floating Icon', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_floating_icon" value="yes" <?php checked( $settings['enable_floating_icon'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Show floating wishlist icon/counter', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_floating_icon_position"><?php esc_html_e( 'Floating Icon Position', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <select name="aww_floating_icon_position" id="aww_floating_icon_position">
-                                    <option value="top_right" <?php selected( $settings['floating_icon_position'], 'top_right' ); ?>><?php esc_html_e( 'Top Right', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="top_left" <?php selected( $settings['floating_icon_position'], 'top_left' ); ?>><?php esc_html_e( 'Top Left', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="bottom_right" <?php selected( $settings['floating_icon_position'], 'bottom_right' ); ?>><?php esc_html_e( 'Bottom Right', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="bottom_left" <?php selected( $settings['floating_icon_position'], 'bottom_left' ); ?>><?php esc_html_e( 'Bottom Left', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="header" <?php selected( $settings['floating_icon_position'], 'header' ); ?>><?php esc_html_e( 'Header', 'advanced-wc-wishlist' ); ?></option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_floating_icon_style"><?php esc_html_e( 'Floating Icon Style', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <select name="aww_floating_icon_style" id="aww_floating_icon_style">
-                                    <option value="circle" <?php selected( $settings['floating_icon_style'], 'circle' ); ?>><?php esc_html_e( 'Circle', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="square" <?php selected( $settings['floating_icon_style'], 'square' ); ?>><?php esc_html_e( 'Square', 'advanced-wc-wishlist' ); ?></option>
-                                    <option value="minimal" <?php selected( $settings['floating_icon_style'], 'minimal' ); ?>><?php esc_html_e( 'Minimal', 'advanced-wc-wishlist' ); ?></option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_floating_icon_custom_css"><?php esc_html_e( 'Custom Floating Icon CSS', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <textarea name="aww_floating_icon_custom_css" id="aww_floating_icon_custom_css" rows="5" cols="50"><?php echo esc_textarea( $settings['floating_icon_custom_css'] ); ?></textarea>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <!-- Sharing Tab -->
-                <div id="sharing" class="tab-content">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Enable Sharing', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_sharing" value="yes" <?php checked( $settings['enable_sharing'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Enable social sharing functionality', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_sharing_networks"><?php esc_html_e( 'Sharing Networks', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <?php
-                                $networks = array(
-                                    'facebook'  => 'Facebook',
-                                    'twitter'   => 'Twitter',
-                                    'whatsapp'  => 'WhatsApp',
-                                    'email'     => 'Email',
-                                    'pinterest' => 'Pinterest',
-                                    'linkedin'  => 'LinkedIn',
-                                );
-                                $selected_networks = !empty($settings['sharing_networks']) ? explode(',', $settings['sharing_networks']) : array('facebook', 'twitter', 'whatsapp', 'email');
-                                foreach ( $networks as $key => $label ) {
-                                    echo '<label style="margin-right: 15px;"><input type="checkbox" name="aww_sharing_networks[]" value="' . esc_attr( $key ) . '" ' . checked( in_array( $key, $selected_networks ), true, false ) . '> ' . esc_html( $label ) . '</label>';
-                                }
-                                ?>
-                                <p class="description"><?php esc_html_e( 'Select the social networks to enable for sharing.', 'advanced-wc-wishlist' ); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_sharing_message"><?php esc_html_e( 'Custom Sharing Message', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="text" name="aww_sharing_message" id="aww_sharing_message" value="<?php echo esc_attr( $settings['sharing_message'] ); ?>" class="regular-text" />
-                                <p class="description"><?php esc_html_e( 'Use {product_name} and {site_name} as placeholders', 'advanced-wc-wishlist' ); ?></p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <!-- Behavior Tab -->
-                <div id="behavior" class="tab-content">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Require Login', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_require_login" value="yes" <?php checked( $settings['require_login'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Require users to login before adding to wishlist', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Merge Guest Wishlist', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_merge_guest_on_login" value="yes" <?php checked( $settings['merge_guest_on_login'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Merge guest wishlist items when user logs in', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Remove After Add to Cart', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_remove_after_add_to_cart" value="yes" <?php checked( $settings['remove_after_add_to_cart'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Remove item from wishlist after adding to cart', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Redirect to Cart', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_redirect_to_cart" value="yes" <?php checked( $settings['redirect_to_cart'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Redirect to cart page after adding to cart from wishlist', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <!-- Page & Shortcode Tab -->
-                <div id="page" class="tab-content">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_wishlist_page"><?php esc_html_e( 'Wishlist Page', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <select name="aww_wishlist_page" id="aww_wishlist_page">
-                                    <?php foreach ( $this->get_pages_list() as $page_id => $page_title ) : ?>
-                                        <option value="<?php echo esc_attr( $page_id ); ?>" <?php selected( $settings['wishlist_page'], $page_id ); ?>>
-                                            <?php echo esc_html( $page_title ); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <p class="description"><?php esc_html_e( 'Select the page where your wishlist will be displayed.', 'advanced-wc-wishlist' ); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Wishlist Page Status', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <?php 
-                                $wishlist_page_id = get_option( 'aww_wishlist_page' );
-                                if ( $wishlist_page_id ) {
-                                    $page = get_post( $wishlist_page_id );
-                                    if ( $page && $page->post_type === 'page' && $page->post_status === 'publish' ) {
-                                        echo '<span style="color: green;">✓ ' . esc_html__( 'Wishlist page exists and is accessible', 'advanced-wc-wishlist' ) . '</span>';
-                                        echo '<br><a href="' . esc_url( get_permalink( $wishlist_page_id ) ) . '" target="_blank">' . esc_html__( 'View Wishlist Page', 'advanced-wc-wishlist' ) . '</a>';
-                                    } else {
-                                        echo '<span style="color: red;">✗ ' . esc_html__( 'Wishlist page not found or not accessible', 'advanced-wc-wishlist' ) . '</span>';
-                                    }
-                                } else {
-                                    echo '<span style="color: orange;">⚠ ' . esc_html__( 'No wishlist page configured', 'advanced-wc-wishlist' ) . '</span>';
-                                }
-                                ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Recreate Wishlist Page', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=aww-settings&action=recreate_wishlist_page' ), 'recreate_wishlist_page' ) ); ?>" class="button button-secondary">
-                                    <?php esc_html_e( 'Recreate Wishlist Page', 'advanced-wc-wishlist' ); ?>
-                                </a>
-                                <p class="description"><?php esc_html_e( 'Click this button to recreate the wishlist page if it\'s missing or not working properly.', 'advanced-wc-wishlist' ); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_wishlist_shortcode"><?php esc_html_e( 'Wishlist Shortcode', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="text" name="aww_wishlist_shortcode" id="aww_wishlist_shortcode" value="<?php echo esc_attr( $settings['wishlist_shortcode'] ); ?>" class="regular-text" />
-                                <p class="description"><?php esc_html_e( 'Default: [aww_wishlist]', 'advanced-wc-wishlist' ); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_wishlist_endpoint"><?php esc_html_e( 'Wishlist Endpoint', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <input type="text" name="aww_wishlist_endpoint" id="aww_wishlist_endpoint" value="<?php echo esc_attr( $settings['wishlist_endpoint'] ); ?>" class="regular-text" />
-                                <p class="description"><?php esc_html_e( 'Default: wishlist', 'advanced-wc-wishlist' ); ?></p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <!-- Display & UX Tab -->
-                <div id="display" class="tab-content">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Enable Modal Popups', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_modal" value="yes" <?php checked( $settings['enable_modal'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Show modal popups for wishlist actions', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Enable Tooltips', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_tooltips" value="yes" <?php checked( $settings['enable_tooltips'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Show tooltips on wishlist elements', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Enable AJAX Feedback', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_ajax_feedback" value="yes" <?php checked( $settings['enable_ajax_feedback'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Show AJAX feedback messages', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Enable Responsive Styles', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_responsive" value="yes" <?php checked( $settings['enable_responsive'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Enable responsive design for mobile devices', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Enable Accessibility Features', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_accessibility" value="yes" <?php checked( $settings['enable_accessibility'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Enable accessibility features (ARIA labels, keyboard navigation)', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'Enable RTL Support', 'advanced-wc-wishlist' ); ?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" name="aww_enable_rtl" value="yes" <?php checked( $settings['enable_rtl'], 'yes' ); ?> />
-                                    <?php esc_html_e( 'Enable right-to-left language support', 'advanced-wc-wishlist' ); ?>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <label for="aww_custom_css"><?php esc_html_e( 'Custom CSS', 'advanced-wc-wishlist' ); ?></label>
-                            </th>
-                            <td>
-                                <textarea name="aww_custom_css" id="aww_custom_css" rows="10" cols="50"><?php echo esc_textarea( $settings['custom_css'] ); ?></textarea>
-                                <p class="description"><?php esc_html_e( 'Add custom CSS to style wishlist elements', 'advanced-wc-wishlist' ); ?></p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <!-- Shortcodes Tab -->
-                <div id="shortcodes" class="tab-content">
-                    <h3><?php esc_html_e( 'Available Shortcodes', 'advanced-wc-wishlist' ); ?></h3>
-                    <p><?php esc_html_e( 'Use these shortcodes to display wishlist functionality anywhere on your site:', 'advanced-wc-wishlist' ); ?></p>
-                    
-                    <table class="widefat">
-                        <thead>
-                            <tr>
-                                <th><?php esc_html_e( 'Shortcode', 'advanced-wc-wishlist' ); ?></th>
-                                <th><?php esc_html_e( 'Description', 'advanced-wc-wishlist' ); ?></th>
-                                <th><?php esc_html_e( 'Attributes', 'advanced-wc-wishlist' ); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>[aww_wishlist]</code></td>
-                                <td><?php esc_html_e( 'Display the full wishlist page', 'advanced-wc-wishlist' ); ?></td>
-                                <td><code>wishlist_id="1"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>[aww_wishlist_count]</code></td>
-                                <td><?php esc_html_e( 'Display wishlist item count', 'advanced-wc-wishlist' ); ?></td>
-                                <td><code>wishlist_id="1" show_text="yes" show_icon="yes"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>[aww_wishlist_button]</code></td>
-                                <td><?php esc_html_e( 'Display wishlist button for current product', 'advanced-wc-wishlist' ); ?></td>
-                                <td><code>product_id="123" style="default" size="medium"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>[aww_wishlist_products]</code></td>
-                                <td><?php esc_html_e( 'Display wishlist products in a grid', 'advanced-wc-wishlist' ); ?></td>
-                                <td><code>columns="3" show_price="yes" show_add_to_cart="yes"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>[aww_popular_wishlisted]</code></td>
-                                <td><?php esc_html_e( 'Display most popular wishlisted products', 'advanced-wc-wishlist' ); ?></td>
-                                <td><code>limit="10" columns="4" show_count="yes"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>[aww_wishlist_manager]</code></td>
-                                <td><?php esc_html_e( 'Display wishlist management interface', 'advanced-wc-wishlist' ); ?></td>
-                                <td><code>show_create="yes" show_rename="yes" show_delete="yes"</code></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <?php submit_button(); ?>
-            </form>
+            </div>
         </div>
-
         <style>
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .nav-tab-wrapper { margin-bottom: 20px; }
+        .nav-tab.nav-tab-active { font-weight: bold; }
         </style>
-
         <script>
         jQuery(document).ready(function($) {
             $('.nav-tab').click(function(e) {
                 e.preventDefault();
                 var target = $(this).attr('href');
-                
                 $('.nav-tab').removeClass('nav-tab-active');
                 $(this).addClass('nav-tab-active');
-                
                 $('.tab-content').removeClass('active');
                 $(target).addClass('active');
             });
@@ -1862,6 +1851,15 @@ class AWW_Admin {
      * @param string $hook Current admin page
      */
     public function enqueue_admin_scripts( $hook ) {
+        // Only load on our settings page
+        if ( $hook === 'woocommerce_page_aww-settings' ) {
+            wp_enqueue_style(
+                'aww-admin-beauty',
+                AWW_PLUGIN_URL . 'assets/css/admin-beauty.css',
+                array(),
+                AWW_VERSION
+            );
+        }
         if ( 'woocommerce_page_aww-analytics' === $hook ) {
             wp_enqueue_script(
                 'aww-admin-analytics',

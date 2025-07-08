@@ -176,52 +176,6 @@ final class Advanced_WC_Wishlist {
 
         // Hook into WooCommerce
         $this->hook_woocommerce();
-
-        // Check and recreate wishlist page if needed
-        $this->ensure_wishlist_page_exists();
-    }
-
-    /**
-     * Ensure wishlist page exists
-     */
-    private function ensure_wishlist_page_exists() {
-        $wishlist_page_id = get_option( 'aww_wishlist_page' );
-        
-        // If no page ID is stored, or the page doesn't exist, recreate it
-        if ( ! $wishlist_page_id ) {
-            $this->create_wishlist_page();
-            add_action( 'admin_notices', array( $this, 'wishlist_page_created_notice' ) );
-            return;
-        }
-        
-        // Check if the page actually exists
-        $page = get_post( $wishlist_page_id );
-        if ( ! $page || $page->post_type !== 'page' || $page->post_status !== 'publish' ) {
-            $this->create_wishlist_page();
-            add_action( 'admin_notices', array( $this, 'wishlist_page_created_notice' ) );
-        }
-    }
-
-    /**
-     * Wishlist page created notice
-     */
-    public function wishlist_page_created_notice() {
-        $wishlist_page_id = get_option( 'aww_wishlist_page' );
-        if ( $wishlist_page_id ) {
-            ?>
-            <div class="notice notice-success is-dismissible">
-                <p>
-                    <?php 
-                    printf( 
-                        esc_html__( 'Advanced WooCommerce Wishlist: Wishlist page has been created successfully! %sView Wishlist Page%s', 'advanced-wc-wishlist' ),
-                        '<a href="' . esc_url( get_permalink( $wishlist_page_id ) ) . '" target="_blank">',
-                        '</a>'
-                    ); 
-                    ?>
-                </p>
-            </div>
-            <?php
-        }
     }
 
     /**
@@ -400,81 +354,36 @@ final class Advanced_WC_Wishlist {
         // Set default options
         $this->set_default_options();
 
-        // Create or find wishlist page
-        $this->create_wishlist_page();
-    }
-
-    /**
-     * Create or find wishlist page
-     */
-    private function create_wishlist_page() {
-        $wishlist_page_id = get_option( 'aww_wishlist_page' );
-        
-        // If we already have a valid page ID, verify it still exists and is actually a wishlist page
-        if ( $wishlist_page_id ) {
-            $page = get_post( $wishlist_page_id );
-            if ( $page && $page->post_type === 'page' && $page->post_status === 'publish' ) {
-                // Check if this page is actually a wishlist page (has the shortcode or correct slug)
-                if ( $page->post_name === 'wishlist' || has_shortcode( $page->post_content, 'aww_wishlist' ) ) {
-                    return; // Page exists and is valid wishlist page
-                }
-            }
-        }
-
-        // First, try to find existing wishlist page by slug (most reliable)
-        $page = get_page_by_path( 'wishlist' );
-        
-        if ( ! $page ) {
-            // Try to find by exact title match (more specific)
-            $pages = get_pages( array(
-                'title' => 'Wishlist',
-                'post_type' => 'page',
-                'post_status' => 'publish',
-                'numberposts' => 1
-            ) );
+        if ( ! get_option( 'aww_wishlist_page' ) ) {
+            // Check if page already exists using modern approach
+            $page = get_page_by_path( 'wishlist' );
             
-            // Only use this page if it has the wishlist shortcode or correct slug
-            if ( ! empty( $pages ) ) {
-                $potential_page = $pages[0];
-                if ( $potential_page->post_name === 'wishlist' || has_shortcode( $potential_page->post_content, 'aww_wishlist' ) ) {
-                    $page = $potential_page;
-                }
-            }
-        }
-
-        if ( ! $page ) {
-            // Create new wishlist page
-            $page_id = wp_insert_post( array(
-                'post_title'   => __( 'Wishlist', 'advanced-wc-wishlist' ),
-                'post_name'    => 'wishlist',
-                'post_content' => '[aww_wishlist]',
-                'post_status'  => 'publish',
-                'post_type'    => 'page',
-                'post_author'  => 1,
-            ) );
-
-            if ( is_wp_error( $page_id ) ) {
-                // Log error for debugging
-                error_log( 'Advanced WC Wishlist: Failed to create wishlist page - ' . $page_id->get_error_message() );
-                return;
-            }
-
-            if ( $page_id ) {
-                update_option( 'aww_wishlist_page', $page_id );
-                
-                // Flush rewrite rules to ensure the page is accessible
-                flush_rewrite_rules();
-            }
-        } else {
-            // Use existing page
-            update_option( 'aww_wishlist_page', $page->ID );
-            
-            // Update content if it doesn't have the shortcode
-            if ( ! has_shortcode( $page->post_content, 'aww_wishlist' ) ) {
-                wp_update_post( array(
-                    'ID' => $page->ID,
-                    'post_content' => $page->post_content . "\n\n[aww_wishlist]"
+            if ( ! $page ) {
+                // Try to find by title as fallback
+                $pages = get_pages( array(
+                    'title' => 'Wishlist',
+                    'post_type' => 'page',
+                    'post_status' => 'publish',
+                    'numberposts' => 1
                 ) );
+                $page = ! empty( $pages ) ? $pages[0] : null;
+            }
+
+            if ( ! $page ) {
+                // Create page
+                $page_id = wp_insert_post( array(
+                    'post_title'   => 'Wishlist',
+                    'post_name'    => 'wishlist',
+                    'post_content' => '[aww_wishlist]',
+                    'post_status'  => 'publish',
+                    'post_type'    => 'page',
+                ) );
+
+                if ( $page_id ) {
+                    update_option( 'aww_wishlist_page', $page_id );
+                }
+            } else {
+                update_option( 'aww_wishlist_page', $page->ID );
             }
         }
     }
@@ -570,14 +479,6 @@ final class Advanced_WC_Wishlist {
             return false;
         }
         return AWW()->database->is_product_in_wishlist( $product_id, $wishlist_id );
-    }
-
-    /**
-     * Force recreate wishlist page
-     */
-    public static function force_recreate_wishlist_page() {
-        $instance = self::instance();
-        $instance->create_wishlist_page();
     }
 }
 
