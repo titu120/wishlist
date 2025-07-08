@@ -14,7 +14,7 @@
  *
  * Plugin Name: Advanced WooCommerce Wishlist
  * Plugin URI: https://example.com/advanced-wc-wishlist
- * Description: Feature-rich wishlist plugin with AJAX functionality, guest wishlists, social sharing, and analytics for WooCommerce stores
+ * Description: Feature-rich wishlist plugin with AJAX functionality, guest wishlists, and social sharing for WooCommerce stores
  * Version: 1.0.0
  * Author: [Your Name]
  * Author URI: https://example.com
@@ -144,7 +144,7 @@ final class Advanced_WC_Wishlist {
             \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
             \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'product_block_editor', __FILE__, true );
             \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'product_editor', __FILE__, true );
-            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'analytics', __FILE__, true );
+    
         }
     }
 

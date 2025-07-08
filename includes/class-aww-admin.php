@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * AWW_Admin Class
  *
- * Handles admin functionality, settings, and analytics
+ * Handles admin functionality and settings
  *
  * @since 1.0.0
  */
@@ -62,7 +62,7 @@ class AWW_Admin {
         add_action('admin_post_aww_export_wishlist', array($this, 'handle_export_wishlist'));
 
         // Add admin AJAX actions
-        add_action( 'wp_ajax_aww_get_analytics', array( $this, 'get_analytics' ) );
+
         add_action( 'wp_ajax_aww_export_data', array( $this, 'export_data' ) );
         add_action( 'wp_ajax_aww_clean_expired', array( $this, 'clean_expired' ) );
 
@@ -88,14 +88,7 @@ class AWW_Admin {
             array($this, 'settings_page')
         );
 
-        add_submenu_page(
-            'woocommerce',
-            __('Wishlist Analytics', 'advanced-wc-wishlist'),
-            __('Wishlist Analytics', 'advanced-wc-wishlist'),
-            'manage_woocommerce',
-            'aww-analytics',
-            array($this, 'analytics_page')
-        );
+
     }
 
     /**
@@ -245,7 +238,7 @@ class AWW_Admin {
                 'after_title' => __('After product title', 'advanced-wc-wishlist'),
                 'after_price' => __('After price', 'advanced-wc-wishlist'),
                 'after_meta' => __('After product meta', 'advanced-wc-wishlist'),
-                'custom' => __('Custom (use shortcode)', 'advanced-wc-wishlist'),
+               
             ))
         );
 
@@ -373,7 +366,7 @@ class AWW_Admin {
                     'on_image' => __('On top of the image', 'advanced-wc-wishlist'),
                     'before_add_to_cart' => __('Before "Add to cart" button', 'advanced-wc-wishlist'),
                     'after_add_to_cart' => __('After "Add to cart" button', 'advanced-wc-wishlist'),
-                    'shortcode' => __('Use shortcode', 'advanced-wc-wishlist'),
+
                 )
             )
         );
@@ -623,7 +616,7 @@ class AWW_Admin {
                     'on_image' => __('On top of the image', 'advanced-wc-wishlist'),
                     'before_add_to_cart' => __('Before "Add to cart" button', 'advanced-wc-wishlist'),
                     'after_add_to_cart' => __('After "Add to cart" button', 'advanced-wc-wishlist'),
-                    'shortcode' => __('Use shortcode', 'advanced-wc-wishlist'),
+   
                 )
             )
         );
@@ -779,83 +772,6 @@ class AWW_Admin {
     }
 
     /**
-     * Get analytics data for multiple wishlists
-     */
-    public function get_analytics_data() {
-        global $wpdb;
-        $analytics = array();
-
-        // Basic analytics
-        $analytics['total_items'] = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}aww_wishlists");
-        $analytics['total_wishlists'] = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}aww_wishlist_lists");
-        $analytics['unique_users'] = $wpdb->get_var("SELECT COUNT(DISTINCT user_id) FROM {$wpdb->prefix}aww_wishlist_lists WHERE user_id IS NOT NULL");
-        $analytics['guest_sessions'] = $wpdb->get_var("SELECT COUNT(DISTINCT session_id) FROM {$wpdb->prefix}aww_wishlist_lists WHERE session_id IS NOT NULL");
-
-        // Items added today
-        $analytics['items_today'] = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->prefix}aww_wishlists WHERE DATE(date_added) = %s",
-            current_time('Y-m-d')
-        ));
-
-        // Items added this week
-        $analytics['items_this_week'] = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->prefix}aww_wishlists WHERE YEARWEEK(date_added) = YEARWEEK(%s)",
-            current_time('Y-m-d')
-        ));
-
-        // Items added this month
-        $analytics['items_this_month'] = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->prefix}aww_wishlists WHERE YEAR(date_added) = YEAR(%s) AND MONTH(date_added) = MONTH(%s)",
-            current_time('Y-m-d'),
-            current_time('Y-m-d')
-        ));
-
-        // Multiple wishlist analytics
-        $analytics['users_with_multiple_wishlists'] = $wpdb->get_var("
-            SELECT COUNT(DISTINCT user_id) 
-            FROM {$wpdb->prefix}aww_wishlist_lists 
-            WHERE user_id IS NOT NULL 
-            AND user_id IN (
-                SELECT user_id 
-                FROM {$wpdb->prefix}aww_wishlist_lists 
-                WHERE user_id IS NOT NULL 
-                GROUP BY user_id 
-                HAVING COUNT(*) > 1
-            )
-        ");
-
-        $analytics['average_wishlists_per_user'] = $wpdb->get_var("
-            SELECT AVG(wishlist_count) 
-            FROM (
-                SELECT user_id, COUNT(*) as wishlist_count 
-                FROM {$wpdb->prefix}aww_wishlist_lists 
-                WHERE user_id IS NOT NULL 
-                GROUP BY user_id
-            ) as user_wishlists
-        ");
-
-        // Price drop analytics
-        $analytics['items_with_price_drops'] = $wpdb->get_var("
-            SELECT COUNT(*) 
-            FROM {$wpdb->prefix}aww_wishlists w 
-            JOIN {$wpdb->posts} p ON w.product_id = p.ID 
-            WHERE w.price_at_add IS NOT NULL 
-            AND w.price_at_add > 0
-        ");
-
-        $analytics['total_price_drops'] = $wpdb->get_var("
-            SELECT COUNT(*) 
-            FROM {$wpdb->prefix}aww_wishlists w 
-            JOIN {$wpdb->posts} p ON w.product_id = p.ID 
-            WHERE w.price_at_add IS NOT NULL 
-            AND w.price_at_add > 0 
-            AND w.price_at_add > p.post_content
-        ");
-
-        return $analytics;
-    }
-
-    /**
      * Export wishlist data with multiple wishlist support
      */
     public function handle_export_wishlist() {
@@ -1006,7 +922,7 @@ class AWW_Admin {
                                                 <option value="after_meta" <?php selected( $settings['button_position'], 'after_meta' ); ?>>
                                                     <?php esc_html_e( 'After Product Meta', 'advanced-wc-wishlist' ); ?>
                                                 </option>
-                                                <option value="custom" <?php selected( $settings['button_position'], 'custom' ); ?>><?php esc_html_e( 'Custom (use shortcode)', 'advanced-wc-wishlist' ); ?></option>
+           
                                             </select>
                                         </td>
                                     </tr>
@@ -1110,7 +1026,7 @@ class AWW_Admin {
                                                 <option value="on_image" <?php selected( $settings['loop_button_position'], 'on_image' ); ?>><?php esc_html_e( 'On top of the image', 'advanced-wc-wishlist' ); ?></option>
                                                 <option value="before_add_to_cart" <?php selected( $settings['loop_button_position'], 'before_add_to_cart' ); ?>><?php esc_html_e( 'Before "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
                                                 <option value="after_add_to_cart" <?php selected( $settings['loop_button_position'], 'after_add_to_cart' ); ?>><?php esc_html_e( 'After "Add to cart" button', 'advanced-wc-wishlist' ); ?></option>
-                                                <option value="shortcode" <?php selected( $settings['loop_button_position'], 'shortcode' ); ?>><?php esc_html_e( 'Use shortcode', 'advanced-wc-wishlist' ); ?></option>
+
                                             </select>
                                             <p class="description"><?php esc_html_e( 'Choose where to show the wishlist button in product loops (shop, category, etc).', 'advanced-wc-wishlist' ); ?></p>
                                         </td>
@@ -1458,102 +1374,7 @@ class AWW_Admin {
         <?php
     }
 
-    /**
-     * Analytics page
-     */
-    public function analytics_page() {
-        if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            return;
-        }
 
-        $analytics = AWW()->database->get_analytics();
-        $popular_products = AWW()->database->get_popular_wishlisted_products( 10 );
-        ?>
-        <div class="wrap">
-            <h1><?php esc_html_e( 'Wishlist Analytics', 'advanced-wc-wishlist' ); ?></h1>
-
-            <div class="aww-analytics-grid">
-                <div class="aww-analytics-card">
-                    <h3><?php esc_html_e( 'Total Wishlist Items', 'advanced-wc-wishlist' ); ?></h3>
-                    <div class="aww-number"><?php echo esc_html( $analytics['total_items'] ); ?></div>
-                </div>
-
-                <div class="aww-analytics-card">
-                    <h3><?php esc_html_e( 'Unique Users', 'advanced-wc-wishlist' ); ?></h3>
-                    <div class="aww-number"><?php echo esc_html( $analytics['unique_users'] ); ?></div>
-                </div>
-
-                <div class="aww-analytics-card">
-                    <h3><?php esc_html_e( 'Guest Sessions', 'advanced-wc-wishlist' ); ?></h3>
-                    <div class="aww-number"><?php echo esc_html( $analytics['guest_sessions'] ); ?></div>
-                </div>
-
-                <div class="aww-analytics-card">
-                    <h3><?php esc_html_e( 'Added Today', 'advanced-wc-wishlist' ); ?></h3>
-                    <div class="aww-number"><?php echo esc_html( $analytics['items_today'] ); ?></div>
-                </div>
-
-                <div class="aww-analytics-card">
-                    <h3><?php esc_html_e( 'Added This Week', 'advanced-wc-wishlist' ); ?></h3>
-                    <div class="aww-number"><?php echo esc_html( $analytics['items_this_week'] ); ?></div>
-                </div>
-
-                <div class="aww-analytics-card">
-                    <h3><?php esc_html_e( 'Added This Month', 'advanced-wc-wishlist' ); ?></h3>
-                    <div class="aww-number"><?php echo esc_html( $analytics['items_this_month'] ); ?></div>
-                </div>
-            </div>
-
-            <div class="aww-actions">
-                <button type="button" class="button button-primary" id="aww-export-csv">
-                    <?php esc_html_e( 'Export CSV', 'advanced-wc-wishlist' ); ?>
-                </button>
-                <button type="button" class="button button-secondary" id="aww-clean-expired">
-                    <?php esc_html_e( 'Clean Expired Items', 'advanced-wc-wishlist' ); ?>
-                </button>
-            </div>
-
-            <h2><?php esc_html_e( 'Popular Wishlisted Products', 'advanced-wc-wishlist' ); ?></h2>
-            <?php if ( ! empty( $popular_products ) ) : ?>
-                <table class="widefat">
-                    <thead>
-                        <tr>
-                            <th><?php esc_html_e( 'Product', 'advanced-wc-wishlist' ); ?></th>
-                            <th><?php esc_html_e( 'Wishlist Count', 'advanced-wc-wishlist' ); ?></th>
-                            <th><?php esc_html_e( 'Actions', 'advanced-wc-wishlist' ); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ( $popular_products as $product ) : ?>
-                            <tr>
-                                <td>
-                                    <?php
-                                    $wc_product = wc_get_product( $product->product_id );
-                                    if ( $wc_product ) {
-                                        echo '<a href="' . esc_url( get_edit_post_link( $product->product_id ) ) . '">';
-                                        echo esc_html( $wc_product->get_name() );
-                                        echo '</a>';
-                                    } else {
-                                        echo esc_html( $product->product_name );
-                                    }
-                                    ?>
-                                </td>
-                                <td><?php echo esc_html( $product->wishlist_count ); ?></td>
-                                <td>
-                                    <a href="<?php echo esc_url( get_edit_post_link( $product->product_id ) ); ?>" class="button button-small">
-                                        <?php esc_html_e( 'Edit', 'advanced-wc-wishlist' ); ?>
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php else : ?>
-                <p><?php esc_html_e( 'No wishlist data available.', 'advanced-wc-wishlist' ); ?></p>
-            <?php endif; ?>
-        </div>
-        <?php
-    }
 
     /**
      * Save settings
@@ -1791,24 +1612,14 @@ class AWW_Admin {
      * Dashboard widget content
      */
     public function dashboard_widget_content() {
-        $analytics = AWW()->database->get_analytics();
         ?>
         <div class="aww-dashboard-widget">
             <p>
-                <strong><?php esc_html_e( 'Total Wishlist Items:', 'advanced-wc-wishlist' ); ?></strong>
-                <?php echo esc_html( $analytics['total_items'] ); ?>
+                <strong><?php esc_html_e( 'Wishlist Plugin Active', 'advanced-wc-wishlist' ); ?></strong>
             </p>
             <p>
-                <strong><?php esc_html_e( 'Added Today:', 'advanced-wc-wishlist' ); ?></strong>
-                <?php echo esc_html( $analytics['items_today'] ); ?>
-            </p>
-            <p>
-                <strong><?php esc_html_e( 'Unique Users:', 'advanced-wc-wishlist' ); ?></strong>
-                <?php echo esc_html( $analytics['unique_users'] ); ?>
-            </p>
-            <p>
-                <a href="<?php echo admin_url( 'admin.php?page=aww-analytics' ); ?>" class="button button-small">
-                    <?php esc_html_e( 'View Full Analytics', 'advanced-wc-wishlist' ); ?>
+                <a href="<?php echo admin_url( 'admin.php?page=aww-settings' ); ?>" class="button button-small">
+                    <?php esc_html_e( 'Configure Settings', 'advanced-wc-wishlist' ); ?>
                 </a>
             </p>
         </div>
@@ -1865,24 +1676,7 @@ class AWW_Admin {
                 AWW_VERSION
             );
         }
-        if ( 'woocommerce_page_aww-analytics' === $hook ) {
-            wp_enqueue_script(
-                'aww-admin-analytics',
-                AWW_PLUGIN_URL . 'assets/js/admin.js',
-                array( 'jquery' ),
-                AWW_VERSION,
-                true
-            );
 
-            wp_localize_script(
-                'aww-admin-analytics',
-                'aww_admin',
-                array(
-                    'ajax_url' => admin_url( 'admin-ajax.php' ),
-                    'nonce' => wp_create_nonce( 'aww_admin_nonce' ),
-                )
-            );
-        }
     }
 
     /**
@@ -2109,23 +1903,7 @@ class AWW_Admin {
         }
     }
 
-    /**
-     * Get analytics via AJAX
-     */
-    public function get_analytics() {
-        // Check nonce
-        if ( ! wp_verify_nonce( $_POST['nonce'], 'aww_admin_nonce' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Security check failed.', 'advanced-wc-wishlist' ) ) );
-        }
 
-        // Check permissions
-        if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_send_json_error( array( 'message' => __( 'You do not have permission to view analytics.', 'advanced-wc-wishlist' ) ) );
-        }
-
-        $analytics = AWW()->database->get_analytics();
-        wp_send_json_success( $analytics );
-    }
 
     /**
      * Export data via AJAX

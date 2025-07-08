@@ -402,32 +402,7 @@ class AWW_Ajax {
         ) );
     }
 
-    /**
-     * Get wishlist analytics (admin only)
-     */
-    public function get_wishlist_analytics() {
-        // Verify nonce
-        if ( ! wp_verify_nonce( $_POST['nonce'], 'aww_nonce' ) ) {
-            wp_send_json_error( array(
-                'message' => __( 'Security check failed.', 'advanced-wc-wishlist' ),
-            ) );
-        }
 
-        // Check if user has admin capabilities
-        if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_send_json_error( array(
-                'message' => __( 'You do not have permission to view analytics.', 'advanced-wc-wishlist' ),
-            ) );
-        }
-
-        $analytics = AWW()->database->get_analytics();
-        $popular_products = AWW()->database->get_popular_wishlisted_products( 10 );
-
-        wp_send_json_success( array(
-            'analytics' => $analytics,
-            'popular_products' => $popular_products,
-        ) );
-    }
 
     /**
      * Export wishlist data (admin only)

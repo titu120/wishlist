@@ -461,75 +461,9 @@ class AWW_Database {
         return $deleted_count;
     }
 
-    /**
-     * Get popular wishlisted products
-     *
-     * @param int $limit Number of products to return
-     * @return array
-     */
-    public function get_popular_wishlisted_products( $limit = 10 ) {
-        global $wpdb;
 
-        $sql = "SELECT w.product_id, COUNT(*) as wishlist_count, p.post_title as product_name 
-                FROM {$this->table_name} w 
-                LEFT JOIN {$wpdb->posts} p ON w.product_id = p.ID 
-                WHERE p.post_status = 'publish' 
-                GROUP BY w.product_id 
-                ORDER BY wishlist_count DESC 
-                LIMIT %d";
 
-        return $wpdb->get_results( $wpdb->prepare( $sql, $limit ) );
-    }
 
-    /**
-     * Get wishlist analytics
-     *
-     * @return array
-     */
-    public function get_analytics() {
-        global $wpdb;
-
-        $analytics = array();
-
-        // Total wishlist items
-        $analytics['total_items'] = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name}" );
-
-        // Total wishlists
-        $analytics['total_wishlists'] = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->lists_table_name}" );
-
-        // Total unique users
-        $analytics['unique_users'] = $wpdb->get_var( "SELECT COUNT(DISTINCT user_id) FROM {$this->lists_table_name} WHERE user_id IS NOT NULL" );
-
-        // Total guest sessions
-        $analytics['guest_sessions'] = $wpdb->get_var( "SELECT COUNT(DISTINCT session_id) FROM {$this->lists_table_name} WHERE session_id IS NOT NULL" );
-
-        // Items added today
-        $analytics['items_today'] = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT COUNT(*) FROM {$this->table_name} WHERE DATE(date_added) = %s",
-                current_time( 'Y-m-d' )
-            )
-        );
-
-        // Items added this week
-        $analytics['items_this_week'] = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT COUNT(*) FROM {$this->table_name} WHERE YEARWEEK(date_added) = YEARWEEK(%s)",
-                current_time( 'Y-m-d' )
-            )
-        );
-
-        // Items added this month
-        $analytics['items_this_month'] = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT COUNT(*) FROM {$this->table_name} WHERE YEAR(date_added) = YEAR(%s) AND MONTH(date_added) = MONTH(%s)",
-                current_time( 'Y-m-d' ),
-                current_time( 'Y-m-d' )
-            )
-        );
-
-        return $analytics;
-    }
 
     /**
      * Get wishlist count by product
