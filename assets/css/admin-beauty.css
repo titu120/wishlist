@@ -222,18 +222,26 @@
     gap: 0;
     min-height: 600px;
 }
+.aww-settings-title {
+    text-align: center;
+    margin-bottom: 32px;
+    margin-top: 0;
+}
 #aww-settings-wrap .aww-settings-sidebar {
-    background: #f8fafc;
+    background: #f3f6fa;
     border-right: 1px solid #e2e8f0;
     min-width: 220px;
     max-width: 260px;
     width: 22%;
-    padding: 16px;
+    padding: 32px 0 32px 0;
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     box-sizing: border-box;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin: 0 32px 0 0;
 }
 #aww-settings-wrap .aww-settings-sidebar .nav-tab-wrapper {
     display: flex;
@@ -247,16 +255,16 @@
     overflow: visible;
 }
 #aww-settings-wrap .aww-settings-sidebar .nav-tab {
-    background: #f1f5f9;
+    background: #f8fafc;
     color: #334155;
-    border: none;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    margin: 0 18px 10px 18px;
+    margin: 0 18px 12px 18px;
     padding: 14px 18px;
     font-size: 1.08em;
     font-weight: 500;
     text-align: left;
-    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s, border 0.18s;
     box-shadow: none;
     outline: none;
     cursor: pointer;
@@ -268,12 +276,14 @@
 #aww-settings-wrap .aww-settings-sidebar .nav-tab:hover {
     background: #e0e7ef;
     color: #007cba;
+    border: 1.5px solid #007cba;
 }
 #aww-settings-wrap .aww-settings-sidebar .nav-tab-active {
     background: #007cba;
     color: #fff;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(0,124,186,0.10);
+    border: 1.5px solid #007cba;
     z-index: 2;
 }
 #aww-settings-wrap .aww-settings-content {
@@ -283,8 +293,8 @@
     border-radius: 12px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.07);
     border: 1px solid #e5e7eb;
-    margin: 0 36px 36px 36px;
-    padding: 0px 40px 40px 40px;
+    margin: 0 36px 36px 0;
+    padding: 36px 40px 40px 40px;
     box-sizing: border-box;
 }
 #aww-settings-wrap .tab-content {
@@ -296,13 +306,14 @@
 }
 @media (max-width: 1100px) {
     #aww-settings-wrap .aww-settings-content {
-        margin: 0 12px 24px 12px;
+        margin: 0 12px 24px 0;
         padding: 24px 10px 24px 10px;
     }
     #aww-settings-wrap .aww-settings-sidebar {
         min-width: 140px;
         max-width: 180px;
-        padding: 18px 0 0 0;
+        padding: 18px 0 18px 0;
+        margin: 0 8px 0 0;
     }
 }
 @media (max-width: 900px) {
@@ -317,10 +328,12 @@
         border-right: none;
         border-bottom: 1px solid #e2e8f0;
         padding: 0 0 0 0;
-        margin-bottom: 0;
+        margin: 0 0 0 0;
         overflow-x: auto;
         overflow-y: hidden;
-        background: #f8fafc;
+        background: #f3f6fa;
+        border-radius: 14px 14px 0 0;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     }
     #aww-settings-wrap .aww-settings-sidebar .nav-tab-wrapper {
         flex-direction: row;

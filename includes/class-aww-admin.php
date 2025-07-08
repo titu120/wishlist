@@ -940,9 +940,11 @@ class AWW_Admin {
         ?>
         <div id="aww-settings-wrap">
             <div class="wrap">
-                <h1><?php esc_html_e( 'Advanced WooCommerce Wishlist Settings', 'advanced-wc-wishlist' ); ?></h1>
+                <div class="aww-settings-title" style="text-align:center;margin-bottom:32px;">
+                    <h1><?php esc_html_e( 'Advanced WooCommerce Wishlist Settings', 'advanced-wc-wishlist' ); ?></h1>
+                </div>
                 <div class="aww-settings-flex" style="display: flex; gap: 0; align-items: flex-start;">
-                    <div class="aww-settings-sidebar" style="min-width:220px;max-width:260px;width:22%;padding-right:32px;">
+                    <div class="aww-settings-sidebar">
                         <div class="nav-tab-wrapper">
                             <a href="#general" class="nav-tab nav-tab-active"><?php esc_html_e( 'General', 'advanced-wc-wishlist' ); ?></a>
                             <a href="#button" class="nav-tab"><?php esc_html_e( 'Product Details Page', 'advanced-wc-wishlist' ); ?></a>
@@ -955,7 +957,7 @@ class AWW_Admin {
                             <a href="#shortcodes" class="nav-tab"><?php esc_html_e( 'Shortcodes', 'advanced-wc-wishlist' ); ?></a>
                         </div>
                     </div>
-                    <div class="aww-settings-content" style="flex:1;min-width:0;">
+                    <div class="aww-settings-content">
                         <!-- General Settings Tab -->
                         <div id="general" class="tab-content active">
                             <table class="form-table">
