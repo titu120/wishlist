@@ -10,16 +10,15 @@
 
     // Wishlist object
     var AWW = {
-            // Initialize
-    init: function() {
-        this.bindEvents();
-        this.initTooltips();
-        this.initCounters();
-        this.initModals();
-        this.initWishlistSelector();
-        this.checkPriceDrops();
-        this.initFontAwesomeFallback();
-    },
+        // Initialize
+        init: function() {
+            this.bindEvents();
+            this.initTooltips();
+            this.initCounters();
+            this.initModals();
+            this.initWishlistSelector();
+            this.checkPriceDrops();
+        },
 
         // Bind events
         bindEvents: function() {
@@ -663,42 +662,6 @@
             // Remove on click or after 4s
             toast.find('.aww-browse-link').on('click', function() { toast.remove(); });
             setTimeout(function(){ toast.fadeOut(300, function(){ $(this).remove(); }); }, 4000);
-        },
-
-        // Initialize Font Awesome fallback system
-        initFontAwesomeFallback: function() {
-            // Check if Font Awesome is loaded
-            var fontAwesomeLoaded = this.isFontAwesomeLoaded();
-            
-            if (!fontAwesomeLoaded) {
-                // Hide Font Awesome icons and show Dashicons
-                $('.aww-share-btn .aww-fa-icon').hide();
-                $('.aww-share-btn .aww-dashicon').show();
-            }
-        },
-
-        // Check if Font Awesome is loaded
-        isFontAwesomeLoaded: function() {
-            // Method 1: Check if FontAwesome object exists
-            if (typeof FontAwesome !== 'undefined') {
-                return true;
-            }
-            
-            // Method 2: Check if Font Awesome CSS is loaded by testing a character
-            var testElement = document.createElement('i');
-            testElement.className = 'fas fa-heart';
-            testElement.style.position = 'absolute';
-            testElement.style.left = '-9999px';
-            testElement.style.visibility = 'hidden';
-            document.body.appendChild(testElement);
-            
-            var computedStyle = window.getComputedStyle(testElement, ':before');
-            var content = computedStyle.getPropertyValue('content');
-            
-            document.body.removeChild(testElement);
-            
-            // If content is not empty or default, Font Awesome is loaded
-            return content !== '' && content !== 'none' && content !== 'normal';
         }
     };
 

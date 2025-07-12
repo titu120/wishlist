@@ -888,10 +888,6 @@ a.ast-on-card-button.ast-select-options-trigger.product_type_simple.add_to_cart_
     border: 1px solid rgba(231, 76, 60, 0.3);
 }
 
-span{
-    white-space: nowrap !important;
-}
-
 .aww-floating-icon--minimal:hover .aww-floating-icon__link {
     background-color: rgba(255, 255, 255, 1);
     border-color: #e74c3c;
@@ -1130,48 +1126,6 @@ span{
 .aww-share-icon {
     line-height: 1;
     font-family: Arial, sans-serif;
-}
-
-/* Font Awesome and Dashicons fallback system */
-.aww-share-btn .aww-fa-icon {
-    display: inline-block;
-    font-size: 16px;
-    line-height: 1;
-}
-
-.aww-share-btn .aww-dashicon {
-    display: none;
-    font-size: 16px;
-    line-height: 1;
-}
-
-/* Show Font Awesome icons by default, hide Dashicons */
-.aww-share-btn .aww-fa-icon {
-    display: inline-block;
-}
-
-.aww-share-btn .aww-dashicon {
-    display: none;
-}
-
-/* Fallback: If Font Awesome is not loaded, show Dashicons */
-.aww-share-btn .aww-fa-icon:not([class*="fa-"]) {
-    display: none;
-}
-
-.aww-share-btn .aww-fa-icon:not([class*="fa-"]) + .aww-dashicon {
-    display: inline-block;
-}
-
-/* Alternative fallback using CSS detection */
-@supports not (font-family: "Font Awesome 6 Free") {
-    .aww-share-btn .aww-fa-icon {
-        display: none;
-    }
-    
-    .aww-share-btn .aww-dashicon {
-        display: inline-block;
-    }
 }
 
 /* Facebook */
