@@ -498,8 +498,36 @@ This plugin is licensed under the GPL v2 or later.
 ## Credits
 
 - Built with WordPress and WooCommerce
-- Icons by [Font Awesome](https://fontawesome.com/)
+- Icons by [Font Awesome](https://fontawesome.com/) (with CDN fallback support)
 - Charts by [Chart.js](https://www.chartjs.org/)
+
+## Font Awesome Integration
+
+This plugin includes intelligent Font Awesome integration with automatic fallback to WordPress Dashicons:
+
+### Features
+- **Automatic Detection**: Detects if Font Awesome is already loaded by the theme
+- **CDN Fallback**: Loads Font Awesome 6 Free from CDN if not present
+- **Admin Control**: Option to enable/disable Font Awesome CDN loading
+- **Graceful Degradation**: Falls back to WordPress Dashicons if Font Awesome fails to load
+- **WordPress.org Compliant**: Uses approved CDN (cdnjs.cloudflare.com)
+
+### Configuration
+1. Go to **WooCommerce > Wishlist > Sharing Options**
+2. Enable/disable "Enable Font Awesome CDN" option
+3. The plugin will automatically handle icon display
+
+### How It Works
+1. Plugin checks if Font Awesome is already loaded by the theme
+2. If not loaded and CDN is enabled, loads Font Awesome 6 Free from CDN
+3. Social sharing buttons display Font Awesome icons with Dashicons fallback
+4. JavaScript detects Font Awesome availability and switches icons accordingly
+
+### CDN Details
+- **URL**: `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css`
+- **Version**: Font Awesome 6.4.0 Free
+- **Provider**: Cloudflare CDN (WordPress.org approved)
+- **License**: Font Awesome Free License
 
 ---
 

@@ -426,6 +426,7 @@ final class Advanced_WC_Wishlist {
             'show_stock' => 'yes',
             'show_date' => 'no',
             'loop_button_position' => 'on_image', // Ensure this is the default
+            'enable_font_awesome_cdn' => 'yes', // Enable Font Awesome CDN by default
         );
 
         foreach ( $defaults as $key => $value ) {

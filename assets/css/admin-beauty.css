@@ -227,9 +227,10 @@
     margin-bottom: 32px;
     margin-top: 0;
 }
+
 #aww-settings-wrap .aww-settings-sidebar {
-    background: #f3f6fa;
-    border-right: 1px solid #e2e8f0;
+   
+    border: 1px solid #e2e8f0;
     min-width: 220px;
     max-width: 260px;
     width: 22%;

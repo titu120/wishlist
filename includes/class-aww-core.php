@@ -69,68 +69,80 @@ class AWW_Core {
     }
 
     /**
-     * Enqueue frontend scripts and styles
+     * Enqueue scripts and styles
      */
     public function enqueue_scripts() {
-        $should_enqueue = false;
-        $wishlist_page_id = get_option('aww_wishlist_page');
-
-        // Always enqueue on WooCommerce pages, cart, checkout, account, and wishlist endpoint
-        if (
-            (function_exists('is_woocommerce') && is_woocommerce()) ||
-            is_cart() ||
-            is_checkout() ||
-            is_account_page() ||
-            ($wishlist_page_id && is_page($wishlist_page_id)) ||
-            (function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('wishlist'))
-        ) {
-            $should_enqueue = true;
-        }
-
-        // Enqueue if shortcode is present on the current page
-        if (is_singular() && has_shortcode(get_post()->post_content, 'aww_wishlist')) {
-            $should_enqueue = true;
-        }
-
-        if (!$should_enqueue) {
+        // Only enqueue on relevant pages
+        if ( ! is_woocommerce() && ! is_cart() && ! is_checkout() && ! is_account_page() && ! is_page( get_option( 'aww_wishlist_page' ) ) ) {
             return;
         }
 
+        // Enqueue Font Awesome CDN if not already loaded by theme
+        $this->enqueue_font_awesome();
+
+        // Enqueue plugin styles
         wp_enqueue_style(
-            'aww-frontend',
+            'advanced-wc-wishlist-frontend',
             AWW_PLUGIN_URL . 'assets/css/frontend.css',
             array(),
             AWW_VERSION
         );
 
+        // Enqueue plugin scripts
         wp_enqueue_script(
-            'aww-frontend',
+            'advanced-wc-wishlist-frontend',
             AWW_PLUGIN_URL . 'assets/js/frontend.js',
-            array('jquery'),
+            array( 'jquery' ),
             AWW_VERSION,
             true
         );
-        
 
-        wp_localize_script(
-            'aww-frontend',
-            'aww_ajax',
-            array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce'    => wp_create_nonce('aww_nonce'),
-                'wishlist_url' => $this->get_wishlist_url(),
-                'button_position' => Advanced_WC_Wishlist::get_option('button_position', 'after_add_to_cart'),
-                'strings'  => array(
-                    'added_to_wishlist'    => __('Added to wishlist!', 'advanced-wc-wishlist'),
-                    'removed_from_wishlist'=> __('Removed from wishlist!', 'advanced-wc-wishlist'),
-                    'error'                => __('An error occurred. Please try again.', 'advanced-wc-wishlist'),
-                    'confirm_remove'       => __('Are you sure you want to remove this item from your wishlist?', 'advanced-wc-wishlist'),
-                    'view_wishlist'        => __('View Wishlist', 'advanced-wc-wishlist'),
-                    'button_text'          => Advanced_WC_Wishlist::get_option('button_text', __('Add to Wishlist', 'advanced-wc-wishlist')),
-                    'button_text_added'    => Advanced_WC_Wishlist::get_option('button_text_added', __('Added to Wishlist', 'advanced-wc-wishlist')),
-                ),
-            )
-        );
+        // Localize script
+        wp_localize_script( 'advanced-wc-wishlist-frontend', 'aww_ajax', array(
+            'ajax_url' => admin_url( 'admin-ajax.php' ),
+            'nonce' => wp_create_nonce( 'aww_nonce' ),
+            'strings' => array(
+                'added_to_wishlist' => __( 'Added to wishlist!', 'advanced-wc-wishlist' ),
+                'removed_from_wishlist' => __( 'Removed from wishlist!', 'advanced-wc-wishlist' ),
+                'error_occurred' => __( 'An error occurred. Please try again.', 'advanced-wc-wishlist' ),
+                'login_required' => __( 'Please log in to use the wishlist.', 'advanced-wc-wishlist' ),
+                'wishlist_full' => __( 'Wishlist is full. Please remove some items first.', 'advanced-wc-wishlist' ),
+                'confirm_delete' => __( 'Are you sure you want to delete this item?', 'advanced-wc-wishlist' ),
+                'confirm_delete_wishlist' => __( 'Are you sure you want to delete this wishlist?', 'advanced-wc-wishlist' ),
+                'wishlist_created' => __( 'Wishlist created successfully!', 'advanced-wc-wishlist' ),
+                'wishlist_updated' => __( 'Wishlist updated successfully!', 'advanced-wc-wishlist' ),
+                'wishlist_deleted' => __( 'Wishlist deleted successfully!', 'advanced-wc-wishlist' ),
+                'item_added_to_cart' => __( 'Item added to cart!', 'advanced-wc-wishlist' ),
+                'items_added_to_cart' => __( 'Items added to cart!', 'advanced-wc-wishlist' ),
+                'copy_link' => __( 'Link copied to clipboard!', 'advanced-wc-wishlist' ),
+                'share_success' => __( 'Shared successfully!', 'advanced-wc-wishlist' ),
+                'share_error' => __( 'Error sharing. Please try again.', 'advanced-wc-wishlist' ),
+            ),
+            'options' => array(
+                'enable_ajax' => Advanced_WC_Wishlist::get_option( 'enable_ajax', 'yes' ),
+                'enable_guest_wishlist' => Advanced_WC_Wishlist::get_option( 'enable_guest_wishlist', 'yes' ),
+                'enable_social_sharing' => Advanced_WC_Wishlist::get_option( 'enable_social_sharing', 'yes' ),
+                'enable_multiple_wishlists' => Advanced_WC_Wishlist::get_option( 'enable_multiple_wishlists', 'yes' ),
+                'max_wishlists_per_user' => Advanced_WC_Wishlist::get_option( 'max_wishlists_per_user', 10 ),
+                'enable_price_drop_notifications' => Advanced_WC_Wishlist::get_option( 'enable_price_drop_notifications', 'yes' ),
+                'price_drop_threshold' => Advanced_WC_Wishlist::get_option( 'price_drop_threshold', 5 ),
+                'enable_email_notifications' => Advanced_WC_Wishlist::get_option( 'enable_email_notifications', 'yes' ),
+                'enable_dashboard_notifications' => Advanced_WC_Wishlist::get_option( 'enable_dashboard_notifications', 'yes' ),
+                'wishlist_expiry_days' => Advanced_WC_Wishlist::get_option( 'wishlist_expiry_days', 30 ),
+                'show_price' => Advanced_WC_Wishlist::get_option( 'show_price', 'yes' ),
+                'show_stock' => Advanced_WC_Wishlist::get_option( 'show_stock', 'yes' ),
+                'show_date' => Advanced_WC_Wishlist::get_option( 'show_date', 'no' ),
+                'button_position' => Advanced_WC_Wishlist::get_option( 'button_position', 'after_add_to_cart' ),
+                'button_text' => Advanced_WC_Wishlist::get_option( 'button_text', __( 'Add to Wishlist', 'advanced-wc-wishlist' ) ),
+                'button_text_added' => Advanced_WC_Wishlist::get_option( 'button_text_added', __( 'Added to Wishlist', 'advanced-wc-wishlist' ) ),
+                'button_text_color' => Advanced_WC_Wishlist::get_option( 'button_text_color', '#000000' ),
+                'button_icon_color' => Advanced_WC_Wishlist::get_option( 'button_icon_color', '#000000' ),
+                'loop_button_position' => Advanced_WC_Wishlist::get_option( 'loop_button_position', 'on_image' ),
+            ),
+        ) );
+
+        // Add custom CSS
+        $this->output_custom_css();
     }
 
     /**
@@ -753,13 +765,32 @@ class AWW_Core {
             $product_url = $wishlist_url;
         }
 
+        // Define social networks with Font Awesome and Dashicons fallback
         $social_networks = array(
-            'facebook'  => 'facebook',
-            'twitter'   => 'twitter',
-            'whatsapp'  => 'whatsapp',
-            'email'     => 'email',
-            'pinterest' => 'pinterest',
-            'linkedin'  => 'linkedin',
+            'facebook'  => array(
+                'fa_icon' => 'fab fa-facebook-f',
+                'dashicon' => 'dashicons-facebook'
+            ),
+            'twitter'   => array(
+                'fa_icon' => 'fab fa-twitter',
+                'dashicon' => 'dashicons-twitter'
+            ),
+            'whatsapp'  => array(
+                'fa_icon' => 'fab fa-whatsapp',
+                'dashicon' => 'dashicons-whatsapp'
+            ),
+            'email'     => array(
+                'fa_icon' => 'fas fa-envelope',
+                'dashicon' => 'dashicons-email'
+            ),
+            'pinterest' => array(
+                'fa_icon' => 'fab fa-pinterest-p',
+                'dashicon' => 'dashicons-pinterest'
+            ),
+            'linkedin'  => array(
+                'fa_icon' => 'fab fa-linkedin-in',
+                'dashicon' => 'dashicons-linkedin'
+            ),
         );
 
         ob_start();
@@ -770,7 +801,8 @@ class AWW_Core {
                 <?php foreach ( $networks as $network ) : ?>
                     <?php if ( isset( $social_networks[ $network ] ) ) : ?>
                         <button type="button" class="aww-share-btn aww-share-<?php echo esc_attr( $network ); ?>" data-platform="<?php echo esc_attr( $network ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'aww_nonce' ) ); ?>" data-url="<?php echo esc_url( $wishlist_url ); ?>" title="Share on <?php echo esc_attr( ucfirst( $network ) ); ?>">
-                            <span class="dashicons dashicons-<?php echo esc_attr( $social_networks[ $network ] ); ?>"></span>
+                            <i class="<?php echo esc_attr( $social_networks[ $network ]['fa_icon'] ); ?> aww-fa-icon"></i>
+                            <span class="dashicons <?php echo esc_attr( $social_networks[ $network ]['dashicon'] ); ?> aww-dashicon"></span>
                         </button>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -932,5 +964,71 @@ class AWW_Core {
             return $content . AWW()->shortcodes->wishlist_shortcode(array());
         }
         return $content;
+    }
+
+    /**
+     * Enqueue Font Awesome CDN if not already loaded by theme
+     */
+    private function enqueue_font_awesome() {
+        // Check if Font Awesome CDN is enabled in admin settings
+        if ( 'yes' !== Advanced_WC_Wishlist::get_option( 'enable_font_awesome_cdn', 'yes' ) ) {
+            return;
+        }
+        
+        // Check if Font Awesome is already loaded by the theme
+        if ( ! $this->is_font_awesome_loaded() ) {
+            // Use Font Awesome 6 Free CDN (WordPress.org compliant)
+            wp_enqueue_style(
+                'font-awesome-6',
+                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                array(),
+                '6.4.0'
+            );
+        }
+    }
+
+    /**
+     * Check if Font Awesome is already loaded by the theme
+     *
+     * @return bool
+     */
+    private function is_font_awesome_loaded() {
+        global $wp_styles;
+        
+        if ( ! $wp_styles ) {
+            return false;
+        }
+
+        // Check for common Font Awesome handles
+        $font_awesome_handles = array(
+            'font-awesome',
+            'fontawesome',
+            'font-awesome-5',
+            'font-awesome-6',
+            'fontawesome-free',
+            'fontawesome-pro',
+            'fa',
+            'all.min',
+            'fontawesome-all'
+        );
+
+        foreach ( $font_awesome_handles as $handle ) {
+            if ( wp_style_is( $handle, 'enqueued' ) || wp_style_is( $handle, 'registered' ) ) {
+                return true;
+            }
+        }
+
+        // Check if Font Awesome CSS is present in the page
+        if ( wp_script_is( 'jquery' ) ) {
+            // Add a small script to check if Font Awesome is loaded
+            wp_add_inline_script( 'jquery', '
+                window.awwFontAwesomeLoaded = false;
+                if (typeof FontAwesome !== "undefined" || document.querySelector(".fa, .fas, .far, .fab, .fal, .fad")) {
+                    window.awwFontAwesomeLoaded = true;
+                }
+            ' );
+        }
+
+        return false;
     }
 } 

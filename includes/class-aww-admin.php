@@ -397,7 +397,6 @@ class AWW_Admin {
                 'top_left' => __('Top Left', 'advanced-wc-wishlist'),
                 'bottom_right' => __('Bottom Right', 'advanced-wc-wishlist'),
                 'bottom_left' => __('Bottom Left', 'advanced-wc-wishlist'),
-                'header' => __('Header', 'advanced-wc-wishlist'),
             ))
         );
         add_settings_field(
@@ -451,6 +450,14 @@ class AWW_Admin {
             'aww_settings',
             'aww_sharing_settings',
             array('field' => 'sharing_message')
+        );
+        add_settings_field(
+            'enable_font_awesome_cdn',
+            __('Enable Font Awesome CDN', 'advanced-wc-wishlist'),
+            array($this, 'checkbox_field_callback'),
+            'aww_settings',
+            'aww_sharing_settings',
+            array('field' => 'enable_font_awesome_cdn')
         );
 
         // Guest/User Behavior
@@ -1055,7 +1062,7 @@ class AWW_Admin {
                                                 <option value="top_left" <?php selected( $settings['floating_icon_position'], 'top_left' ); ?>><?php esc_html_e( 'Top Left', 'advanced-wc-wishlist' ); ?></option>
                                                 <option value="bottom_right" <?php selected( $settings['floating_icon_position'], 'bottom_right' ); ?>><?php esc_html_e( 'Bottom Right', 'advanced-wc-wishlist' ); ?></option>
                                                 <option value="bottom_left" <?php selected( $settings['floating_icon_position'], 'bottom_left' ); ?>><?php esc_html_e( 'Bottom Left', 'advanced-wc-wishlist' ); ?></option>
-                                                <option value="header" <?php selected( $settings['floating_icon_position'], 'header' ); ?>><?php esc_html_e( 'Header', 'advanced-wc-wishlist' ); ?></option>
+        
                                             </select>
                                         </td>
                                     </tr>
