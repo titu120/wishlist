@@ -1,0 +1,1370 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: Advanced WooCommerce Wishlist\n"
+"POT-Creation-Date: 2025-07-12 15:54+0600\n"
+"PO-Revision-Date: 2025-07-12 15:54+0600\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: advanced-wc-wishlist.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: advanced-wc-wishlist.php:212 includes/class-aww-admin.php:1688
+msgid ""
+"Advanced WooCommerce Wishlist requires WooCommerce to be installed and "
+"activated."
+msgstr ""
+
+#: advanced-wc-wishlist.php:223
+msgid ""
+"Advanced WooCommerce Wishlist requires WooCommerce version 3.0 or higher."
+msgstr ""
+
+#: advanced-wc-wishlist.php:234
+msgid "Advanced WooCommerce Wishlist requires PHP 7.4 or higher."
+msgstr ""
+
+#: advanced-wc-wishlist.php:395 includes/class-aww-admin.php:1464
+#: includes/class-aww-core.php:129 includes/class-aww-core.php:509
+msgid "Add to Wishlist"
+msgstr ""
+
+#: advanced-wc-wishlist.php:396 includes/class-aww-core.php:130
+#: includes/class-aww-core.php:508
+msgid "Added to Wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:84
+msgid "Wishlist Settings"
+msgstr ""
+
+#: includes/class-aww-admin.php:85 includes/class-aww-admin.php:2035
+#: includes/class-aww-core.php:333 includes/class-aww-core.php:473
+msgid "Wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:103
+msgid "General Settings"
+msgstr ""
+
+#: includes/class-aww-admin.php:110
+msgid "Enable Guest Wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:119
+msgid "Enable Social Sharing"
+msgstr ""
+
+#: includes/class-aww-admin.php:129
+msgid "Multiple Wishlist Settings"
+msgstr ""
+
+#: includes/class-aww-admin.php:136
+msgid "Enable Multiple Wishlists"
+msgstr ""
+
+#: includes/class-aww-admin.php:145
+msgid "Maximum Wishlists per User"
+msgstr ""
+
+#: includes/class-aww-admin.php:154
+msgid "Enable Multiple Wishlists for Guests"
+msgstr ""
+
+#: includes/class-aww-admin.php:164
+msgid "Price Drop Notification Settings"
+msgstr ""
+
+#: includes/class-aww-admin.php:171
+msgid "Enable Price Drop Notifications"
+msgstr ""
+
+#: includes/class-aww-admin.php:180
+msgid "Price Drop Threshold (%)"
+msgstr ""
+
+#: includes/class-aww-admin.php:189
+msgid "Notification Frequency"
+msgstr ""
+
+#: includes/class-aww-admin.php:196
+msgid "Daily"
+msgstr ""
+
+#: includes/class-aww-admin.php:197
+msgid "Weekly"
+msgstr ""
+
+#: includes/class-aww-admin.php:198
+msgid "Monthly"
+msgstr ""
+
+#: includes/class-aww-admin.php:205
+msgid "Enable Email Notifications"
+msgstr ""
+
+#: includes/class-aww-admin.php:214
+msgid "Enable Dashboard Notifications"
+msgstr ""
+
+#: includes/class-aww-admin.php:224
+msgid "Button Settings"
+msgstr ""
+
+#: includes/class-aww-admin.php:231 includes/class-aww-admin.php:905
+msgid "Button Position"
+msgstr ""
+
+#: includes/class-aww-admin.php:236
+msgid "After \"Add to Cart\" button"
+msgstr ""
+
+#: includes/class-aww-admin.php:237
+msgid "Before \"Add to Cart\" button"
+msgstr ""
+
+#: includes/class-aww-admin.php:238
+msgid "After product title"
+msgstr ""
+
+#: includes/class-aww-admin.php:239
+msgid "After price"
+msgstr ""
+
+#: includes/class-aww-admin.php:240
+msgid "After product meta"
+msgstr ""
+
+#: includes/class-aww-admin.php:247 includes/class-aww-admin.php:930
+msgid "Button Font Size (px)"
+msgstr ""
+
+#: includes/class-aww-admin.php:256 includes/class-aww-admin.php:938
+msgid "Button Icon Size (px)"
+msgstr ""
+
+#: includes/class-aww-admin.php:265 includes/class-aww-admin.php:946
+msgid "Button Text"
+msgstr ""
+
+#: includes/class-aww-admin.php:274 includes/class-aww-admin.php:954
+msgid "Button Text (Added)"
+msgstr ""
+
+#: includes/class-aww-admin.php:283 includes/class-aww-admin.php:962
+msgid "Button Text Color"
+msgstr ""
+
+#: includes/class-aww-admin.php:292 includes/class-aww-admin.php:970
+msgid "Button Icon Color"
+msgstr ""
+
+#: includes/class-aww-admin.php:301
+msgid "Enable Hover Border"
+msgstr ""
+
+#: includes/class-aww-admin.php:310
+msgid "Button Hover Border Color"
+msgstr ""
+
+#: includes/class-aww-admin.php:319 includes/class-aww-admin.php:978
+msgid "Button Tooltip"
+msgstr ""
+
+#: includes/class-aww-admin.php:328 includes/class-aww-admin.php:986
+msgid "Custom Button CSS"
+msgstr ""
+
+#: includes/class-aww-admin.php:337 includes/class-aww-admin.php:994
+msgid "Button Icon"
+msgstr ""
+
+#: includes/class-aww-admin.php:342 includes/class-aww-admin.php:999
+msgid "Heart"
+msgstr ""
+
+#: includes/class-aww-admin.php:343 includes/class-aww-admin.php:1002
+msgid "Star"
+msgstr ""
+
+#: includes/class-aww-admin.php:344 includes/class-aww-admin.php:1005
+msgid "Plus"
+msgstr ""
+
+#: includes/class-aww-admin.php:345 includes/class-aww-admin.php:1008
+msgid "Bookmark"
+msgstr ""
+
+#: includes/class-aww-admin.php:346 includes/class-aww-admin.php:1011
+msgid "Gift"
+msgstr ""
+
+#: includes/class-aww-admin.php:353 includes/class-aww-admin.php:602
+msgid "Loop Settings"
+msgstr ""
+
+#: includes/class-aww-admin.php:354 includes/class-aww-admin.php:603
+msgid ""
+"Configure wishlist button position in product loops (shop, category, etc)."
+msgstr ""
+
+#: includes/class-aww-admin.php:359 includes/class-aww-admin.php:608
+#: includes/class-aww-admin.php:1022
+msgid "Position of \"Add to wishlist\" in loop"
+msgstr ""
+
+#: includes/class-aww-admin.php:366 includes/class-aww-admin.php:615
+#: includes/class-aww-admin.php:1025
+msgid "On top of the image"
+msgstr ""
+
+#: includes/class-aww-admin.php:367 includes/class-aww-admin.php:616
+#: includes/class-aww-admin.php:1026
+msgid "Before \"Add to cart\" button"
+msgstr ""
+
+#: includes/class-aww-admin.php:368 includes/class-aww-admin.php:617
+#: includes/class-aww-admin.php:1027
+msgid "After \"Add to cart\" button"
+msgstr ""
+
+#: includes/class-aww-admin.php:377
+msgid "Floating Wishlist Icon"
+msgstr ""
+
+#: includes/class-aww-admin.php:383 includes/class-aww-admin.php:1039
+msgid "Enable Floating Icon"
+msgstr ""
+
+#: includes/class-aww-admin.php:391 includes/class-aww-admin.php:1049
+msgid "Floating Icon Position"
+msgstr ""
+
+#: includes/class-aww-admin.php:396 includes/class-aww-admin.php:1053
+msgid "Top Right"
+msgstr ""
+
+#: includes/class-aww-admin.php:397 includes/class-aww-admin.php:1054
+msgid "Top Left"
+msgstr ""
+
+#: includes/class-aww-admin.php:398 includes/class-aww-admin.php:1055
+msgid "Bottom Right"
+msgstr ""
+
+#: includes/class-aww-admin.php:399 includes/class-aww-admin.php:1056
+msgid "Bottom Left"
+msgstr ""
+
+#: includes/class-aww-admin.php:404 includes/class-aww-admin.php:1062
+msgid "Floating Icon Style"
+msgstr ""
+
+#: includes/class-aww-admin.php:409 includes/class-aww-admin.php:1066
+msgid "Circle"
+msgstr ""
+
+#: includes/class-aww-admin.php:410 includes/class-aww-admin.php:1067
+msgid "Square"
+msgstr ""
+
+#: includes/class-aww-admin.php:411 includes/class-aww-admin.php:1068
+msgid "Minimal"
+msgstr ""
+
+#: includes/class-aww-admin.php:416 includes/class-aww-admin.php:1074
+msgid "Custom Floating Icon CSS"
+msgstr ""
+
+#: includes/class-aww-admin.php:426
+msgid "Sharing Options"
+msgstr ""
+
+#: includes/class-aww-admin.php:432 includes/class-aww-admin.php:1086
+msgid "Enable Sharing"
+msgstr ""
+
+#: includes/class-aww-admin.php:440 includes/class-aww-admin.php:1096
+msgid "Sharing Networks"
+msgstr ""
+
+#: includes/class-aww-admin.php:448 includes/class-aww-admin.php:1118
+msgid "Custom Sharing Message"
+msgstr ""
+
+#: includes/class-aww-admin.php:458
+msgid "Guest/User Wishlist Behavior"
+msgstr ""
+
+#: includes/class-aww-admin.php:464
+msgid "Require Login for Wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:472
+msgid "Merge Guest Wishlist on Login"
+msgstr ""
+
+#: includes/class-aww-admin.php:482
+msgid "Add to Cart Behavior"
+msgstr ""
+
+#: includes/class-aww-admin.php:488
+msgid "Remove from Wishlist after Add to Cart"
+msgstr ""
+
+#: includes/class-aww-admin.php:496
+msgid "Redirect to Cart after Add to Cart"
+msgstr ""
+
+#: includes/class-aww-admin.php:506
+msgid "Wishlist Page & Shortcode"
+msgstr ""
+
+#: includes/class-aww-admin.php:512 includes/class-aww-admin.php:1173
+msgid "Wishlist Page"
+msgstr ""
+
+#: includes/class-aww-admin.php:520 includes/class-aww-admin.php:1216
+msgid "Wishlist Shortcode"
+msgstr ""
+
+#: includes/class-aww-admin.php:528 includes/class-aww-admin.php:1225
+msgid "Wishlist Endpoint"
+msgstr ""
+
+#: includes/class-aww-admin.php:538 includes/class-aww-admin.php:871
+msgid "Display & UX"
+msgstr ""
+
+#: includes/class-aww-admin.php:544 includes/class-aww-admin.php:1238
+msgid "Enable Modal Popups"
+msgstr ""
+
+#: includes/class-aww-admin.php:552 includes/class-aww-admin.php:1247
+msgid "Enable Tooltips"
+msgstr ""
+
+#: includes/class-aww-admin.php:560 includes/class-aww-admin.php:1256
+msgid "Enable AJAX Feedback"
+msgstr ""
+
+#: includes/class-aww-admin.php:568 includes/class-aww-admin.php:1293
+msgid "Custom CSS"
+msgstr ""
+
+#: includes/class-aww-admin.php:576 includes/class-aww-admin.php:1265
+msgid "Enable Responsive Styles"
+msgstr ""
+
+#: includes/class-aww-admin.php:584 includes/class-aww-admin.php:1274
+msgid "Enable Accessibility Features"
+msgstr ""
+
+#: includes/class-aww-admin.php:592 includes/class-aww-admin.php:1283
+msgid "Enable RTL Support"
+msgstr ""
+
+#: includes/class-aww-admin.php:628
+msgid "Configure multiple wishlist functionality for users and guests."
+msgstr ""
+
+#: includes/class-aww-admin.php:635
+msgid "Configure price drop notification settings for wishlist items."
+msgstr ""
+
+#: includes/class-aww-admin.php:736
+#, php-format
+msgid "Price Drop Alert - %s items in your wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:738
+msgid "Price Drop Alert!"
+msgstr ""
+
+#: includes/class-aww-admin.php:739
+msgid "The following items in your wishlist have dropped in price:"
+msgstr ""
+
+#: includes/class-aww-admin.php:749
+msgid "View Product"
+msgstr ""
+
+#: includes/class-aww-admin.php:754
+msgid "View Your Wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:778
+msgid "You do not have permission to export wishlist data."
+msgstr ""
+
+#: includes/class-aww-admin.php:846
+msgid "Wishlist page has been recreated successfully!"
+msgstr ""
+
+#: includes/class-aww-admin.php:859 includes/class-aww-export-import.php:130
+msgid "Advanced WooCommerce Wishlist Settings"
+msgstr ""
+
+#: includes/class-aww-admin.php:864
+msgid "General"
+msgstr ""
+
+#: includes/class-aww-admin.php:865
+msgid "Product Details Page"
+msgstr ""
+
+#: includes/class-aww-admin.php:866
+msgid "Shop Page"
+msgstr ""
+
+#: includes/class-aww-admin.php:867
+msgid "Floating Icon"
+msgstr ""
+
+#: includes/class-aww-admin.php:868
+msgid "Sharing"
+msgstr ""
+
+#: includes/class-aww-admin.php:869
+msgid "Behavior"
+msgstr ""
+
+#: includes/class-aww-admin.php:870
+msgid "Page & Shortcode"
+msgstr ""
+
+#: includes/class-aww-admin.php:872
+msgid "Shortcodes"
+msgstr ""
+
+#: includes/class-aww-admin.php:882
+msgid "Guest Wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:886
+msgid "Enable wishlist for guest users"
+msgstr ""
+
+#: includes/class-aww-admin.php:892
+msgid "Guest Wishlist Expiry (Days)"
+msgstr ""
+
+#: includes/class-aww-admin.php:910
+msgid "After Add to Cart Button"
+msgstr ""
+
+#: includes/class-aww-admin.php:913
+msgid "Before Add to Cart Button"
+msgstr ""
+
+#: includes/class-aww-admin.php:916
+msgid "After Product Title"
+msgstr ""
+
+#: includes/class-aww-admin.php:919
+msgid "After Product Price"
+msgstr ""
+
+#: includes/class-aww-admin.php:922
+msgid "After Product Meta"
+msgstr ""
+
+#: includes/class-aww-admin.php:1030
+msgid ""
+"Choose where to show the wishlist button in product loops (shop, category, "
+"etc)."
+msgstr ""
+
+#: includes/class-aww-admin.php:1043
+msgid "Show floating wishlist icon/counter"
+msgstr ""
+
+#: includes/class-aww-admin.php:1090
+msgid "Enable social sharing functionality"
+msgstr ""
+
+#: includes/class-aww-admin.php:1113
+msgid "Select the social networks to enable for sharing."
+msgstr ""
+
+#: includes/class-aww-admin.php:1122
+msgid "Use {product_name} and {site_name} as placeholders"
+msgstr ""
+
+#: includes/class-aww-admin.php:1131
+msgid "Require Login"
+msgstr ""
+
+#: includes/class-aww-admin.php:1135
+msgid "Require users to login before adding to wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:1140
+msgid "Merge Guest Wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:1144
+msgid "Merge guest wishlist items when user logs in"
+msgstr ""
+
+#: includes/class-aww-admin.php:1149
+msgid "Remove After Add to Cart"
+msgstr ""
+
+#: includes/class-aww-admin.php:1153
+msgid "Remove item from wishlist after adding to cart"
+msgstr ""
+
+#: includes/class-aww-admin.php:1158
+msgid "Redirect to Cart"
+msgstr ""
+
+#: includes/class-aww-admin.php:1162
+msgid "Redirect to cart page after adding to cart from wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:1183
+msgid "Select the page where your wishlist will be displayed."
+msgstr ""
+
+#: includes/class-aww-admin.php:1187
+msgid "Wishlist Page Status"
+msgstr ""
+
+#: includes/class-aww-admin.php:1194
+msgid "Wishlist page exists and is accessible"
+msgstr ""
+
+#: includes/class-aww-admin.php:1195
+msgid "View Wishlist Page"
+msgstr ""
+
+#: includes/class-aww-admin.php:1197
+msgid "Wishlist page not found or not accessible"
+msgstr ""
+
+#: includes/class-aww-admin.php:1200
+msgid "No wishlist page configured"
+msgstr ""
+
+#: includes/class-aww-admin.php:1206 includes/class-aww-admin.php:1209
+msgid "Recreate Wishlist Page"
+msgstr ""
+
+#: includes/class-aww-admin.php:1211
+msgid ""
+"Click this button to recreate the wishlist page if it's missing or not "
+"working properly."
+msgstr ""
+
+#: includes/class-aww-admin.php:1220
+msgid "Default: [aww_wishlist]"
+msgstr ""
+
+#: includes/class-aww-admin.php:1229
+msgid "Default: wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:1242
+msgid "Show modal popups for wishlist actions"
+msgstr ""
+
+#: includes/class-aww-admin.php:1251
+msgid "Show tooltips on wishlist elements"
+msgstr ""
+
+#: includes/class-aww-admin.php:1260
+msgid "Show AJAX feedback messages"
+msgstr ""
+
+#: includes/class-aww-admin.php:1269
+msgid "Enable responsive design for mobile devices"
+msgstr ""
+
+#: includes/class-aww-admin.php:1278
+msgid "Enable accessibility features (ARIA labels, keyboard navigation)"
+msgstr ""
+
+#: includes/class-aww-admin.php:1287
+msgid "Enable right-to-left language support"
+msgstr ""
+
+#: includes/class-aww-admin.php:1297
+msgid "Add custom CSS to style wishlist elements"
+msgstr ""
+
+#: includes/class-aww-admin.php:1304
+msgid "Available Shortcodes"
+msgstr ""
+
+#: includes/class-aww-admin.php:1305
+msgid ""
+"Use these shortcodes to display wishlist functionality anywhere on your site:"
+msgstr ""
+
+#: includes/class-aww-admin.php:1310
+msgid "Shortcode"
+msgstr ""
+
+#: includes/class-aww-admin.php:1311
+msgid "Description"
+msgstr ""
+
+#: includes/class-aww-admin.php:1312
+msgid "Attributes"
+msgstr ""
+
+#: includes/class-aww-admin.php:1318 includes/class-aww-shortcodes.php:464
+msgid "Display the full wishlist page"
+msgstr ""
+
+#: includes/class-aww-admin.php:1323 includes/class-aww-shortcodes.php:480
+msgid "Display wishlist item count"
+msgstr ""
+
+#: includes/class-aww-admin.php:1328
+msgid "Display wishlist button for current product"
+msgstr ""
+
+#: includes/class-aww-admin.php:1333 includes/class-aww-shortcodes.php:499
+msgid "Display wishlist products in a grid"
+msgstr ""
+
+#: includes/class-aww-admin.php:1338 includes/class-aww-shortcodes.php:513
+msgid "Display most popular wishlisted products"
+msgstr ""
+
+#: includes/class-aww-admin.php:1343
+msgid "Display wishlist management interface"
+msgstr ""
+
+#: includes/class-aww-admin.php:1445
+msgid "Settings saved successfully!"
+msgstr ""
+
+#: includes/class-aww-admin.php:1465
+msgid "Browse Wishlist"
+msgstr ""
+
+#: includes/class-aww-admin.php:1514 includes/class-aww-core.php:345
+msgid "Wishlist Information"
+msgstr ""
+
+#: includes/class-aww-admin.php:1541 includes/class-aww-core.php:372
+msgid "Wishlist Count:"
+msgstr ""
+
+#: includes/class-aww-admin.php:1547 includes/class-aww-core.php:378
+msgid "Popular in wishlists"
+msgstr ""
+
+#: includes/class-aww-admin.php:1560
+msgid "Export Wishlist Data"
+msgstr ""
+
+#: includes/class-aww-admin.php:1593
+msgid "Settings"
+msgstr ""
+
+#: includes/class-aww-admin.php:1604
+msgid "Wishlist Overview"
+msgstr ""
+
+#: includes/class-aww-admin.php:1616
+msgid "Wishlist Plugin Active"
+msgstr ""
+
+#: includes/class-aww-admin.php:1620
+msgid "Configure Settings"
+msgstr ""
+
+#: includes/class-aww-admin.php:1634
+msgid "Wishlist Count"
+msgstr ""
+
+#: includes/class-aww-admin.php:1698
+msgid "Configure general wishlist settings."
+msgstr ""
+
+#: includes/class-aww-admin.php:1705
+msgid "Configure wishlist button appearance and behavior."
+msgstr ""
+
+#: includes/class-aww-admin.php:1712
+msgid "Configure floating wishlist icon/counter that appears on your site."
+msgstr ""
+
+#: includes/class-aww-admin.php:1719
+msgid "Configure social sharing options for wishlist items."
+msgstr ""
+
+#: includes/class-aww-admin.php:1726
+msgid "Configure how guest and logged-in users interact with wishlists."
+msgstr ""
+
+#: includes/class-aww-admin.php:1733
+msgid ""
+"Configure what happens when users add items to cart from their wishlist."
+msgstr ""
+
+#: includes/class-aww-admin.php:1740
+msgid "Configure wishlist page, shortcodes, and endpoints."
+msgstr ""
+
+#: includes/class-aww-admin.php:1747
+msgid ""
+"Configure display options, user experience features, and custom styling."
+msgstr ""
+
+#: includes/class-aww-admin.php:1754
+msgid "Configure how wishlist items are displayed."
+msgstr ""
+
+#: includes/class-aww-admin.php:1766
+msgid "Enable this feature"
+msgstr ""
+
+#: includes/class-aww-admin.php:1912 includes/class-aww-admin.php:1944
+#: includes/class-aww-ajax.php:132 includes/class-aww-ajax.php:169
+#: includes/class-aww-ajax.php:189 includes/class-aww-ajax.php:235
+#: includes/class-aww-ajax.php:312 includes/class-aww-ajax.php:352
+#: includes/class-aww-ajax.php:379 includes/class-aww-ajax.php:414
+#: includes/class-aww-ajax.php:446 includes/class-aww-ajax.php:474
+#: includes/class-aww-ajax.php:504 includes/class-aww-ajax.php:528
+#: includes/class-aww-ajax.php:553 includes/class-aww-ajax.php:568
+msgid "Security check failed."
+msgstr ""
+
+#: includes/class-aww-admin.php:1917 includes/class-aww-ajax.php:421
+msgid "You do not have permission to export data."
+msgstr ""
+
+#: includes/class-aww-admin.php:1928 includes/class-aww-admin.php:1933
+msgid "Data exported successfully."
+msgstr ""
+
+#: includes/class-aww-admin.php:1949
+msgid "You do not have permission to clean expired items."
+msgstr ""
+
+#: includes/class-aww-admin.php:1956
+#, php-format
+msgid "Successfully cleaned %d expired wishlist items."
+msgstr ""
+
+#: includes/class-aww-admin.php:1966
+msgid "Select a page"
+msgstr ""
+
+#: includes/class-aww-admin.php:1980 templates/wishlist-page.php:87
+msgid "Facebook"
+msgstr ""
+
+#: includes/class-aww-admin.php:1981 templates/wishlist-page.php:90
+msgid "Twitter"
+msgstr ""
+
+#: includes/class-aww-admin.php:1982 templates/wishlist-page.php:93
+msgid "WhatsApp"
+msgstr ""
+
+#: includes/class-aww-admin.php:1983 templates/wishlist-page.php:96
+msgid "Email"
+msgstr ""
+
+#: includes/class-aww-admin.php:1984
+msgid "Pinterest"
+msgstr ""
+
+#: includes/class-aww-admin.php:1985
+msgid "LinkedIn"
+msgstr ""
+
+#: includes/class-aww-ajax.php:74
+msgid "You do not have permission to add to wishlist."
+msgstr ""
+
+#: includes/class-aww-ajax.php:84
+msgid "Please log in to add items to your wishlist."
+msgstr ""
+
+#: includes/class-aww-ajax.php:90 includes/class-aww-ajax.php:608
+msgid "Invalid product ID."
+msgstr ""
+
+#: includes/class-aww-ajax.php:95
+msgid "Product not found."
+msgstr ""
+
+#: includes/class-aww-ajax.php:100
+msgid "Product is already in your wishlist."
+msgstr ""
+
+#: includes/class-aww-ajax.php:110 includes/class-aww-core.php:124
+msgid "Added to wishlist!"
+msgstr ""
+
+#: includes/class-aww-ajax.php:118
+msgid "Could not add to wishlist."
+msgstr ""
+
+#: includes/class-aww-ajax.php:127
+msgid "You do not have permission to remove from wishlist."
+msgstr ""
+
+#: includes/class-aww-ajax.php:141
+msgid "Invalid product."
+msgstr ""
+
+#: includes/class-aww-ajax.php:150
+msgid "Product removed from wishlist successfully!"
+msgstr ""
+
+#: includes/class-aww-ajax.php:157
+msgid "Failed to remove product from wishlist. Please try again."
+msgstr ""
+
+#: includes/class-aww-ajax.php:230
+msgid "You do not have permission to add all to cart."
+msgstr ""
+
+#: includes/class-aww-ajax.php:242
+msgid "Please log in to add items to cart."
+msgstr ""
+
+#: includes/class-aww-ajax.php:265
+#, php-format
+msgid "Failed to add %s to cart."
+msgstr ""
+
+#: includes/class-aww-ajax.php:268
+#, php-format
+msgid "%s is not available for purchase."
+msgstr ""
+
+#: includes/class-aww-ajax.php:273
+#, php-format
+msgid "%d item added to cart."
+msgid_plural "%d items added to cart."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-aww-ajax.php:275
+msgid "Some items could not be added."
+msgstr ""
+
+#: includes/class-aww-ajax.php:299
+msgid "No items could be added to cart."
+msgstr ""
+
+#: includes/class-aww-ajax.php:319
+msgid "Social sharing is disabled."
+msgstr ""
+
+#: includes/class-aww-ajax.php:328 includes/class-aww-ajax.php:329
+msgid "Check out my wishlist!"
+msgstr ""
+
+#: includes/class-aww-ajax.php:330 includes/class-aww-core.php:227
+#: includes/class-aww-database.php:118 includes/class-aww-database.php:162
+#: includes/class-aww-shortcodes.php:74
+msgid "My Wishlist"
+msgstr ""
+
+#: includes/class-aww-ajax.php:330
+msgid "Check out my wishlist:"
+msgstr ""
+
+#: includes/class-aww-ajax.php:340
+msgid "Invalid sharing platform."
+msgstr ""
+
+#: includes/class-aww-ajax.php:359 includes/class-aww-ajax.php:386
+msgid "Guest wishlist is disabled."
+msgstr ""
+
+#: includes/class-aww-ajax.php:393
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: includes/class-aww-ajax.php:401
+msgid "Email saved successfully!"
+msgstr ""
+
+#: includes/class-aww-ajax.php:443
+msgid "You do not have permission to create wishlists."
+msgstr ""
+
+#: includes/class-aww-ajax.php:451
+msgid "Wishlist name is required."
+msgstr ""
+
+#: includes/class-aww-ajax.php:457
+msgid "Wishlist created successfully!"
+msgstr ""
+
+#: includes/class-aww-ajax.php:462
+msgid "Failed to create wishlist. Please try again."
+msgstr ""
+
+#: includes/class-aww-ajax.php:471
+msgid "You do not have permission to update wishlists."
+msgstr ""
+
+#: includes/class-aww-ajax.php:481
+msgid "Invalid wishlist or name."
+msgstr ""
+
+#: includes/class-aww-ajax.php:487
+msgid "Wishlist updated successfully!"
+msgstr ""
+
+#: includes/class-aww-ajax.php:492
+msgid "Failed to update wishlist. Please try again."
+msgstr ""
+
+#: includes/class-aww-ajax.php:501
+msgid "You do not have permission to delete wishlists."
+msgstr ""
+
+#: includes/class-aww-ajax.php:509
+msgid "Invalid wishlist."
+msgstr ""
+
+#: includes/class-aww-ajax.php:515
+msgid "Wishlist deleted successfully!"
+msgstr ""
+
+#: includes/class-aww-ajax.php:519
+msgid "Failed to delete wishlist. Please try again."
+msgstr ""
+
+#: includes/class-aww-ajax.php:560
+msgid "Notification dismissed."
+msgstr ""
+
+#: includes/class-aww-ajax.php:601
+msgid "You do not have permission to add to cart."
+msgstr ""
+
+#: includes/class-aww-ajax.php:615
+msgid "Product added to cart successfully."
+msgstr ""
+
+#: includes/class-aww-ajax.php:619
+msgid "Could not add product to cart."
+msgstr ""
+
+#: includes/class-aww-core.php:125
+msgid "Removed from wishlist!"
+msgstr ""
+
+#: includes/class-aww-core.php:126
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: includes/class-aww-core.php:127
+msgid "Are you sure you want to remove this item from your wishlist?"
+msgstr ""
+
+#: includes/class-aww-core.php:128 includes/class-aww-core.php:675
+msgid "View Wishlist"
+msgstr ""
+
+#: includes/class-aww-core.php:252
+#, php-format
+msgid "%d item from your guest wishlist has been merged into your account."
+msgid_plural ""
+"%d items from your guest wishlist have been merged into your account."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-aww-core.php:263
+#, php-format
+msgid "%d duplicate item was skipped."
+msgid_plural "%d duplicate items were skipped."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-aww-export-import.php:199
+msgid ""
+"Advanced WooCommerce Wishlist settings have been successfully imported from "
+"the XML file."
+msgstr ""
+
+#: includes/class-aww-export-import.php:206
+msgid ""
+"No Advanced WooCommerce Wishlist settings found in the imported XML file. "
+"Your current settings have been preserved."
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:80 templates/wishlist-page.php:70
+#: templates/wishlist.php:28
+msgid "Your wishlist is empty."
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:81 templates/wishlist-page.php:72
+#: templates/wishlist-table.php:189 templates/wishlist.php:30
+msgid "Continue Shopping"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:125
+msgid "item"
+msgid_plural "items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-aww-shortcodes.php:182
+msgid "No products found in wishlist."
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:230
+msgid "No popular wishlisted products found."
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:257
+#, php-format
+msgid "%s person has this in their wishlist"
+msgid_plural "%s people have this in their wishlist"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-aww-shortcodes.php:291 templates/wishlist-page.php:26
+msgid "Select Wishlist:"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:305 templates/wishlist-page.php:39
+#: templates/wishlist-page.php:119
+msgid "Create New Wishlist"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:313 templates/wishlist-page.php:44
+#: templates/wishlist-page.php:138
+msgid "Rename Wishlist"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:321 templates/wishlist-page.php:49
+#: templates/wishlist-page.php:158 templates/wishlist-page.php:164
+msgid "Delete Wishlist"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:421
+msgid "No price drops found in your wishlist."
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:427
+msgid "Price Drops in Your Wishlist"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:466
+msgid "Show wishlist title (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:467
+msgid "Show message when wishlist is empty (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:468 includes/class-aww-shortcodes.php:507
+#: includes/class-aww-shortcodes.php:520
+msgid "Show add to cart buttons (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:469
+msgid "Show remove buttons (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:470
+msgid "Show social sharing buttons (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:471 includes/class-aww-shortcodes.php:505
+#: includes/class-aww-shortcodes.php:518
+msgid "Show product prices (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:472
+msgid "Show stock status (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:473
+msgid "Show date added (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:474
+msgid "Limit number of items (0 for all)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:475
+msgid "Number of columns for grid layout"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:476
+msgid "Template type (table/grid/list)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:482 includes/class-aww-shortcodes.php:492
+msgid "Show heart icon (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:483
+msgid "Show item text (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:484
+msgid "Link to wishlist page (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:485 includes/class-aww-shortcodes.php:494
+msgid "Additional CSS classes"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:489
+msgid "Display wishlist button for a specific product"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:491
+msgid "Product ID (optional, uses current product if not specified)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:493
+msgid "Show button text (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:495
+msgid "Inline CSS styles"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:501 includes/class-aww-shortcodes.php:515
+msgid "Number of products to display"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:502 includes/class-aww-shortcodes.php:516
+msgid "Number of columns"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:503
+msgid "Order by (date_added, title, price, etc.)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:504
+msgid "Order (ASC/DESC)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:506 includes/class-aww-shortcodes.php:519
+msgid "Show product ratings (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:508 includes/class-aww-shortcodes.php:521
+msgid "Show wishlist buttons (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:509
+msgid "Template type (grid/list)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:517 includes/class-aww-shortcodes.php:537
+msgid "Show wishlist count (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:522
+msgid "Minimum wishlist count to display"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:526
+msgid "Display wishlist manager"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:528
+msgid "Show create wishlist button (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:529
+msgid "Show rename wishlist button (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:530
+msgid "Show delete wishlist button (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:531
+msgid "Show wishlist selector (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:535
+msgid "Display wishlist selector"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:538
+msgid "Selector style (dropdown/tabs)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:542
+msgid "Display price drops in wishlist"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:544
+msgid "Wishlist ID (optional, uses current wishlist if not specified)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:545
+msgid "Number of price drops to display"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:546
+msgid "Show discount percentage (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:547
+msgid "Show old price (yes/no)"
+msgstr ""
+
+#: includes/class-aww-shortcodes.php:548
+msgid "Show new price (yes/no)"
+msgstr ""
+
+#: templates/wishlist-button.php:28
+msgid "Add to wishlist"
+msgstr ""
+
+#: templates/wishlist-button.php:29
+msgid "Browse wishlist"
+msgstr ""
+
+#: templates/wishlist-page.php:58
+msgid "Price Drops"
+msgstr ""
+
+#: templates/wishlist-page.php:78 templates/wishlist-table.php:168
+msgid "Add All to Cart"
+msgstr ""
+
+#: templates/wishlist-page.php:83
+msgid "Share Wishlist"
+msgstr ""
+
+#: templates/wishlist-page.php:123 templates/wishlist-page.php:143
+msgid "Wishlist Name:"
+msgstr ""
+
+#: templates/wishlist-page.php:127
+msgid "Create Wishlist"
+msgstr ""
+
+#: templates/wishlist-page.php:128 templates/wishlist-page.php:148
+#: templates/wishlist-page.php:165
+msgid "Cancel"
+msgstr ""
+
+#: templates/wishlist-page.php:147
+msgid "Update Wishlist"
+msgstr ""
+
+#: templates/wishlist-page.php:159
+msgid ""
+"Are you sure you want to delete this wishlist? This action cannot be undone."
+msgstr ""
+
+#: templates/wishlist-table.php:25
+msgid "Please log in to view your wishlist."
+msgstr ""
+
+#: templates/wishlist-table.php:40
+msgid "Product"
+msgstr ""
+
+#: templates/wishlist-table.php:41
+msgid "Name"
+msgstr ""
+
+#: templates/wishlist-table.php:43
+msgid "Price"
+msgstr ""
+
+#: templates/wishlist-table.php:46
+msgid "Stock"
+msgstr ""
+
+#: templates/wishlist-table.php:49
+msgid "Date Added"
+msgstr ""
+
+#: templates/wishlist-table.php:51
+msgid "Actions"
+msgstr ""
+
+#: templates/wishlist-table.php:109
+msgid "In Stock"
+msgstr ""
+
+#: templates/wishlist-table.php:113
+msgid "Out of Stock"
+msgstr ""
+
+#: templates/wishlist-table.php:117
+msgid "On Backorder"
+msgstr ""
+
+#: templates/wishlist-table.php:144
+msgid "Add to Cart"
+msgstr ""
+
+#: templates/wishlist-table.php:154
+msgid "Remove"
+msgstr ""
+
+#: templates/wishlist-table.php:174
+#, php-format
+msgid "%d item in wishlist"
+msgid_plural "%d items in wishlist"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/wishlist-table.php:186
+msgid "Your wishlist is empty"
+msgstr ""
+
+#: templates/wishlist-table.php:187
+msgid "Start adding products to your wishlist to see them here."
+msgstr ""
+
+#: templates/wishlist.php:15
+msgid "&laquo; Previous"
+msgstr ""
+
+#: templates/wishlist.php:16
+msgid "Next &raquo;"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Advanced WooCommerce Wishlist"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://softivus.com/advanced-woocommerce-wishlist/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Feature-rich wishlist plugin with AJAX functionality, guest wishlists, and "
+"social sharing for WooCommerce stores."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Softivus"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://profiles.wordpress.org/softivus/"
+msgstr ""

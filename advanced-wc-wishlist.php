@@ -1,23 +1,11 @@
 <?php
 /**
- * SECURITY & REVIEW NOTES (for WordPress.org reviewers):
- * - All user input is sanitized and validated (see includes/class-aww-ajax.php, includes/class-aww-core.php, includes/class-aww-admin.php).
- * - All output is properly escaped using esc_html, esc_attr, esc_url, etc.
- * - All AJAX and form actions use nonces and verify them.
- * - All admin and AJAX actions check user capabilities.
- * - No use of eval, base64, or other dangerous functions.
- * - No direct access to any file (all files start with defined('ABSPATH') || exit;).
- * - All user-facing strings are translatable.
- * - No deprecated functions or PHP short tags.
- * - No hardcoded credentials or unapproved external calls.
- * - Plugin is fully compatible with latest WordPress and WooCommerce versions.
- *
  * Plugin Name: Advanced WooCommerce Wishlist
- * Plugin URI: https://example.com/advanced-wc-wishlist
- * Description: Feature-rich wishlist plugin with AJAX functionality, guest wishlists, and social sharing for WooCommerce stores
+ * Plugin URI:  https://softivus.com/advanced-woocommerce-wishlist/
+ * Description: Feature-rich wishlist plugin with AJAX functionality, guest wishlists, and social sharing for WooCommerce stores.
  * Version: 1.0.0
- * Author: [Your Name]
- * Author URI: https://example.com
+ * Author: Softivus
+ * Author URI: https://profiles.wordpress.org/softivus/
  * Text Domain: advanced-wc-wishlist
  * Domain Path: /languages
  * Requires at least: 5.0
@@ -25,14 +13,10 @@
  * Requires PHP: 7.4
  * WC requires at least: 3.0
  * WC tested up to: 8.0
- * WC requires PHP: 7.4
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Network: false
- *
- * @package Advanced_WC_Wishlist
- * @version 1.0.0
  */
+
 
 // Prevent direct access
 if ( ! defined( 'ABSPATH' ) ) {
@@ -499,26 +483,40 @@ final class Advanced_WC_Wishlist {
      * Create the wishlist page if it doesn't exist or is not published.
      */
     private function create_wishlist_page() {
-        if ( ! function_exists('error_log') ) return;
-        error_log('AWW: create_wishlist_page() called', 3, WP_CONTENT_DIR . '/debug.log');
+        // Only log in debug mode
+        if ( defined( 'WP_DEBUG' ) && WP_DEBUG && function_exists('error_log') ) {
+            error_log('AWW: create_wishlist_page() called');
+        }
         $wishlist_page_id = get_option( 'aww_wishlist_page' );
         $page = $wishlist_page_id ? get_post( $wishlist_page_id ) : null;
 
         // If the page is missing, trashed, or not published, try to find or create it
         if ( ! $page || $page->post_status === 'trash' || $page->post_status !== 'publish' ) {
-            error_log('AWW: Wishlist page missing or not published', 3, WP_CONTENT_DIR . '/debug.log');
+            // Only log in debug mode
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG && function_exists('error_log') ) {
+                error_log('AWW: Wishlist page missing or not published');
+            }
             // Try to find a page with slug 'wishlist'
             $existing = get_page_by_path( 'wishlist' );
             if ( $existing ) {
-                error_log('AWW: Found existing page with slug wishlist, status: ' . $existing->post_status, 3, WP_CONTENT_DIR . '/debug.log');
+                // Only log in debug mode
+                if ( defined( 'WP_DEBUG' ) && WP_DEBUG && function_exists('error_log') ) {
+                    error_log('AWW: Found existing page with slug wishlist, status: ' . $existing->post_status);
+                }
                 // If trashed, restore and publish
                 if ( $existing->post_status === 'trash' ) {
                     wp_untrash_post( $existing->ID );
                     wp_publish_post( $existing->ID );
-                    error_log('AWW: Untrashed and published existing wishlist page', 3, WP_CONTENT_DIR . '/debug.log');
+                    // Only log in debug mode
+                    if ( defined( 'WP_DEBUG' ) && WP_DEBUG && function_exists('error_log') ) {
+                        error_log('AWW: Untrashed and published existing wishlist page');
+                    }
                 } elseif ( $existing->post_status !== 'publish' ) {
                     wp_publish_post( $existing->ID );
-                    error_log('AWW: Published existing wishlist page', 3, WP_CONTENT_DIR . '/debug.log');
+                    // Only log in debug mode
+                    if ( defined( 'WP_DEBUG' ) && WP_DEBUG && function_exists('error_log') ) {
+                        error_log('AWW: Published existing wishlist page');
+                    }
                 }
                 update_option( 'aww_wishlist_page', $existing->ID );
                 flush_rewrite_rules();
@@ -533,14 +531,23 @@ final class Advanced_WC_Wishlist {
                 'post_type'    => 'page',
             ) );
             if ( $page_id && ! is_wp_error( $page_id ) ) {
-                error_log('AWW: Created new wishlist page, ID: ' . $page_id, 3, WP_CONTENT_DIR . '/debug.log');
+                // Only log in debug mode
+                if ( defined( 'WP_DEBUG' ) && WP_DEBUG && function_exists('error_log') ) {
+                    error_log('AWW: Created new wishlist page, ID: ' . $page_id);
+                }
                 update_option( 'aww_wishlist_page', $page_id );
                 flush_rewrite_rules();
             } else {
-                error_log('AWW: Failed to create wishlist page: ' . ( is_wp_error($page_id) ? $page_id->get_error_message() : 'Unknown error' ), 3, WP_CONTENT_DIR . '/debug.log');
+                // Only log in debug mode
+                if ( defined( 'WP_DEBUG' ) && WP_DEBUG && function_exists('error_log') ) {
+                    error_log('AWW: Failed to create wishlist page: ' . ( is_wp_error($page_id) ? $page_id->get_error_message() : 'Unknown error' ));
+                }
             }
         } else {
-            error_log('AWW: Wishlist page already exists and is published, ID: ' . $wishlist_page_id, 3, WP_CONTENT_DIR . '/debug.log');
+            // Only log in debug mode
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG && function_exists('error_log') ) {
+                error_log('AWW: Wishlist page already exists and is published, ID: ' . $wishlist_page_id);
+            }
         }
     }
 }

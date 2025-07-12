@@ -2001,6 +2001,10 @@ class AWW_Admin {
      * Recreate wishlist page
      */
     public function recreate_wishlist_page() {
+        // Check permissions
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            return;
+        }
         // Delete existing option to force recreation
         delete_option( 'aww_wishlist_page' );
         

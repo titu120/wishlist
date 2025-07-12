@@ -527,7 +527,7 @@ class AWW_Core {
             data-nonce="<?php echo esc_attr( wp_create_nonce( 'aww_nonce' ) ); ?>"
             type="button"
         >
-            <span class="aww-icon"><?php echo $icon; ?></span>
+            <span class="aww-icon"><?php echo wp_kses_post( $icon ); ?></span>
             <span class="aww-text"><?php echo esc_html( $button_text ); ?></span>
         </button>
         <?php

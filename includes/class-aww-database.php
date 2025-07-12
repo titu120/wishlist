@@ -126,10 +126,21 @@ class AWW_Database {
                 $wishlist_id = $wpdb->insert_id;
                 // Update items
                 $where = [];
-                if ( $user_id ) $where[] = $wpdb->prepare( 'user_id = %d', $user_id );
-                if ( $session_id ) $where[] = $wpdb->prepare( 'session_id = %s', $session_id );
-                $where_clause = implode( ' AND ', $where );
-                $wpdb->query( "UPDATE {$this->table_name} SET wishlist_id = {$wishlist_id} WHERE {$where_clause}" );
+                $where_values = [];
+                if ( $user_id ) {
+                    $where[] = 'user_id = %d';
+                    $where_values[] = $user_id;
+                }
+                if ( $session_id ) {
+                    $where[] = 'session_id = %s';
+                    $where_values[] = $session_id;
+                }
+                if ( ! empty( $where ) ) {
+                    $where_clause = implode( ' AND ', $where );
+                    $sql = "UPDATE {$this->table_name} SET wishlist_id = %d WHERE {$where_clause}";
+                    $values = array_merge( array( $wishlist_id ), $where_values );
+                    $wpdb->query( $wpdb->prepare( $sql, $values ) );
+                }
             }
             // Remove old columns
             $wpdb->query( "ALTER TABLE {$this->table_name} DROP COLUMN user_id" );
@@ -332,8 +343,10 @@ class AWW_Database {
                 session_start();
                 return true;
             } catch ( Exception $e ) {
-                // Session start failed, log the error
-                error_log( 'Advanced WC Wishlist: Could not start session: ' . $e->getMessage() );
+                // Session start failed, log the error only in debug mode
+                if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                    error_log( 'Advanced WC Wishlist: Could not start session: ' . $e->getMessage() );
+                }
                 return false;
             }
         }
@@ -558,5 +571,26 @@ class AWW_Database {
         );
         
         return $wpdb->query( $sql );
+    }
+
+    /**
+     * Get popular wishlisted products
+     *
+     * @param int $limit Number of products to return
+     * @return array
+     */
+    public function get_popular_wishlisted_products( $limit = 10 ) {
+        global $wpdb;
+
+        $sql = $wpdb->prepare(
+            "SELECT product_id, COUNT(*) as wishlist_count 
+             FROM {$this->table_name} 
+             GROUP BY product_id 
+             ORDER BY wishlist_count DESC 
+             LIMIT %d",
+            $limit
+        );
+
+        return $wpdb->get_results( $sql );
     }
 } 
